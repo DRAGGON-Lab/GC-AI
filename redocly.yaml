@@ -1,0 +1,20 @@
+extends:
+  - recommended
+
+rules:
+  # Flask serves /healthcheck/ and /inference/ with the trailing slash required:
+  # the same paths without it redirect. The spec records the paths as the service
+  # answers them.
+  no-path-trailing-slash: off
+
+  # The service is built to run on a developer's machine through the Docker
+  # environment, so localhost is the only server there is.
+  no-server-example.com: off
+
+  # The service reports a failed dependency as a 500, so several operations have
+  # no 4XX response to document.
+  operation-4xx-response: off
+
+apis:
+  gc-ai:
+    root: docs/openapi.yaml

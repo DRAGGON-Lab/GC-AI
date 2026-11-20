@@ -1,0 +1,888 @@
+openapi: 3.0.3
+
+info:
+  title: GC-AI API
+  version: "1.0.0"
+  description: |
+    GC-AI detects SBOL Visual glyphs in an image and builds SBOL3 documents from
+    the detected parts, with optional conversion to GenBank and FASTA.
+
+    A full run uses three calls:
+
+    1. `POST /inference/` with an image returns the glyphs it found, each with a
+       bounding box and a class name.
+    2. `POST /file/create` with a design built from those glyphs returns an SBOL3
+       document, and the path of a second, structural-only document in the
+       `file_path_structural` response header.
+    3. `POST /file/convert` with that path returns a ZIP of GenBank and/or FASTA.
+
+    Parts come from a bundled snapshot of the iGEM parts registry held in the
+    application's MySQL database. A design may also carry parts that are not in
+    that snapshot by marking them `new` and supplying the sequence directly.
+
+    ## Conventions
+
+    - Every error, at every status code, has the body described by `Error`.
+    - All paths carry the prefix of the blueprint that serves them:
+      `/healthcheck`, `/inference`, `/component`, `/file`. The trailing slash on
+      `/healthcheck/` and `/inference/` is required.
+    - Responses are not paginated. `GET /component/names` returns every matching
+      part name, which is several thousand for some roles.
+
+    ## Validation
+
+    The service builds an SBOL3 document and reports whether it could be written,
+    not whether it is semantically valid: generated documents are not rejected on
+    validation grounds. Clients that need a validated document should validate the
+    returned file themselves, for example with `sbol3.Document.validate()`.
+
+  license:
+    name: MIT
+    url: https://github.com/DRAGGON-Lab/GC-AI/blob/main/LICENSE
+
+servers:
+  - url: http://localhost:5001
+    description: Local Docker environment
+
+# The service has no authentication and no authorization: every endpoint is open
+# to anyone who can reach the port. It is built to run on a developer's machine
+# behind the local Docker network.
+security: []
+
+tags:
+  - name: health
+    description: Service and dependency status.
+  - name: inference
+    description: Glyph detection in images.
+  - name: components
+    description: Lookups against the bundled parts registry.
+  - name: files
+    description: SBOL3 generation and format conversion.
+
+paths:
+  /healthcheck/:
+    get:
+      tags: [health]
+      summary: Report service health
+      description: |
+        Intended to report whether the detection model is loaded and the parts
+        database answers.
+
+        **This endpoint always fails.** It runs its test query and closes the
+        database cursor without reading the result, which makes the MySQL
+        connector raise `InternalError: Unread result found`, so it answers 500
+        with `Healthcheck failed: Unread result found` whatever the state of the
+        service. The 200 below is the response it is built to return and is not
+        reachable.
+
+        To test whether the service is usable, call
+        `GET /component/names?role=Promoter` instead. That succeeds only when the
+        application is serving, the detection model has loaded (it is loaded at
+        import, so the application does not serve without it), and the parts
+        database answers queries.
+      operationId: healthcheck
+      responses:
+        "200":
+          description: |
+            Not reachable in this build; see the description above.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status, message]
+                properties:
+                  status:
+                    type: string
+                    enum: [healthy]
+                  message:
+                    type: string
+                    example: Application is running correctly
+        "500":
+          description: |
+            Returned on every call. `error` is
+            `Healthcheck failed: Unread result found`.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /inference/:
+    post:
+      tags: [inference]
+      summary: Detect glyphs in an image
+      description: |
+        Runs the detection model over an uploaded image and returns the glyphs it
+        found, together with a copy of the image annotated with labelled boxes.
+
+        Detections are filtered at a fixed confidence threshold of 0.7, and
+        overlapping detections above an IoU of 0.3 are reduced to the
+        highest-scoring one. Neither threshold is configurable per request, and
+        confidence scores are not included in the response.
+
+        `draw_boxes` and `pred_classes` are parallel arrays in the model's own
+        order, which is not left-to-right. To recover the order the parts appear
+        in along the backbone, sort by the first element of each box (`x_min`).
+      operationId: detectGlyphs
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [image]
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: Any image format OpenCV can decode, such as PNG or JPEG.
+            encoding:
+              image:
+                contentType: image/png, image/jpeg
+      responses:
+        "200":
+          description: |
+            Detection succeeded. An image with no recognised glyphs is also a
+            200, with `has_predictions` false and both arrays empty.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InferenceResponse"
+        "400":
+          description: No `image` field, or an empty filename.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+
+  /component/names:
+    get:
+      tags: [components]
+      summary: List registry part names for a role
+      description: |
+        Returns the names of every part in the bundled registry whose part type
+        maps to the given role and which has a sequence recorded.
+
+        The result is unpaginated and large for common roles; CDS and
+        Engineered-Region each return several thousand names.
+      operationId: listPartNames
+      parameters:
+        - name: role
+          in: query
+          required: true
+          description: |
+            One of the roles the registry can be searched by. This is a smaller
+            set than the roles a design may use: `mRNA` is accepted as a
+            component role in `POST /file/create` but cannot be searched for
+            here, because no registry part type maps to it.
+          schema:
+            $ref: "#/components/schemas/SearchableRole"
+      responses:
+        "200":
+          description: Part names, which may be an empty array.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                example: [BBa_R0010, BBa_J23100, BBa_R0040]
+        "400":
+          description: The `role` parameter is missing or is not a searchable role.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+
+  /component/interactions:
+    get:
+      tags: [components]
+      summary: List participation roles for an interaction type
+      description: |
+        Returns the participation roles an interaction of the given type expects.
+        These are the keys to put in `Interaction.participants`.
+
+        The answer is advisory. `POST /file/create` checks a participation role
+        against the full set of ten roles in `ParticipationRole`, not against the
+        roles valid for the interaction type, so it accepts any of the ten for
+        any type and writes the corresponding SBO term unchanged. Use this
+        endpoint to build a correct design; do not rely on the service to reject
+        an incorrect one.
+      operationId: listParticipationRoles
+      parameters:
+        - name: interaction_type
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/InteractionType"
+      responses:
+        "200":
+          description: The participation roles for that interaction type.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ParticipationRole"
+              examples:
+                inhibition:
+                  summary: Inhibition
+                  value: [Inhibitor, Inhibited]
+                geneticProduction:
+                  summary: Genetic Production
+                  value: [Promoter, Template, Product]
+        "400":
+          description: The `interaction_type` parameter is missing or unknown.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+
+  /component/details:
+    get:
+      tags: [components]
+      summary: Get one registry part
+      description: |
+        Returns the description and sequence recorded for a part in the bundled
+        registry. `role` is echoed back unchanged and is not used to look the
+        part up, so passing a role that does not match the part has no effect on
+        the result.
+      operationId: getPartDetails
+      parameters:
+        - name: component_name
+          in: query
+          required: true
+          description: Exact part name, such as `BBa_R0010`.
+          schema:
+            type: string
+        - name: role
+          in: query
+          required: false
+          description: Echoed back in the `role` field of the response.
+          schema:
+            $ref: "#/components/schemas/ComponentRole"
+      responses:
+        "200":
+          description: The part's details.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PartDetails"
+        "400":
+          description: The `component_name` parameter is missing.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: No part with that name.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+
+  /file/create:
+    post:
+      tags: [files]
+      summary: Generate SBOL3 documents for a design
+      description: |
+        Builds two SBOL3 documents from a design and returns the fuller of the
+        two as the response body:
+
+        - the **full** document, containing the structural parts and, when the
+          design has at least one operon, a functional system with the operons,
+          interactions and external species. This is the response body.
+        - the **structural** document, containing only the parts and their order.
+          This one is not returned; its path on the server is in the
+          `file_path_structural` response header, and that path is what
+          `POST /file/convert` takes.
+
+        Both documents are written into the server's own storage and deleted
+        after 24 hours, so a structural path is only usable within that window.
+
+        ### How a design maps onto SBOL3
+
+        - `components[0]` is the design itself, and becomes the parent component.
+          The remaining entries are its parts, in 5'-to-3' order.
+        - Consecutive parts are linked by `meets` constraints, and each part also
+          receives a `Range` location on the parent's computed sequence.
+        - The parent's sequence is the concatenation of the part sequences joined
+          by BioBrick assembly scars.
+        - Each part's `name` becomes an SBOL `displayId`, so it has to match
+          `^[A-Za-z_][A-Za-z0-9_]*$`.
+        - Registry metadata is attached to each part as annotations under the
+          namespace `{uri}{name}#`, which is why a part's `uri` has to end in
+          `/` or `#`.
+        - Operon members, union endpoints and part participants are referenced by
+          the string `{name}_{instance_id}`, defaulting to `{name}_1` when the
+          part carries no `instance_id`. External species are referenced by their
+          bare `name`.
+        - When `expressions` is empty, no functional system is built, and
+          `interactions` and `eds` are ignored.
+      operationId: createSbol3
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRequest"
+      responses:
+        "200":
+          description: The full SBOL3 document, as an attachment.
+          headers:
+            file_path_structural:
+              description: |
+                Absolute path, on the server, of the structural-only document.
+                Pass it unchanged as `file_path` to `POST /file/convert`. The
+                file is deleted 24 hours after it is written.
+              required: true
+              schema:
+                type: string
+                example: /app/app/files_generated/structural_sbol3_1a2b3c4d.xml
+          content:
+            application/rdf+xml:
+              schema:
+                type: string
+                format: binary
+        "400":
+          description: The request body is empty or not valid JSON.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: |
+            The document could not be built. Among the causes: a part marked
+            `new: false` whose name is not in the registry; a part whose `name`
+            is not a valid SBOL `displayId`; a `role` outside `ComponentRole`; a
+            participation key outside the ten roles of `ParticipationRole`.
+
+            A participation role that is valid in itself but wrong for its
+            interaction type does **not** fail; see `Interaction.participants`.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /file/convert:
+    post:
+      tags: [files]
+      summary: Convert an SBOL3 document to GenBank and FASTA
+      description: |
+        Converts a document the service generated earlier into GenBank and/or
+        FASTA, and returns them together in a ZIP.
+
+        The document is identified by its path on the server, as returned in the
+        `file_path_structural` header of `POST /file/create`. This endpoint reads
+        the file from the server's filesystem; it does not accept an uploaded
+        document.
+
+        Members of the ZIP are named after the source file with the format
+        appended, for example `structural_sbol3_1a2b3c4d_genbank.gb` and
+        `structural_sbol3_1a2b3c4d_fasta.fasta`.
+
+        GenBank conversion uses the online SBOL validator, so the service needs
+        outbound internet access for it. FASTA conversion is local.
+      operationId: convertSbol3
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConvertRequest"
+      responses:
+        "200":
+          description: |
+            A ZIP of the requested formats. Requesting neither format returns an
+            empty ZIP rather than an error.
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+        "404":
+          description: The path is missing from the body, or no file exists there.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+
+components:
+  responses:
+    Error:
+      description: The request failed.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+  schemas:
+    Error:
+      type: object
+      description: The body of every failed request, at every status code.
+      required: [status_code, error]
+      properties:
+        status_code:
+          type: integer
+          description: Repeats the HTTP status code.
+          example: 404
+        error:
+          type: string
+          description: A human-readable message. Not a stable identifier.
+          example: Component not found
+
+    GlyphClass:
+      type: string
+      description: |
+        A class the detection model can emit. `cds` and `cds-arrow` are separate
+        classes that both denote a coding sequence.
+      enum:
+        - aptamer
+        - cds
+        - cds-arrow
+        - engineered-region
+        - inert-dna-spacer
+        - ncrna
+        - operator
+        - origin-of-replication
+        - origin-of-transfer
+        - polyA
+        - primer-binding-site
+        - promoter
+        - ribosome-entry-site
+        - terminator
+
+    ComponentRole:
+      type: string
+      description: |
+        A role a component in a design may take. Each maps to a Sequence Ontology
+        term in the generated document:
+
+        | Role | SO term |
+        | --- | --- |
+        | Promoter | SO:0000167 |
+        | RBS | SO:0000139 |
+        | CDS | SO:0000316 |
+        | Terminator | SO:0000141 |
+        | Operator | SO:0000057 |
+        | Engineered-Region | SO:0000804 |
+        | Aptamer-DNA | SO:0000032 |
+        | Aptamer-RNA | SO:0000033 |
+        | Inert-DNA-Spacer | SO:0002223 |
+        | Ncrna | SO:0000655 |
+        | PolyA-Site | SO:0000553 |
+        | Primer-Binding-Site | SO:0005850 |
+        | Origin-Of-Transfer | SO:0000724 |
+        | Origin-Of-Replication | SO:0000296 |
+        | mRNA | SO:0000234 |
+
+        Aptamer-RNA, Ncrna and PolyA-Site are given the RNA SBO type
+        (SBO:0000250) rather than DNA (SBO:0000251); mRNA is given RNA as well.
+        A design may mix them with DNA parts, and their sequences are
+        concatenated into the parent's sequence like any other part: the DNA and
+        RNA sequence encodings both resolve to the same IUPAC nucleotide format
+        (`edam:format_1207`), so nothing rejects the combination. Whether the
+        result is meaningful is the design's business, not the service's.
+      enum:
+        - Promoter
+        - RBS
+        - CDS
+        - Terminator
+        - Operator
+        - Engineered-Region
+        - Aptamer-DNA
+        - Aptamer-RNA
+        - Inert-DNA-Spacer
+        - Ncrna
+        - PolyA-Site
+        - Primer-Binding-Site
+        - Origin-Of-Transfer
+        - Origin-Of-Replication
+        - mRNA
+
+    SearchableRole:
+      type: string
+      description: |
+        The subset of `ComponentRole` that the bundled registry can be searched
+        by. `mRNA` is absent because no registry part type maps to it.
+      enum:
+        - Promoter
+        - RBS
+        - CDS
+        - Terminator
+        - Operator
+        - Engineered-Region
+        - Aptamer-DNA
+        - Aptamer-RNA
+        - Inert-DNA-Spacer
+        - Ncrna
+        - PolyA-Site
+        - Primer-Binding-Site
+        - Origin-Of-Transfer
+        - Origin-Of-Replication
+
+    InteractionType:
+      type: string
+      enum:
+        - Inhibition
+        - Stimulation
+        - Biochemical Reaction
+        - Non-Covalent Binding
+        - Degradation
+        - Control
+        - Genetic Production
+
+    ParticipationRole:
+      type: string
+      description: |
+        A role a participant takes in an interaction.
+
+        The combinations below are the ones that are meaningful, and the ones
+        `GET /component/interactions` returns. They are not enforced:
+        `POST /file/create` accepts any of these ten roles for any interaction
+        type. A role outside these ten fails the request with a 500.
+
+        Valid combinations:
+
+        | Interaction type | Participation roles |
+        | --- | --- |
+        | Inhibition | Inhibitor, Inhibited |
+        | Stimulation | Stimulator, Stimulated |
+        | Biochemical Reaction | Reactant, Modifier, Product |
+        | Non-Covalent Binding | Reactant, Product |
+        | Degradation | Reactant |
+        | Control | Modifier, Modified |
+        | Genetic Production | Promoter, Template, Product |
+      enum:
+        - Inhibitor
+        - Inhibited
+        - Stimulator
+        - Stimulated
+        - Reactant
+        - Product
+        - Modifier
+        - Modified
+        - Template
+        - Promoter
+
+    ExternalType:
+      type: string
+      description: |
+        The type of a species that is not encoded on the DNA. `Protein` and
+        `Restriction Enzyme` are both typed as protein in the generated
+        document, and `Protein` additionally receives the DNA-binding
+        transcription factor role GO:0003700.
+      enum:
+        - Simple Chemical
+        - Protein
+        - Restriction Enzyme
+
+    UnionType:
+      type: string
+      description: |
+        The relationship a union asserts between two features. Both are recorded
+        as a `meets` constraint in the generated document.
+      enum:
+        - Order
+        - Regulate
+
+    InferenceResponse:
+      type: object
+      required: [status, result_image, draw_boxes, pred_classes, has_predictions]
+      properties:
+        status:
+          type: string
+          enum: [success]
+        message:
+          type: string
+          description: Present only when nothing was detected.
+          example: No predictions made by the model.
+        result_image:
+          type: string
+          format: byte
+          description: |
+            The input image as a base64-encoded PNG, with a labelled box drawn
+            around each detection. Present whether or not anything was detected.
+        draw_boxes:
+          type: array
+          description: |
+            One box per detection, as `[x_min, y_min, x_max, y_max]` in pixels,
+            in the same order as `pred_classes`.
+          items:
+            type: array
+            minItems: 4
+            maxItems: 4
+            items:
+              type: integer
+          example: [[112, 240, 198, 300], [205, 232, 286, 300]]
+        pred_classes:
+          type: array
+          description: The class of each detection, in the same order as `draw_boxes`.
+          items:
+            $ref: "#/components/schemas/GlyphClass"
+          example: [promoter, ribosome-entry-site]
+        has_predictions:
+          type: boolean
+
+    PartDetails:
+      type: object
+      required: [identifier, name, description, role, sequence, sequence_length]
+      properties:
+        identifier:
+          type: string
+          description: Repeats the part name.
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        role:
+          type: string
+          nullable: true
+          description: |
+            Echoes the `role` query parameter, or null when none was given. When
+            present it is one of the values of `ComponentRole`; it is not
+            validated against the part.
+        sequence:
+          type: string
+          nullable: true
+          description: The recorded sequence, in lower case.
+        sequence_length:
+          type: integer
+          nullable: true
+
+    Component:
+      type: object
+      description: |
+        One entry in a design. The first entry is the design itself and the rest
+        are its parts in 5'-to-3' order.
+      required: [name, role, uri, new]
+      properties:
+        id:
+          type: string
+          description: |
+            A client-side key. The web interface uses `component-principal` for
+            the design and a UUID for each part. Not used in the generated
+            document.
+        name:
+          type: string
+          description: |
+            Becomes the SBOL `displayId`, so it has to match
+            `^[A-Za-z_][A-Za-z0-9_]*$`. For a part with `new: false` it also has
+            to be an exact part name in the bundled registry.
+          pattern: "^[A-Za-z_][A-Za-z0-9_]*$"
+          example: BBa_R0010
+        identifier:
+          type: string
+          description: |
+            Carried by the web interface, which requires it to be unique across
+            the design. Not used in the generated document.
+        role:
+          $ref: "#/components/schemas/ComponentRole"
+        uri:
+          type: string
+          format: uri
+          description: |
+            Prefix for the part's annotation namespace, which is formed as
+            `{uri}{name}#`, so it has to end in `/` or `#`.
+          example: http://parts.igem.org/
+        new:
+          type: boolean
+          description: |
+            When false, the description and sequence are read from the bundled
+            registry by `name` and any values sent here are ignored; a name that
+            is not in the registry fails the request. When true, the values sent
+            here are used as given.
+        description:
+          type: string
+          description: Becomes the component's description. Used when `new` is true.
+        sequence:
+          type: string
+          description: |
+            Required for a part with `new: true`. Give it in lower case: the
+            assembly-scar rule that joins parts into the parent sequence
+            inspects the first bases literally.
+        sequence_length:
+          oneOf:
+            - type: integer
+            - type: string
+          description: Length of `sequence`. The web interface sends it as a string.
+        instance_id:
+          type: integer
+          minimum: 1
+          description: |
+            Distinguishes parts that share a `name`. Present only when two or
+            more components share that name and all of them have the same role.
+            Operons, unions and interactions refer to a part as
+            `{name}_{instance_id}`, defaulting to `{name}_1` when absent.
+
+    Union:
+      type: object
+      description: An ordering or regulatory relationship between two members of an operon.
+      required: [type, from, to]
+      properties:
+        type:
+          $ref: "#/components/schemas/UnionType"
+        from:
+          type: string
+          description: The 5' endpoint, as `{name}_{instance_id}`.
+          example: BBa_R0010_1
+        to:
+          type: string
+          description: The 3' endpoint, as `{name}_{instance_id}`.
+          example: BBa_B0034_1
+        id:
+          type: string
+          description: A client-side key. Not used in the generated document.
+
+    Expression:
+      type: object
+      description: |
+        An operon: a named group of parts within the design, optionally with a
+        constitutive promoter and with ordering relationships between members.
+      required: [name, components, unions, constitutive]
+      properties:
+        name:
+          type: string
+          example: LacI Operon
+        components:
+          type: array
+          description: Members of the operon, as `{name}_{instance_id}`.
+          items:
+            type: string
+          example: [BBa_R0010_1, BBa_B0034_1, BBa_C0012_1]
+        unions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Union"
+        constitutive:
+          type: boolean
+          description: |
+            When true, a constitutive promoter (SO:0002050) is added to the
+            system regulating this operon.
+        id:
+          type: string
+          description: A client-side key. Not used in the generated document.
+
+    Interaction:
+      type: object
+      required: [type, participants]
+      properties:
+        type:
+          $ref: "#/components/schemas/InteractionType"
+        participants:
+          type: object
+          description: |
+            reference `{name}_{instance_id}` or the bare `name` of an entry in
+            `eds`.
+
+            Use the participation roles that
+            `GET /component/interactions` returns for this interaction type. The
+            service does not check them against the interaction type: it accepts
+            any of the ten roles in `ParticipationRole` and writes the matching
+            SBO term, so a mismatched role produces a document that is
+            structurally valid and semantically wrong. A role outside those ten
+            fails with a 500.
+          additionalProperties:
+            type: array
+            items:
+              type: string
+          example:
+            Inhibitor: [LacI]
+            Inhibited: [BBa_R0010_1]
+        id:
+          type: string
+          description: A client-side key. Not used in the generated document.
+
+    ExternallyDefined:
+      type: object
+      description: |
+        A species that takes part in interactions but is not encoded on the DNA,
+        such as a protein or a small molecule.
+      required: [name, type]
+      properties:
+        name:
+          type: string
+          description: |
+            How interactions refer to this species. Interaction participants
+            matching this name are resolved to the species rather than to a part.
+          example: LacI
+        type:
+          $ref: "#/components/schemas/ExternalType"
+        uri:
+          type: string
+          format: uri
+          description: |
+            An identifier for the species, used as the feature's definition. A
+            resolvable term is the useful choice, for example
+            `https://identifiers.org/uniprot:P03023` for a protein or
+            `https://identifiers.org/CHEBI:61448` for a chemical.
+          example: https://identifiers.org/uniprot:P03023
+
+    CreateRequest:
+      type: object
+      required: [components, expressions, interactions, eds]
+      properties:
+        namespace:
+          type: string
+          format: uri
+          description: |
+            The SBOL namespace for the generated document.
+
+            **Send it on every request.** It is applied process-wide when
+            present and left untouched when absent, so a request that omits it
+            is built under whatever namespace the previous request set — the
+            namespace leaks between requests, and between clients sharing the
+            service. With no namespace ever set, documents are built under
+            `http://sbols.org/unspecified_namespace/`.
+          example: https://example.org/designs/
+        components:
+          type: array
+          minItems: 1
+          description: The design followed by its parts, in 5'-to-3' order.
+          items:
+            $ref: "#/components/schemas/Component"
+        expressions:
+          type: array
+          description: |
+            Operons. An empty array means no functional system is built, and
+            `interactions` and `eds` are then ignored.
+          items:
+            $ref: "#/components/schemas/Expression"
+        interactions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Interaction"
+        eds:
+          type: array
+          description: Species that are not encoded on the DNA.
+          items:
+            $ref: "#/components/schemas/ExternallyDefined"
+
+    ConvertRequest:
+      type: object
+      required: [file_path]
+      properties:
+        file_path:
+          type: string
+          description: |
+            The value of the `file_path_structural` header from an earlier
+            `POST /file/create`, unchanged.
+          example: /app/app/files_generated/structural_sbol3_1a2b3c4d.xml
+        genbank:
+          type: boolean
+          default: false
+          description: Include GenBank in the ZIP. Requires outbound internet access.
+        fasta:
+          type: boolean
+          default: false
+          description: Include FASTA in the ZIP.
