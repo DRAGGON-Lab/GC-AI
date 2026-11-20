@@ -1,0 +1,42 @@
+{
+  "has_predictions": true,
+  "count": 4,
+  "glyphs": [
+    {
+      "glyph_class": "promoter",
+      "box": [
+        114,
+        279,
+        199,
+        364
+      ]
+    },
+    {
+      "glyph_class": "ribosome-entry-site",
+      "box": [
+        204,
+        297,
+        281,
+        362
+      ]
+    },
+    {
+      "glyph_class": "cds",
+      "box": [
+        302,
+        294,
+        398,
+        363
+      ]
+    },
+    {
+      "glyph_class": "cds",
+      "box": [
+        707,
+        290,
+        787,
+        355
+      ]
+    }
+  ]
+}

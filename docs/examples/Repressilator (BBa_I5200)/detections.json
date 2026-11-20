@@ -1,0 +1,33 @@
+{
+  "has_predictions": true,
+  "count": 3,
+  "glyphs": [
+    {
+      "glyph_class": "cds",
+      "box": [
+        162,
+        299,
+        262,
+        368
+      ]
+    },
+    {
+      "glyph_class": "cds",
+      "box": [
+        540,
+        298,
+        642,
+        361
+      ]
+    },
+    {
+      "glyph_class": "cds",
+      "box": [
+        917,
+        292,
+        998,
+        360
+      ]
+    }
+  ]
+}

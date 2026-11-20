@@ -1,0 +1,291 @@
+{
+  "namespace": "http://sbols.org/unspecified_namespace",
+  "components": [
+    {
+      "id": "component-principal",
+      "uri": "http://parts.igem.org/",
+      "new": true,
+      "identifier": "BBa_I13263",
+      "name": "BBa_I13263",
+      "description": "Lux Receiver (HSL & R0063 driven)",
+      "role": "Engineered-Region"
+    },
+    {
+      "id": "bba_r0063-1",
+      "uri": "http://parts.igem.org/",
+      "new": false,
+      "identifier": "BBa_R0063",
+      "name": "BBa_R0063",
+      "description": "",
+      "role": "Promoter",
+      "sequence": "",
+      "sequence_length": ""
+    },
+    {
+      "id": "bba_b0034-1",
+      "uri": "http://parts.igem.org/",
+      "new": false,
+      "identifier": "BBa_B0034",
+      "name": "BBa_B0034",
+      "description": "",
+      "role": "RBS",
+      "sequence": "",
+      "sequence_length": "",
+      "instance_id": 1
+    },
+    {
+      "id": "bba_c0062-1",
+      "uri": "http://parts.igem.org/",
+      "new": false,
+      "identifier": "BBa_C0062",
+      "name": "BBa_C0062",
+      "description": "",
+      "role": "CDS",
+      "sequence": "",
+      "sequence_length": ""
+    },
+    {
+      "id": "bba_b0010-1",
+      "uri": "http://parts.igem.org/",
+      "new": false,
+      "identifier": "BBa_B0010",
+      "name": "BBa_B0010",
+      "description": "",
+      "role": "Terminator",
+      "sequence": "",
+      "sequence_length": "",
+      "instance_id": 1
+    },
+    {
+      "id": "bba_b0012-1",
+      "uri": "http://parts.igem.org/",
+      "new": false,
+      "identifier": "BBa_B0012",
+      "name": "BBa_B0012",
+      "description": "",
+      "role": "Terminator",
+      "sequence": "",
+      "sequence_length": "",
+      "instance_id": 1
+    },
+    {
+      "id": "bba_r0062-1",
+      "uri": "http://parts.igem.org/",
+      "new": false,
+      "identifier": "BBa_R0062",
+      "name": "BBa_R0062",
+      "description": "",
+      "role": "Promoter",
+      "sequence": "",
+      "sequence_length": ""
+    },
+    {
+      "id": "bba_b0034-2",
+      "uri": "http://parts.igem.org/",
+      "new": false,
+      "identifier": "BBa_B0034",
+      "name": "BBa_B0034",
+      "description": "",
+      "role": "RBS",
+      "sequence": "",
+      "sequence_length": "",
+      "instance_id": 2
+    },
+    {
+      "id": "bba_e0040-1",
+      "uri": "http://parts.igem.org/",
+      "new": false,
+      "identifier": "BBa_E0040",
+      "name": "BBa_E0040",
+      "description": "",
+      "role": "CDS",
+      "sequence": "",
+      "sequence_length": ""
+    },
+    {
+      "id": "bba_b0010-2",
+      "uri": "http://parts.igem.org/",
+      "new": false,
+      "identifier": "BBa_B0010",
+      "name": "BBa_B0010",
+      "description": "",
+      "role": "Terminator",
+      "sequence": "",
+      "sequence_length": "",
+      "instance_id": 2
+    },
+    {
+      "id": "bba_b0012-2",
+      "uri": "http://parts.igem.org/",
+      "new": false,
+      "identifier": "BBa_B0012",
+      "name": "BBa_B0012",
+      "description": "",
+      "role": "Terminator",
+      "sequence": "",
+      "sequence_length": "",
+      "instance_id": 2
+    }
+  ],
+  "expressions": [
+    {
+      "id": "op-localsubcomponent1",
+      "name": "Operon 1",
+      "constitutive": true,
+      "components": [
+        "BBa_R0063_1",
+        "BBa_B0034_1",
+        "BBa_C0062_1",
+        "BBa_B0010_1",
+        "BBa_B0012_1"
+      ],
+      "unions": [
+        {
+          "id": "u-BBa_R0063_1-BBa_B0034_1",
+          "type": "Order",
+          "from": "BBa_R0063_1",
+          "to": "BBa_B0034_1"
+        },
+        {
+          "id": "u-BBa_B0034_1-BBa_C0062_1",
+          "type": "Order",
+          "from": "BBa_B0034_1",
+          "to": "BBa_C0062_1"
+        },
+        {
+          "id": "u-BBa_C0062_1-BBa_B0010_1",
+          "type": "Order",
+          "from": "BBa_C0062_1",
+          "to": "BBa_B0010_1"
+        },
+        {
+          "id": "u-BBa_B0010_1-BBa_B0012_1",
+          "type": "Order",
+          "from": "BBa_B0010_1",
+          "to": "BBa_B0012_1"
+        }
+      ]
+    },
+    {
+      "id": "op-localsubcomponent3",
+      "name": "Operon 2",
+      "constitutive": false,
+      "components": [
+        "BBa_R0062_1",
+        "BBa_B0034_2",
+        "BBa_E0040_1",
+        "BBa_B0010_2",
+        "BBa_B0012_2"
+      ],
+      "unions": [
+        {
+          "id": "u-BBa_R0062_1-BBa_B0034_2",
+          "type": "Order",
+          "from": "BBa_R0062_1",
+          "to": "BBa_B0034_2"
+        },
+        {
+          "id": "u-BBa_B0034_2-BBa_E0040_1",
+          "type": "Order",
+          "from": "BBa_B0034_2",
+          "to": "BBa_E0040_1"
+        },
+        {
+          "id": "u-BBa_E0040_1-BBa_B0010_2",
+          "type": "Order",
+          "from": "BBa_E0040_1",
+          "to": "BBa_B0010_2"
+        },
+        {
+          "id": "u-BBa_B0010_2-BBa_B0012_2",
+          "type": "Order",
+          "from": "BBa_B0010_2",
+          "to": "BBa_B0012_2"
+        }
+      ]
+    }
+  ],
+  "interactions": [
+    {
+      "id": "i-interaction1",
+      "type": "Non-Covalent Binding",
+      "participants": {
+        "Reactant": [
+          "LuxR",
+          "AHL"
+        ],
+        "Product": [
+          "LuxR-AHL Complex"
+        ]
+      }
+    },
+    {
+      "id": "i-interaction2",
+      "type": "Stimulation",
+      "participants": {
+        "Stimulator": [
+          "LuxR-AHL Complex"
+        ],
+        "Stimulated": [
+          "BBa_R0062_1"
+        ]
+      }
+    },
+    {
+      "id": "i-interaction3",
+      "type": "Genetic Production",
+      "participants": {
+        "Product": [
+          "GFP"
+        ],
+        "Promoter": [
+          "BBa_R0062_1"
+        ],
+        "Template": [
+          "BBa_E0040_1"
+        ]
+      }
+    },
+    {
+      "id": "i-interaction4",
+      "type": "Genetic Production",
+      "participants": {
+        "Product": [
+          "LuxR"
+        ],
+        "Promoter": [
+          "BBa_R0063_1"
+        ],
+        "Template": [
+          "BBa_C0062_1"
+        ]
+      }
+    }
+  ],
+  "eds": [
+    {
+      "id": "ed-ahl",
+      "name": "AHL",
+      "type": "Simple Chemical",
+      "uri": "https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:55474"
+    },
+    {
+      "id": "ed-luxr",
+      "name": "LuxR",
+      "type": "Protein",
+      "uri": "https://www.uniprot.org/uniprotkb/P12746/entry"
+    },
+    {
+      "id": "ed-luxr-ahl complex",
+      "name": "LuxR-AHL Complex",
+      "type": "Simple Chemical",
+      "uri": "file:///Users/marpaia/git/DRAGGON-Lab/GC-AI/docs/examples/Lux%20System%20%28BBa_I13263%29/BBa_I13263.xml"
+    },
+    {
+      "id": "ed-gfp",
+      "name": "GFP",
+      "type": "Protein",
+      "uri": "https://www.uniprot.org/uniprotkb/P42212/entry"
+    }
+  ]
+}
