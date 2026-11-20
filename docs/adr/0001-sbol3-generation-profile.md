@@ -1,7 +1,10 @@
 # ADR 0001: SBOL3 generation and relationship semantics
 
-Status: implementation decision approved by the project owner during epic #6 planning;
-scientific review of the implementation is still required before merge.
+Status: Proposed — pending scientific review.
+
+The behavior below describes the proposed interpretation implemented on this
+branch. Formal scientific acceptance has not been recorded and remains a merge
+prerequisite.
 
 ## Context
 

@@ -26,12 +26,13 @@ pySBOL3 and sbol-rs; source hashes and full reports are saved alongside them.
 This is evidence for the specified graph corrections, not a claim that either
 validator can establish biological truth.
 
-## Existing domain question for human review
+## Protein annotation correction
 
-The pre-existing generator assigns GO:0003700 (DNA-binding transcription factor
+The pre-existing generator assigned GO:0003700 (DNA-binding transcription factor
 activity) to every species whose type is `Protein`, including GFP. Molecular type
 alone does not establish this function. This annotation predates the epic changes;
-it should receive an explicit human disposition or a narrowly scoped correction.
+the blanket role assignment has now been removed, with local and external protein
+regressions. Protein molecular type and supplied definition URIs are retained.
 Passing SBOL conformance checks does not substantiate that biological annotation.
 
 No additional confirmed new scientific defect was found in the reviewed paths.
