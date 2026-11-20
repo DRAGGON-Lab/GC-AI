@@ -306,6 +306,12 @@ def main(argv=None):
             raise ValueError("Unsupported historical baseline or probe pin")
         if args.probe is not None and not args.probe.is_file():
             raise ValueError("Probe executable is missing")
+        if baseline is not None:
+            for historical in baseline["fixtures"]:
+                if not (ROOT / historical).is_file():
+                    raise FileNotFoundError(
+                        f"Historical RDF input is missing: {historical}"
+                    )
         generated_paths = (
             regenerate(args.regenerate.resolve()) if args.regenerate else []
         )

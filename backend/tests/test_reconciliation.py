@@ -225,3 +225,11 @@ def test_report_cannot_overwrite_historical_request(run):
     code = reconciliation.main(["--output", str(request), "--baseline", str(baseline)])
     assert code == 2
     assert request.read_text() == '{"historical": true}'
+
+
+def test_missing_historical_input_is_exit_two(run):
+    execute, _, baseline, _ = run
+    (baseline.parent / "docs/examples/0/original.xml").unlink()
+    code, report = execute()
+    assert code == 2
+    assert "Historical RDF input is missing" in report["execution_errors"][0]
