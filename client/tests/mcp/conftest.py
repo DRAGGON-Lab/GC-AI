@@ -9,12 +9,15 @@ import httpx
 import pytest
 
 from gcai import GCAIClient
-from gcai.mcp.server import build_server
 from tests.helpers import Recorder
 
+# Before importing anything that needs it, so a checkout without the extra
+# skips these tests rather than failing to collect them.
 pytest.importorskip("mcp", reason="install gc-ai-client[mcp]")
 
 from mcp import Client  # noqa: E402
+
+from gcai.mcp.server import build_server  # noqa: E402
 
 
 @pytest.fixture
