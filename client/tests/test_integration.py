@@ -1,0 +1,101 @@
+"""Tests against a running GC-AI service.
+
+Set GCAI_URL and run `pytest -m integration`.
+"""
+
+from __future__ import annotations
+
+import json
+import os
+from pathlib import Path
+from typing import Any, Iterator
+
+import pytest
+from conftest import EXAMPLES
+
+from gcai import Design, GCAIClient
+from gcai.constants import Role
+
+pytestmark = pytest.mark.integration
+
+URL = os.environ.get("GCAI_URL")
+needs_service = pytest.mark.skipif(not URL, reason="set GCAI_URL to run the integration tests")
+
+
+@pytest.fixture(scope="module")
+def live() -> Iterator[GCAIClient]:
+    with GCAIClient(URL) as client:
+        yield client
+
+
+def example_dirs() -> list[Path]:
+    return sorted(p for p in EXAMPLES.iterdir() if (p / "request.json").exists())
+
+
+def triples(data: bytes | Path) -> set[tuple[str, str, str]]:
+    """The triples of a document, parsed without a base URI.
+
+    Both sides are read as bytes with the same empty base, because an empty
+    `rdf:resource` — which one species in the Lux system has — is otherwise
+    resolved against wherever the file happens to sit.
+    """
+    rdflib = pytest.importorskip("rdflib", reason="install gc-ai-client[sbol]")
+    raw = data.read_bytes() if isinstance(data, Path) else data
+    graph = rdflib.Graph()
+    graph.parse(data=raw.decode(), format="xml", publicID="")
+    return {(str(s), str(p), str(o)) for s, p, o in graph}
+
+
+@needs_service
+def test_the_service_is_usable(live: GCAIClient) -> None:
+    assert live.health() is True
+
+
+@needs_service
+def test_the_health_endpoint_is_broken(live: GCAIClient) -> None:
+    """The reason `health()` does not use it."""
+    from gcai.errors import GCAIResponseError
+
+    with pytest.raises(GCAIResponseError) as caught:
+        live._request("GET", "/healthcheck/")
+    assert caught.value.status_code == 500
+    assert "Unread result found" in caught.value.message
+
+
+@needs_service
+def test_every_searchable_role_returns_parts(live: GCAIClient) -> None:
+    for role in (Role.PROMOTER, Role.CDS, Role.RBS, Role.TERMINATOR):
+        assert live.part_names(role), f"no parts for {role.value}"
+
+
+@needs_service
+@pytest.mark.parametrize("directory", example_dirs(), ids=lambda p: p.name)
+def test_detection_matches_the_committed_record(live: GCAIClient, directory: Path) -> None:
+    image = next(directory.glob("*-CIRCUIT.png"))
+    expected = json.loads((directory / "detections.json").read_text())
+    assert live.detect(image).to_json() == expected
+
+
+@needs_service
+@pytest.mark.parametrize("directory", example_dirs(), ids=lambda p: p.name)
+def test_building_an_example_reproduces_its_document(live: GCAIClient, directory: Path) -> None:
+    payload: dict[str, Any] = json.loads((directory / "request.json").read_text())
+    committed = next(p for p in directory.glob("*.xml"))
+
+    result = live.build(Design.from_payload(payload))
+
+    assert triples(result.sbol3) == triples(committed), "the generated document differs from the committed one"
+    assert result.fasta and result.fasta.startswith(b">")
+    assert result.genbank and result.genbank.startswith(b"LOCUS")
+
+    expected_fasta = committed.with_suffix(".fasta").read_bytes()
+    assert result.fasta.split(b"\n", 1)[1] == expected_fasta.split(b"\n", 1)[1], "sequences differ"
+
+
+@needs_service
+def test_an_unknown_part_is_reported_clearly(live: GCAIClient) -> None:
+    from gcai.errors import GCAIResponseError
+
+    with pytest.raises(GCAIResponseError) as caught:
+        live.part_details("BBa_NOT_A_REAL_PART_999")
+    assert caught.value.status_code in {404, 500}

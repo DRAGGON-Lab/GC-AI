@@ -1,0 +1,32 @@
+name: client
+
+on:
+  push:
+    paths: ["client/**", ".github/workflows/client.yml", ".pre-commit-config.yaml"]
+  pull_request:
+    paths: ["client/**", ".github/workflows/client.yml", ".pre-commit-config.yaml"]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: pre-commit/action@v3.0.1
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Run the tests
+        # Run from client/, so pytest reads the configuration in its
+        # pyproject.toml: that is what registers the integration marker and
+        # deselects the tests needing a running service.
+        working-directory: client
+        run: uv run --python ${{ matrix.python-version }} --extra dev pytest
