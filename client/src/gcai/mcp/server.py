@@ -227,8 +227,12 @@ def _register(mcp: MCPServer) -> None:
                 "the design is not valid",
             )
 
+        # GenBank and FASTA come from a conversion to SBOL2, which rejects a
+        # part whose range ends at zero. A part with no bases has one: either it
+        # carries a sequence of its own, or it names a part the service looks up.
+        bases = all(part.sequence or not part.new for part in design.parts)
         try:
-            built = app.service.build(design, genbank=genbank, fasta=fasta, validate=False)
+            built = app.service.build(design, genbank=genbank and bases, fasta=fasta and bases, validate=False)
         except Exception as exc:
             raise _fail(exc) from exc
 
@@ -244,6 +248,11 @@ def _register(mcp: MCPServer) -> None:
                 "parts named after their role carry no sequence, so the document records their "
                 "role and their place in the order. The parent's sequence is the assembly scars "
                 "between them. Pass part_names to bind them to registry parts."
+            )
+        if (genbank or fasta) and not bases:
+            result.notes.append(
+                "GenBank and FASTA were not produced: they need every part to carry bases, and "
+                "parts named after their role carry none."
             )
 
         if output_dir:
