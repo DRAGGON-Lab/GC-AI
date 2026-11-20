@@ -10,13 +10,14 @@ from pathlib import Path
 from typing import Any
 
 import httpx
+import image_to_sbol
+import publish_to_registry
 import pytest
 
-import image_to_sbol
 from gcai import GCAIClient
-from tests.helpers import EXAMPLES, Recorder, detection_payload, zip_bytes
+from tests.helpers import Recorder, detection_payload, zip_bytes
 
-MODULES = [image_to_sbol]
+MODULES = [image_to_sbol, publish_to_registry]
 
 
 def service(handler: Recorder) -> None:
@@ -93,3 +94,22 @@ def test_an_image_with_nothing_in_it_is_refused(client: GCAIClient, handler: Rec
     handler.json("POST", "/inference/", detection_payload([], []))
     with pytest.raises(SystemExit, match="no glyph"):
         image_to_sbol.run(client, image, name="CIRCUIT", namespace="https://example.org/d/")
+
+
+# ------------------------------------------------------------ publish_to_registry
+
+
+def test_the_design_iri_is_where_the_service_puts_it() -> None:
+    assert publish_to_registry.design_iri("http://example.org/ns", "YesGate") == "http://example.org/ns/YesGate"
+    assert publish_to_registry.design_iri("http://example.org/ns/", "YesGate") == "http://example.org/ns/YesGate"
+
+
+def test_publishing_needs_consent_and_a_registry() -> None:
+    document = ["doc.xml", "--design", "D", "--iri", "http://example.org/g"]
+    with pytest.raises(SystemExit) as no_consent:
+        publish_to_registry.main([*document, "--registry", "http://example.org"])
+    assert no_consent.value.code == 2
+
+    with pytest.raises(SystemExit) as no_registry:
+        publish_to_registry.main([*document, "--yes"])
+    assert no_registry.value.code == 2
