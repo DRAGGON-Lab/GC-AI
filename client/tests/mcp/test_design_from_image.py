@@ -53,32 +53,82 @@ async def test_the_server_offers_one_tool(client) -> None:
     assert tool.annotations is not None and not tool.annotations.open_world_hint
 
 
-async def test_an_image_alone_reports_what_was_found(client, handler: Recorder, image: Path) -> None:
+async def test_an_image_alone_builds_a_document(client, handler: Recorder, image: Path) -> None:
+    """A diagram says the roles and the order, and that is what comes back."""
     detects(handler)
+    builds(handler)
     result = await call(client, image_path=str(image))
 
     data = result.structured_content
-    assert data["built"] is False
+    assert data["built"] is True
+    assert data["sbol3"] == "<rdf:RDF/>"
+    assert data["parts"] == ["promoter_1", "rbs_1"], "parts are named after their roles"
+    assert data["named_from_registry"] == []
     assert [(g["glyph_class"], g["role"]) for g in data["detected"]] == [
         ("promoter", "Promoter"),
         ("ribosome-entry-site", "RBS"),
     ]
-    assert "detection misses parts" in data["next_step"]
     assert [type(block).__name__ for block in result.content] == ["ImageContent", "TextContent"]
+
+
+async def test_unnamed_parts_are_sent_without_a_sequence(client, handler: Recorder, image: Path) -> None:
+    detects(handler)
+    builds(handler)
+    await call(client, image_path=str(image))
+
+    sent = next(json.loads(request.content) for request in handler.requests if request.url.path == "/file/create")
+    parts = sent["components"][1:]
+    assert [part["name"] for part in parts] == ["promoter_1", "rbs_1"]
+    assert all(part["new"] is True for part in parts)
+    assert all(part["sequence"] == "" for part in parts)
+
+
+async def test_the_result_says_what_the_document_leaves_out(client, handler: Recorder, image: Path) -> None:
+    detects(handler)
+    builds(handler)
+    data = (await call(client, image_path=str(image))).structured_content
+    assert any("carry no sequence" in note for note in data["notes"])
+
+
+async def test_repeated_roles_are_numbered(client, handler: Recorder, image: Path) -> None:
+    detects(handler, ["promoter", "promoter", "cds"], [[0, 0, 9, 9], [20, 0, 29, 9], [40, 0, 49, 9]])
+    builds(handler)
+    data = (await call(client, image_path=str(image))).structured_content
+    assert data["parts"] == ["promoter_1", "promoter_2", "cds_1"]
 
 
 async def test_glyphs_come_back_left_to_right(client, handler: Recorder, image: Path) -> None:
     detects(handler, ["terminator", "promoter"], [[300, 0, 350, 50], [10, 0, 60, 50]])
+    builds(handler)
     data = (await call(client, image_path=str(image))).structured_content
     assert [glyph["glyph_class"] for glyph in data["detected"]] == ["promoter", "terminator"]
+    assert data["parts"] == ["promoter_1", "terminator_1"]
 
 
 async def test_an_image_can_arrive_as_base64(client, handler: Recorder) -> None:
     detects(handler)
-    encoded = base64.b64encode(b"pretend this is a png").decode()
-    data = (await call(client, image_base64=encoded)).structured_content
+    builds(handler)
+    data = (await call(client, image_base64=base64.b64encode(b"pretend this is a png").decode())).structured_content
+    assert data["built"] is True
     assert len(data["detected"]) == 2
-    assert b"pretend this is a png" in handler.last.content
+    sent = next(r for r in handler.requests if r.url.path == "/inference/")
+    assert b"pretend this is a png" in sent.content
+
+
+async def test_an_empty_name_falls_back_to_the_role(client, handler: Recorder, image: Path) -> None:
+    """Name the parts you know and leave the rest to their roles."""
+    detects(handler)
+    builds(handler)
+    data = (await call(client, image_path=str(image), part_names=["BBa_R0010", ""])).structured_content
+    assert data["parts"] == ["BBa_R0010", "rbs_1"]
+    assert data["named_from_registry"] == ["BBa_R0010"]
+
+
+async def test_an_image_with_nothing_in_it_says_so(client, handler: Recorder, image: Path) -> None:
+    detects(handler, [], [])
+    data = (await call(client, image_path=str(image))).structured_content
+    assert data["built"] is False
+    assert "no glyphs" in data["problems"][0]
 
 
 async def test_exactly_one_image_argument_is_required(client, handler: Recorder, image: Path) -> None:

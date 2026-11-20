@@ -25,6 +25,8 @@ class Result(BaseModel):
     unmapped: list[str] = Field(default_factory=list, description="Classes the detector found that have no role")
     built: bool = False
     parts: list[str] = Field(default_factory=list, description="The parts that went into the design")
+    named_from_registry: list[str] = Field(default_factory=list, description="Those bound to a part the service knows")
+    notes: list[str] = Field(default_factory=list, description="What the document does and does not say")
     sbol3: str | None = Field(default=None, description="The SBOL3 document, when nothing was written")
     genbank: str | None = None
     fasta: str | None = None

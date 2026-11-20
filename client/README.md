@@ -136,24 +136,33 @@ claude mcp add --transport stdio gc-ai --scope project -- \
   uv run --with "gc-ai-client[mcp]" gcai-mcp --url http://localhost:5001 --allow-root .
 ```
 
-The tool is `design_from_image`. Call it with just an image and it returns the
-glyphs the detector found, left to right, with the role of each, and the image
-with the detections drawn on it. Call it again with `part_names` and it builds
-the SBOL3.
+The tool is `design_from_image`, and one call gives you a document. It returns
+the SBOL3, the glyphs the detector found left to right, and the image with the
+detections drawn on it.
 
-The image arrives one of two ways. `image_path` when the server shares a
-filesystem with the caller, which is the stdio case. `image_base64` when it
-does not. Give exactly one.
+The image arrives one of two ways, and exactly one has to be given.
+`image_path` when the server shares a filesystem with the caller, which is the
+stdio case. `image_base64` when it does not.
 
-The two calls are separate because detection finds roles, not names, and it
-misses parts. A photograph of a hand-drawn circuit here gives 2 glyphs for an
-8-part design. Whoever is driving has to look at the picture and decide what
-the design really is.
+A diagram says what the parts are and what order they come in. It does not say
+which registry parts they are, so each part is named after its role, like
+`promoter_1`, and carries no sequence: the document records the role and the
+place in the order. The parent's sequence is the assembly scars between the
+parts.
+
+Pass `part_names`, one per part in 5' to 3' order, to bind them to parts the
+service knows, which fills in the sequences. Leave an entry empty to name that
+one after its role instead.
+
+Detection misses parts. On a photograph of a hand-drawn circuit here it finds
+2 glyphs for an 8-part design, so check the annotated image against the glyph
+list.
 
 `output_dir` writes the documents there and returns the paths. Without it the
-SBOL3 comes back in the result, which is tens of thousands of tokens for a
-real design. `--allow-root` bounds which directories the server will read
-images from or write files to; it defaults to the working directory.
+SBOL3 comes back in the result, which is 11 KB for two parts and 56 to 121 KB
+for the designs in `docs/examples`. `--allow-root` bounds which directories the
+server reads images from and writes files to, and defaults to the working
+directory.
 
 `--http` serves streamable HTTP instead of stdio. On a non-loopback address it
 requires `--allowed-host`, without which every request is rejected.

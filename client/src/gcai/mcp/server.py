@@ -1,11 +1,13 @@
 """An MCP server over the GC-AI service.
 
-One tool. It takes a diagram, as a path when the caller shares a filesystem
-with the server and as base64 when it does not, and gives back the SBOL3 for
-the design in it.
+One tool, one call. It takes a diagram, as a path when the caller shares a
+filesystem with the server and as base64 when it does not, and gives back the
+SBOL3 for the design in it.
 
-Detection finds the parts' roles, not their names, so the first call reports
-what it saw and the second one, with names, builds the documents.
+A diagram says what the parts are and what order they come in. It does not say
+which registry parts they are, so by default each part is named after its role
+and carries no sequence. Pass part_names to bind them to parts the service
+knows, which fills in the sequences.
 """
 
 from __future__ import annotations
@@ -25,6 +27,7 @@ from mcp.types import CallToolResult, TextContent, ToolAnnotations
 from pydantic import Field
 
 from gcai.client import GCAIClient
+from gcai.constants import Role
 from gcai.design import Design, Operon, Part
 from gcai.errors import GCAIConnectionError, GCAIError, GCAIResponseError
 from gcai.mcp.schemas import Glyph, Result
@@ -36,13 +39,14 @@ MAX_BASE64 = 24 * 1024 * 1024
 INSTRUCTIONS = """\
 GC-AI reads a picture of an SBOL Visual diagram and writes the SBOL3 for it.
 
-design_from_image is the only tool. Call it with just the image first: it
-returns the glyphs it found, in order, with the role of each. Detection finds
-the roles, never the names, and it misses parts, so look at the annotated
-image it returns and work out with the user what the real design is.
+design_from_image is the only tool, and one call gives you a document. A
+diagram says what the parts are and what order they come in, so the document
+records the roles and the order, with each part named after its role and
+carrying no sequence.
 
-Then call it again with part_names, one registry part name per part in 5' to
-3' order, and it builds the documents.
+Pass part_names, one name per part in 5' to 3' order, to bind them to parts
+the service knows and fill in the sequences. Detection misses parts, so check
+the annotated image that comes back against the glyph list.
 """
 
 
@@ -108,6 +112,33 @@ def _fail(exc: Exception) -> ToolError:
     return ToolError(f"internal error: {type(exc).__name__}")
 
 
+def _parts_for(roles: list[Role], part_names: list[str] | None) -> list[Part]:
+    """One part per detected role.
+
+    A name that was given binds the part to the service's registry, which
+    supplies its description and sequence. Where no name was given the part is
+    named after its role and carries no sequence, which is everything the
+    diagram says about it.
+    """
+    parts: list[Part] = []
+    counts: dict[str, int] = {}
+    for index, role in enumerate(roles):
+        given = ((part_names[index] if part_names and index < len(part_names) else "") or "").strip()
+        if given:
+            parts.append(Part(name=given, role=role, new=False))
+            continue
+        counts[role.value] = counts.get(role.value, 0) + 1
+        parts.append(
+            Part(
+                name=f"{role.value.lower().replace('-', '_')}_{counts[role.value]}",
+                role=role,
+                new=True,
+                description=f"{role.value} read from the diagram",
+            )
+        )
+    return parts
+
+
 def _register(mcp: MCPServer) -> None:
     @mcp.tool(
         title="Design from a diagram",
@@ -126,30 +157,31 @@ def _register(mcp: MCPServer) -> None:
         part_names: Annotated[
             list[str] | None,
             Field(
-                description="One registry part name per part, 5' to 3'. Leave it out on the first "
-                "call to see what the image holds."
+                description="One registry part name per part, 5' to 3'. Leave an entry empty to "
+                "name that one after its role instead. Omit it entirely and every part is."
             ),
         ] = None,
         description: str = "",
         output_dir: Annotated[
-            str | None,
-            Field(description="Write the documents here instead of returning them"),
+            str | None, Field(description="Write the documents here instead of returning them")
         ] = None,
         genbank: bool = False,
         fasta: bool = False,
     ) -> Annotated[CallToolResult, Result]:
-        """Read a diagram and build the SBOL3 for it.
+        """Read a diagram and write the SBOL3 for the design in it.
 
-        Call it with the image alone first. It returns the glyphs it found,
-        left to right, each with the role it becomes, and the image with the
-        detections drawn on it. Detection finds roles, not names, and it misses
-        parts, so check the picture against the list before going on.
+        Returns the document, the glyphs that were found left to right, and
+        the image with the detections drawn on it.
 
-        Call it again with part_names to build. Every name has to be a part the
-        service knows, and there has to be one per part, 5' to 3'.
+        A diagram says what the parts are and what order they come in, so by
+        default each part is named after its role and carries no sequence.
+        Pass part_names to bind them to parts the service knows, which fills in
+        the sequences; every name has to be one the service has.
+
+        Detection misses parts. Check the annotated image against the glyph
+        list, and call again with the parts it missed if you need them.
 
         Without output_dir the SBOL3 comes back in the result, which is large.
-        With it, the documents are written there and only the paths come back.
         """
         app = ctx.request_context.lifespan_context
         data = _image_bytes(app, image_path, image_base64)
@@ -171,7 +203,6 @@ def _register(mcp: MCPServer) -> None:
         ]
         roles = [glyph.role for glyph in ordered if glyph.role is not None]
         unmapped = sorted({g.glyph_class.value for g in ordered if g.role is None})
-
         picture = (
             [Image(data=detection.annotated_png, format="png").to_image_content()] if detection.annotated_png else []
         )
@@ -182,30 +213,26 @@ def _register(mcp: MCPServer) -> None:
                 structured_content=result.model_dump(),
             )
 
-        if not part_names:
-            found = ", ".join(f"{g.glyph_class}->{g.role}" for g in glyphs) or "nothing"
+        if not roles:
             return answer(
                 Result(
                     detected=glyphs,
                     unmapped=unmapped,
-                    next_step=(
-                        f"{len(roles)} parts detected. Look at the image: detection misses parts, "
-                        "so decide what the design really is, then call again with part_names, "
-                        "one registry part name per part in 5' to 3' order."
-                    ),
+                    problems=["no glyphs with a known role were found in that image"],
+                    next_step="check the image is an SBOL Visual diagram",
                 ),
-                f"{len(glyphs)} glyphs: {found}",
+                "nothing to build from",
             )
 
-        if len(part_names) != len(roles):
+        if part_names and len(part_names) != len(roles):
             return answer(
                 Result(
                     detected=glyphs,
                     unmapped=unmapped,
                     problems=[
-                        f"{len(part_names)} names given for {len(roles)} detected parts. "
-                        "Give one name per part, or add the parts detection missed by naming "
-                        "them in the right order and saying so."
+                        f"{len(part_names)} names given for {len(roles)} detected parts. Give one "
+                        "per part in 5' to 3' order, or leave part_names out and every part is "
+                        "named after its role."
                     ],
                     next_step="call again with one name per part",
                 ),
@@ -213,16 +240,16 @@ def _register(mcp: MCPServer) -> None:
             )
 
         design = Design(name=name, namespace=namespace, description=description)
-        design.parts.extend(Part(name=part, role=role) for part, role in zip(part_names, roles))
+        design.parts.extend(_parts_for(roles, part_names))
         design.operons.append(Operon(name=f"{name}_operon", parts=list(design.parts)).chain())
 
-        issues = [issue for issue in design.validate() if issue.severity == "error"]
-        if issues:
+        errors = [issue for issue in design.validate() if issue.severity == "error"]
+        if errors:
             return answer(
                 Result(
                     detected=glyphs,
                     unmapped=unmapped,
-                    problems=[f"{issue.path}: {issue.message}" for issue in issues],
+                    problems=[f"{issue.path}: {issue.message}" for issue in errors],
                     next_step="fix those and call again",
                 ),
                 "the design is not valid",
@@ -238,13 +265,19 @@ def _register(mcp: MCPServer) -> None:
             unmapped=unmapped,
             built=True,
             parts=[part.name for part in design.parts],
+            named_from_registry=[part.name for part in design.parts if not part.new],
         )
+        if any(part.new for part in design.parts):
+            result.notes.append(
+                "parts named after their role carry no sequence, so the document records their "
+                "role and their place in the order. The parent's sequence is the assembly scars "
+                "between them. Pass part_names to bind them to registry parts."
+            )
 
         if output_dir:
             target = _in_roots(output_dir, app, must_be_file=False)
             target.mkdir(parents=True, exist_ok=True)
-            written = built.write(target, name)
-            result.written = [str(path) for path in written]
+            result.written = [str(path) for path in built.write(target, name)]
             result.next_step = "the documents are on disk"
             return answer(result, f"built {name}: {', '.join(result.written)}")
 
