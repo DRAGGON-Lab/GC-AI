@@ -7,7 +7,7 @@ means the check completed; unavailable services are not counted as passes.
 
 | Command / check | Result |
 | --- | --- |
-| `python -m pytest backend/tests -q --disable-warnings` | 67 passed (52 export/identity/annotation tests and 15 reconciliation tests); exit 0. Dependency deprecation warnings remain. |
+| `python -m pytest backend/tests -q --disable-warnings` | 68 passed (52 export/identity/annotation tests and 16 reconciliation tests); exit 0. Dependency deprecation warnings remain. |
 | `cd client && python -m pytest -q` | 123 passed, 22 live integration tests deselected; exit 0. |
 | `cd frontend && npm test` | 10 passed; exit 0. |
 | `cd frontend && npm run build` | Passed; exit 0. |
@@ -49,7 +49,7 @@ inferred transcription-factor activity. All 123 client tests still pass.
 Reconciliation now defaults to verification: original hashes and diagnostic
 identities must match an immutable baseline; all six fresh generated files must
 have zero findings from both pinned validators. Capture mode is explicitly
-non-gating. Fifteen tests cover findings, changed historical evidence, missing
+non-gating. Sixteen tests cover findings, changed historical evidence, missing
 prerequisites, parse/execution failures and output-overwrite protection.
 The new conformance workflow builds the locked probe, regenerates temporary RDF
 and uploads verification evidence; remote CI execution is not claimed here.
