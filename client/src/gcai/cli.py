@@ -6,12 +6,15 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from typing import Any, Callable, Sequence
+from typing import TYPE_CHECKING, Any, Callable, Sequence
 
 from gcai.client import DEFAULT_URL, GCAIClient
 from gcai.constants import Role
 from gcai.design import Design
 from gcai.errors import GCAIConnectionError, GCAIError
+
+if TYPE_CHECKING:  # pragma: no cover
+    from gcai.interop import SbolDb
 
 ClientFactory = Callable[[str], GCAIClient]
 
@@ -43,6 +46,39 @@ def build_parser() -> argparse.ArgumentParser:
 
     check = sub.add_parser("check", help="validate a request body without sending it")
     check.add_argument("request", type=Path)
+
+    validate = sub.add_parser("validate", help="validate a generated document locally")
+    validate.add_argument("document", type=Path)
+
+    roundtrip = sub.add_parser("roundtrip", help="compare the glyphs in an image with the parts in a document")
+    roundtrip.add_argument("image", type=Path)
+    roundtrip.add_argument("document", type=Path)
+
+    publish = sub.add_parser("publish", help="publish a generated document to an SBOL DB registry")
+    publish.add_argument("document", type=Path)
+    publish.add_argument("--registry", help="registry URL (default: $SBOL_DB_URL)")
+    publish.add_argument("--iri", required=True, help="document IRI to publish under")
+    publish.add_argument("--name")
+    publish.add_argument("--description", default="")
+    publish.add_argument("--namespace")
+    publish.add_argument(
+        "--overwrite",
+        type=int,
+        default=0,
+        choices=[0, 1, 2],
+        help="0 fail if it exists, 1 replace, 2 merge",
+    )
+    publish.add_argument(
+        "--yes",
+        action="store_true",
+        help="required: publishing writes to a registry other people can read",
+    )
+
+    fetch = sub.add_parser("fetch", help="read a document back out of an SBOL DB registry")
+    fetch.add_argument("iri")
+    fetch.add_argument("-o", "--out", type=Path, required=True)
+    fetch.add_argument("--registry", help="registry URL (default: $SBOL_DB_URL)")
+    fetch.add_argument("--sbol2", action="store_true", help="ask the registry for SBOL2 instead of SBOL3")
 
     build = sub.add_parser("build", help="generate SBOL3, GenBank and FASTA from a request body")
     build.add_argument("request", type=Path)
@@ -137,7 +173,69 @@ def _dispatch(args: argparse.Namespace, client: GCAIClient) -> int:
             print(path)
         return 0
 
+    if args.command == "validate":
+        from gcai.interop import validate as validate_document
+
+        issues = validate_document(args.document.read_bytes())
+        if not issues:
+            print(f"{args.document}: valid")
+            return 0
+        for issue in issues:
+            print(issue)
+        return 1 if any(issue.severity == "error" for issue in issues) else 0
+
+    if args.command == "roundtrip":
+        from gcai.interop import check_order
+
+        detection = client.detect(args.image)
+        report = check_order(detection, args.document.read_bytes())
+        print(report.format())
+        return 0 if report.ok else 1
+
+    if args.command == "publish":
+        if not args.yes:
+            print(
+                "error: publishing writes to a registry other people can read. " "Pass --yes to go ahead.",
+                file=sys.stderr,
+            )
+            return 1
+        with _registry(args.registry) as registry:
+            published = registry.publish(
+                args.document.read_bytes(),
+                document_iri=args.iri,
+                name=args.name,
+                description=args.description,
+                namespace=args.namespace,
+                overwrite=args.overwrite,
+            )
+        print(published)
+        if not published.valid:
+            # The document is published either way: the registry records the
+            # findings and keeps the import.
+            print(
+                f"warning: the registry's validator reported "
+                f"{published.validation_issue_count} issues ({published.validation_status})",
+                file=sys.stderr,
+            )
+        return 0
+
+    if args.command == "fetch":
+        with _registry(args.registry) as registry:
+            data = registry.to_sbol2(args.iri) if args.sbol2 else registry.fetch(args.iri)
+        args.out.write_bytes(data)
+        print(f"{args.out} ({len(data)} bytes)")
+        return 0
+
     raise AssertionError(f"unhandled command {args.command!r}")  # pragma: no cover
+
+
+def _registry(url: str | None) -> "SbolDb":
+    """Open the registry named on the command line, or in the environment."""
+    from gcai.interop import SbolDb
+
+    if url:
+        return SbolDb(url)
+    return SbolDb.from_env()
 
 
 def _read_json(path: Path) -> dict[str, Any]:

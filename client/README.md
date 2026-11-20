@@ -29,7 +29,8 @@ with GCAIClient("http://localhost:5001") as client:
 
 ```sh
 pip install -e client              # the client and its CLI
-pip install -e "client[sbol]"      # also the SBOL libraries, for validating output
+pip install -e "client[sbol]"      # also validation and the round-trip check
+pip install -e "client[db]"        # also publishing to an SBOL DB registry
 ```
 
 ## What it does for you
@@ -69,11 +70,64 @@ document in a response header, and `POST /file/convert` takes that path.
 - **Generated files are deleted after 24 hours**, so a structural path is only
   good for that long.
 
+## Working with what comes back
+
+The `interop` module handles a generated document after the service has
+written it. `validate` and `check_order` need the `sbol` extra; publishing
+needs `db`.
+
+```python
+from gcai.interop import validate, check_order, SbolDb
+
+for issue in validate(result.sbol3):      # the check the service skips
+    print(issue)
+
+report = check_order(detection, result.sbol3)
+print(report.format())                     # what was drawn vs what was encoded
+
+with SbolDb("http://localhost:8888") as registry:
+    published = registry.publish(
+        result.sbol3,
+        document_iri="https://example.org/designs/my-circuit",
+        name="My circuit",
+        description="built from a photo of a whiteboard",
+    )
+    sbol2 = registry.to_sbol2("https://example.org/designs/my-circuit")
+```
+
+**Validation.** The service reports whether it could *write* a document, not
+whether that document is valid: it discards its own validation result before
+checking it. `validate` runs that check. It also reports a document that holds
+no SBOL objects at all, which would otherwise look valid.
+
+**Round-trip.** `check_order` compares the glyphs detected in an image with
+the parts the document encodes, matching a glyph class against the role it
+becomes, so `cds` and `cds-arrow` both satisfy a CDS. The order comes from the
+Range locations the service writes, falling back to its chain of `meets`
+constraints; when a document carries both and they disagree, that is raised
+rather than guessed at. A design is usually completed by hand after detection,
+so a report that is not `ok` normally means the document holds parts the image
+did not show.
+
+**Publishing.** [SBOL DB](https://github.com/marpaia/sbol-db) reads SBOL3,
+which is what the service produces, so a design reaches a registry without
+being converted on the way. When SBOL2 is wanted the registry produces it, so
+no local converter and none of its runtimes are involved. The registry also
+runs its own validator on import and reports what it finds, which is a second
+opinion on a document rather than a restatement of the first.
+
+Health is served on a separate loopback listener, port 9090 by default, so
+pass `operations_url` when it differs from the registry's own address.
+
 ## Command line
 
 ```sh
 gcai health
 gcai detect circuit.png --json
+gcai validate design.xml
+gcai roundtrip circuit.png design.xml
+gcai publish design.xml --iri https://example.org/designs/mine --name Mine --yes
+gcai fetch https://example.org/designs/mine -o mine-sbol2.xml --sbol2
 gcai parts Promoter --grep R0010
 gcai part BBa_R0010
 gcai check "docs/examples/YES GATE/request.json"
@@ -81,6 +135,8 @@ gcai build "docs/examples/YES GATE/request.json" -o out
 ```
 
 `--url` or `GCAI_URL` points at a service other than `http://localhost:5001`.
+`--registry` or `SBOL_DB_URL` points at a registry; `publish` also needs
+`--yes`, because it writes somewhere other people can read.
 
 ## Tests
 

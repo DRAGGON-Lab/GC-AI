@@ -11,10 +11,10 @@ from pathlib import Path
 from typing import Any, Iterator
 
 import pytest
-from conftest import EXAMPLES
 
 from gcai import Design, GCAIClient
 from gcai.constants import Role
+from tests.helpers import EXAMPLES
 
 pytestmark = pytest.mark.integration
 
