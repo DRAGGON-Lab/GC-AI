@@ -1,8 +1,8 @@
 """Publishing designs to an SBOL DB registry.
 
-SBOL DB reads SBOL3 directly, which is what the GC-AI service produces, so a
-design goes to a registry without being converted first. When SBOL2 is wanted
-the server produces it, so no local converter is involved either.
+An SBOL DB registry holds SBOL3 and serves either SBOL vocabulary. The GC-AI
+service writes SBOL3, so `publish` sends a generated document as it stands and
+`to_sbol2` asks the registry for the SBOL2 form of an object it holds.
 
 Everything here needs the db extra: pip install 'gc-ai-client[db]'
 """
@@ -196,10 +196,9 @@ class SbolDb:
         return text.encode()
 
     def to_sbol2(self, iri: str, *, format: str = RDF_XML) -> bytes:
-        """The SBOL2 form of an object already in the registry.
+        """The SBOL2 form of an object the registry holds.
 
-        The registry converts, so this needs neither a local converter nor the
-        runtimes one would want.
+        The registry serves the conversion.
         """
         return self.fetch(iri, version="sbol2", format=format)
 

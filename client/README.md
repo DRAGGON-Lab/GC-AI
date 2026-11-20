@@ -109,12 +109,16 @@ rather than guessed at. A design is usually completed by hand after detection,
 so a report that is not `ok` normally means the document holds parts the image
 did not show.
 
-**Publishing.** [SBOL DB](https://github.com/marpaia/sbol-db) reads SBOL3,
-which is what the service produces, so a design reaches a registry without
-being converted on the way. When SBOL2 is wanted the registry produces it, so
-no local converter and none of its runtimes are involved. The registry also
-runs its own validator on import and reports what it finds, which is a second
-opinion on a document rather than a restatement of the first.
+**Publishing.** `SbolDb` talks to an [SBOL DB](https://github.com/marpaia/sbol-db)
+registry. `publish` sends a generated document as `application/rdf+xml` and
+returns what the registry made of it: the graph it created, how many objects
+and triples it holds, and the result of the registry's own validation, which
+it runs on every import. `fetch` reads an object back, and `to_sbol2` asks the
+registry for the SBOL2 form of one. The registry holds SBOL3 and serves either
+vocabulary, so both directions are a single call.
+
+`overwrite` decides what a second publish to the same `document_iri` does: 0
+fails, 1 replaces, 2 merges.
 
 Health is served on a separate loopback listener, port 9090 by default, so
 pass `operations_url` when it differs from the registry's own address.
