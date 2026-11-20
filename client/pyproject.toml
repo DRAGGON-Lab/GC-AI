@@ -44,6 +44,9 @@ line_length = 120
 [tool.mypy]
 strict = true
 python_version = "3.10"
+# The examples live outside the package and import it, so mypy is told where
+# it is. Relative to the repo root, which is where the hooks run.
+mypy_path = "client/src"
 
 [[tool.mypy.overrides]]
 module = ["sbol_db.*", "rdflib.*", "mcp.*"]

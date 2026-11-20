@@ -112,8 +112,7 @@ class GCAIClient:
     def participations(self, interaction_type: InteractionType) -> list[ParticipationRole]:
         """The participation roles an interaction type expects.
 
-        The service does not enforce these: it accepts any participation role
-        on any interaction type. `Design.validate` reports a mismatch.
+        The service and `Design.validate` enforce these combinations.
         """
         response = self._request(
             "GET", "/component/interactions", params={"interaction_type": InteractionType(interaction_type).value}
@@ -207,6 +206,8 @@ def _as_error(response: httpx.Response) -> GCAIResponseError:
     """Turn a failed response into an error, reading the service's envelope."""
     text = response.text
     message = text
+    code = None
+    issues = []
     try:
         body = response.json()
     except ValueError:
@@ -214,4 +215,7 @@ def _as_error(response: httpx.Response) -> GCAIResponseError:
     else:
         if isinstance(body, dict):
             message = str(body.get("error") or text)
-    return GCAIResponseError(status_code=response.status_code, message=message, body=text)
+            code = body.get("code") if isinstance(body.get("code"), str) else None
+            if isinstance(body.get("issues"), list):
+                issues = [issue for issue in body["issues"] if isinstance(issue, dict)]
+    return GCAIResponseError(status_code=response.status_code, message=message, body=text, code=code, issues=issues)

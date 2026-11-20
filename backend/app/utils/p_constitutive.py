@@ -15,7 +15,7 @@ def promoter_constitutive(target: Union[sbol3.Feature, sbol3.Component], system:
 
   local = sbol3.LocalSubComponent([sbol3.SBO_DNA], roles=['https://identifiers.org/SO:0002050'])
   promoter_component = add_feature(system, local)
-  regulate(promoter_component, target)
+  system.constraints.append(sbol3.Constraint(sbol3.SBOL_PRECEDES, promoter_component, target))
 
   # TODO: add lookups for constraints like we have for interactions
   containers = [c.subject for c in system.constraints

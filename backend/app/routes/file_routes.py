@@ -1,129 +1,136 @@
-from flask import Blueprint, request, jsonify, send_file
-from app.utils.file import generate_sbol3_file, validate_sbol3_document, generate_related_filename
+"""Validated, transactional SBOL export and sequence conversion boundaries."""
 
-from app.utils.custom_error import CustomError
-from sbol_utilities.conversion import convert_to_genbank, convert_to_fasta
-from app.config import get_db_connection
-from app.config import FILES_CONVERTED_DIR
-
-import os
-import zipfile
+from contextlib import nullcontext
 import io
-import sbol3
-import uuid
 import logging
+import os
+import shutil
+import tempfile
+import uuid
+import zipfile
+
+from flask import Blueprint, current_app, request, send_file
+import sbol3
+from sbol_utilities.conversion import convert_to_genbank, convert_to_fasta
+from app.utils.file import (
+    create_file_sol3,
+    validate_sbol3_document,
+    generate_related_filename,
+)
+from app.utils.validation import validate_create, reject
+from app.utils.custom_error import CustomError
+from app.config import get_db_connection, FILES_GENERATED_DIR, FILES_CONVERTED_DIR
 
 logger = logging.getLogger(__name__)
-logger.propagate = True
+file_blueprint = Blueprint("file", __name__)
 
-file_blueprint = Blueprint('file', __name__)
 
-@file_blueprint.route('/create', methods=['POST'])
+def json_object():
+    if not request.is_json:
+        raise CustomError("Expected application/json", 400, code="invalid_json")
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        raise CustomError("Expected a JSON object", 400, code="invalid_json")
+    return data
+
+
+def require_valid(doc):
+    valid, issues = validate_sbol3_document(doc)
+    if not valid:
+        raise CustomError(
+            "SBOL validation failed", 422, code="sbol_validation_failed", issues=issues
+        )
+
+
+@file_blueprint.route("/create", methods=["POST"])
 def create_file():
-  """
-  Generates SBOL3 files and validates them.
-  """
-  logger.info("Received request to create SBOL3 file")
-  try:
-    data_front = request.json
-    if not data_front:
-      logger.warning("No data provided in request")
-      raise CustomError('No data provided', 400)
-
-    connection = get_db_connection()
+    data = validate_create(json_object())
+    directory = current_app.config.get("FILES_GENERATED_DIR", FILES_GENERATED_DIR)
+    os.makedirs(directory, exist_ok=True)
+    staging = tempfile.mkdtemp(prefix=".staging-", dir=directory)
+    destination = os.path.join(directory, str(uuid.uuid4()))
+    connection = None
     try:
-      with connection.cursor() as cursor:
-          unique_id = str(uuid.uuid4())[:8]
-          logger.info(f"Generated unique ID: {unique_id}")
-
-          file_path_full, error_full = generate_sbol3_file(data_front, cursor, unique_id, include_functional=True)
-          if error_full:
-            logger.error(f"Error generating full SBOL3 file: {error_full}")
-            raise CustomError(f"Error generating full SBOL3 file: {error_full}", 500)
-
-          file_path_structural, error_structural = generate_sbol3_file(data_front, cursor, unique_id, include_functional=False)
-          if error_structural:
-            logger.error(f"Error generating structural SBOL3 file: {error_structural}")
-            raise CustomError(f"Error generating structural SBOL3 file: {error_structural}", 500)
-          
-          logger.info(f"SBOL3 files generated: {file_path_full}, {file_path_structural}")
+        if any(not c["new"] for c in data["components"]):
+            connection = get_db_connection()
+        with connection.cursor() if connection else nullcontext(None) as cursor:
+            for name, functional in (("full", True), ("structural", False)):
+                doc = create_file_sol3(cursor, data, functional)
+                require_valid(doc)
+                path = os.path.join(staging, name + ".xml")
+                doc.write(path)
+                parsed = sbol3.Document()
+                parsed.read(path)
+                require_valid(parsed)
+        # Publish the directory once: neither file is reachable until both pass.
+        os.replace(staging, destination)
+        response = send_file(os.path.join(destination, "full.xml"), as_attachment=True)
+        response.headers["file_path_structural"] = os.path.join(
+            destination, "structural.xml"
+        )
+        return response
+    except Exception:
+        shutil.rmtree(destination, ignore_errors=True)
+        raise
     finally:
-      connection.close()
+        shutil.rmtree(staging, ignore_errors=True)
+        if connection is not None:
+            connection.close()
 
-    doc3 = sbol3.Document()
-    try:
-      doc3.read(file_path_full)
-      logger.info(f"Successfully read SBOL3 file: {file_path_full}")
-    except Exception as e:
-      logger.error(f"Failed to read SBOL3 file: {e}", exc_info=True)
-      raise CustomError(f"Failed to read SBOL3 file: {e}", 500)
 
-    is_valid = validate_sbol3_document(doc3)
-    if not is_valid:
-      logger.warning("Invalid SBOL3 document")
-      raise CustomError('Invalid SBOL3 document', 400)
-
-    response = send_file(file_path_full, as_attachment=True)
-    response.headers['file_path_structural'] = file_path_structural
-    logger.info("Returning SBOL3 file to client")
-    return response
-  except Exception as e:
-    logger.error(f"Failed to create SBOL3 file: {e}", exc_info=True)
-    raise CustomError(f"Failed to create SBOL3 file: {e}", 500)
-
-@file_blueprint.route('/convert', methods=['POST'])
+@file_blueprint.route("/convert", methods=["POST"])
 def convert_sbol3():
-  """
-  Converts SBOL3 files to GenBank and/or FASTA formats and returns them as a ZIP.
-  """
-  logger.info("Received request to convert SBOL3 file")
-  try:
-    data = request.get_json()
-    file_path = data.get('file_path')
-    genbank = data.get('genbank')
-    fasta = data.get('fasta')
-
-    if not file_path or not os.path.exists(file_path):
-      logger.warning(f"Invalid file path: {file_path}")
-      raise CustomError('File does not exist or invalid file path', 404)
-
-    if not os.path.exists(FILES_CONVERTED_DIR):
-      os.makedirs(FILES_CONVERTED_DIR, exist_ok=True)
-      logger.info(f"Created directory for converted files: {FILES_CONVERTED_DIR}")
-      
-    output_files = []
-    
+    data = json_object()
+    file_path = data.get("file_path")
+    if not isinstance(file_path, str) or not file_path:
+        reject("file_path", "Expected a generated structural file reference", 400)
+    for flag in ("genbank", "fasta"):
+        if not isinstance(data.get(flag), bool):
+            reject(flag, "Expected a boolean", 400)
+    if not data["genbank"] and not data["fasta"]:
+        reject("", "Select at least one conversion format", 400)
+    if not os.path.isfile(file_path):
+        raise CustomError("File not found", 404)
     try:
-      doc3 = sbol3.Document()
-      doc3.read(file_path)
-      logger.info(f"Successfully read SBOL3 file: {file_path}")
-      
-      if fasta:
-        output_fasta = os.path.join(FILES_CONVERTED_DIR, generate_related_filename(file_path, 'fasta', 'fasta'))
-        convert_to_fasta(doc3, output_fasta)
-        output_files.append(output_fasta)
-        logger.info(f"Generated FASTA: {output_fasta}")
-
-      if genbank:
-        output_genbank = os.path.join(FILES_CONVERTED_DIR, generate_related_filename(file_path, 'genbank', 'gb'))
-        logger.info("Starting GenBank conversion")
-        convert_to_genbank(doc3, output_genbank, allow_genbank_online=True)
-        logger.info(f"Generated GenBank: {output_genbank}")
-        output_files.append(output_genbank)
-
-      zip_buffer = io.BytesIO()
-      with zipfile.ZipFile(zip_buffer, 'w') as zipf:
-        for file in output_files:
-          zipf.write(file, os.path.basename(file))
-      zip_buffer.seek(0)
-
-      logger.info("Returning ZIP file")
-      return send_file(zip_buffer, as_attachment=True, mimetype='application/zip', attachment_filename='converted_files.zip')
-    
-    except Exception as e:
-      logger.error(f"Error during file conversion: {e}", exc_info=True)
-      raise CustomError(f"Error during file conversion: {e}", 500)
-
-  except Exception as e:
-    logger.error(f"Failed to convert SBOL3 file: {e}", exc_info=True)
-    raise CustomError(f"Failed to convert SBOL3 file: {e}", 500)
+        doc = sbol3.Document()
+        doc.read(file_path)
+    except Exception:
+        raise CustomError(
+            "Cannot parse the SBOL document", 422, code="invalid_sbol"
+        ) from None
+    require_valid(doc)
+    components = [o for o in doc.objects if isinstance(o, sbol3.Component)]
+    if not components or any(
+        not c.sequences or any(not q.lookup().elements for q in c.sequences)
+        for c in components
+    ):
+        reject(
+            "file_path", "Conversion requires a complete sequence for every component"
+        )
+    directory = current_app.config.get("FILES_CONVERTED_DIR", FILES_CONVERTED_DIR)
+    os.makedirs(directory, exist_ok=True)
+    with tempfile.TemporaryDirectory(dir=directory) as temporary:
+        output_files = []
+        if data["fasta"]:
+            path = os.path.join(
+                temporary, generate_related_filename(file_path, "fasta", "fasta")
+            )
+            convert_to_fasta(doc, path)
+            output_files.append(path)
+        if data["genbank"]:
+            path = os.path.join(
+                temporary, generate_related_filename(file_path, "genbank", "gb")
+            )
+            convert_to_genbank(doc, path, allow_genbank_online=True)
+            output_files.append(path)
+        buffer = io.BytesIO()
+        with zipfile.ZipFile(buffer, "w") as archive:
+            for path in output_files:
+                archive.write(path, os.path.basename(path))
+        buffer.seek(0)
+    return send_file(
+        buffer,
+        as_attachment=True,
+        mimetype="application/zip",
+        download_name="converted_files.zip",
+    )

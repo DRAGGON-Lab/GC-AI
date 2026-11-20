@@ -151,3 +151,24 @@ def test_build_reports_a_service_failure(run, handler: Recorder, capsys, tmp_pat
     handler.route("POST", "/file/create", lambda _r: error_response(500, "No component data found"))
     assert run("build", str(EXAMPLES / "YES GATE" / "request.json"), "-o", str(tmp_path)) == 1
     assert "No component data found" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("sbol2,version", [(False, "sbol3"), (True, "sbol2")])
+def test_fetch_uses_registry_export_rdf(monkeypatch, tmp_path, sbol2, version) -> None:
+    from contextlib import nullcontext
+
+    from gcai import cli
+
+    class Registry:
+        def export_rdf(self, iri: str, *, format: str, version: str) -> str:
+            assert iri == "https://example.org/design"
+            assert format == "rdfxml"
+            assert version == expected_version
+            return "<rdf>α</rdf>"
+
+    expected_version = version
+    monkeypatch.setattr(cli, "_registry", lambda url: nullcontext(Registry()))
+    out = tmp_path / "design.xml"
+    arguments = ["fetch", "https://example.org/design", "-o", str(out)]
+    assert main([*arguments, *(["--sbol2"] if sbol2 else [])]) == 0
+    assert out.read_text() == "<rdf>α</rdf>"

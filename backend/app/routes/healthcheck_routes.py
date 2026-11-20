@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify
 from app.utils.custom_error import CustomError
 from app.config import get_db_connection
-from app.config import model
+from app.config import get_model
 import logging
 
 logger = logging.getLogger(__name__)
@@ -17,6 +17,7 @@ def healthcheck():
   logger.info("Healthcheck endpoint called")
   
   try:
+    model = get_model()
     if model is None:
       logger.error("Healthcheck failed: Model not loaded")
       raise CustomError("Model not loaded", 500)
@@ -33,6 +34,8 @@ def healthcheck():
     logger.info("Healthcheck passed successfully")
     return jsonify({"status": "healthy", "message": "Application is running correctly"}), 200
   
+  except CustomError:
+    raise
   except Exception as e:
     logger.error(f"Healthcheck failed: {e}", exc_info=True)
     raise CustomError(f"Healthcheck failed: {e}", 500)

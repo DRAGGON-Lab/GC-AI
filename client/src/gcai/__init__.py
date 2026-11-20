@@ -15,7 +15,7 @@ from gcai.constants import (
     Role,
     UnionType,
 )
-from gcai.design import Design, ExternalSpecies, Interaction, Operon, Part, Union
+from gcai.design import Design, ExternalSpecies, Interaction, Operon, Part, Union, name_parts
 from gcai.errors import (
     DesignValidationError,
     GCAIConnectionError,
@@ -61,6 +61,7 @@ __all__ = [
     "Union",
     "UnionType",
     "__version__",
+    "name_parts",
     "validate_design",
 ]
 

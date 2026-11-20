@@ -1,0 +1,827 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+   xmlns:ns1="http://parts.igem.org/BBa_R0040#"
+   xmlns:ns10="http://parts.igem.org/BBa_B0011#"
+   xmlns:ns11="https://parts.igem.org/BBa_C0012#"
+   xmlns:ns2="http://parts.igem.org/BBa_B0012#"
+   xmlns:ns3="http://parts.igem.org/BBa_C0050#"
+   xmlns:ns4="https://parts.igem.org/BBa_R0050#"
+   xmlns:ns5="https://parts.igem.org/BBa_B0010#"
+   xmlns:ns6="http://parts.igem.org/BBa_B0034#"
+   xmlns:ns7="http://parts.igem.org/BBa_R0011#"
+   xmlns:ns8="https://parts.igem.org/BBa_E0040#"
+   xmlns:ns9="http://parts.igem.org/BBa_C0040#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:sbol="http://sbols.org/v3#"
+>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_R0040">
+    <sbol:displayId>BBa_R0040</sbol:displayId>
+    <sbol:name>BBa_R0040_1</sbol:name>
+    <sbol:description>TetR repressible promoter</sbol:description>
+    <rdf:type rdf:resource="http://sbols.org/v3#Component"/>
+    <sbol:hasNamespace rdf:resource="http://sbols.org/unspecified_namespace"/>
+    <sbol:type rdf:resource="https://identifiers.org/SBO:0000251"/>
+    <sbol:role rdf:resource="https://identifiers.org/SO:0000167"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_R0040_seq"/>
+    <ns1:owning_group_id></ns1:owning_group_id>
+    <ns1:status></ns1:status>
+    <ns1:dominant>false</ns1:dominant>
+    <ns1:discontinued>false</ns1:discontinued>
+    <ns1:part_status></ns1:part_status>
+    <ns1:sample_status></ns1:sample_status>
+    <ns1:created></ns1:created>
+    <ns1:modified></ns1:modified>
+    <ns1:m_user_id></ns1:m_user_id>
+    <ns1:experience></ns1:experience>
+    <ns1:bookmark>false</ns1:bookmark>
+    <ns1:owner_id></ns1:owner_id>
+    <ns1:group_u_list></ns1:group_u_list>
+    <ns1:mutableNotes></ns1:mutableNotes>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint17">
+    <sbol:displayId>Constraint17</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Constraint"/>
+    <sbol:restriction rdf:resource="http://sbols.org/v3#precedes"/>
+    <sbol:subject rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent17"/>
+    <sbol:object rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent18"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint5">
+    <sbol:displayId>Constraint5</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Constraint"/>
+    <sbol:restriction rdf:resource="http://sbols.org/v3#precedes"/>
+    <sbol:subject rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent5"/>
+    <sbol:object rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent6"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_E0040">
+    <sbol:displayId>BBa_E0040</sbol:displayId>
+    <sbol:name>BBa_E0040_1</sbol:name>
+    <sbol:description> green fluorescent protein derived from jellyfish Aequeora victoria wild-type GFP (SwissProt: P42212</sbol:description>
+    <rdf:type rdf:resource="http://sbols.org/v3#Component"/>
+    <sbol:hasNamespace rdf:resource="http://sbols.org/unspecified_namespace"/>
+    <sbol:type rdf:resource="https://identifiers.org/SBO:0000251"/>
+    <sbol:role rdf:resource="https://identifiers.org/SO:0000316"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_E0040_seq"/>
+    <ns8:owning_group_id></ns8:owning_group_id>
+    <ns8:status></ns8:status>
+    <ns8:dominant>false</ns8:dominant>
+    <ns8:discontinued>false</ns8:discontinued>
+    <ns8:part_status></ns8:part_status>
+    <ns8:sample_status></ns8:sample_status>
+    <ns8:created></ns8:created>
+    <ns8:modified></ns8:modified>
+    <ns8:m_user_id></ns8:m_user_id>
+    <ns8:experience></ns8:experience>
+    <ns8:bookmark>false</ns8:bookmark>
+    <ns8:owner_id></ns8:owner_id>
+    <ns8:group_u_list></ns8:group_u_list>
+    <ns8:mutableNotes></ns8:mutableNotes>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent16">
+    <sbol:displayId>SubComponent16</sbol:displayId>
+    <sbol:name>BBa_R0011_2</sbol:name>
+    <rdf:type rdf:resource="http://sbols.org/v3#SubComponent"/>
+    <sbol:instanceOf rdf:resource="http://sbols.org/unspecified_namespace/BBa_R0011"/>
+    <sbol:hasLocation rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent16/Range1"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent17">
+    <sbol:displayId>SubComponent17</sbol:displayId>
+    <sbol:name>BBa_B0034_4</sbol:name>
+    <rdf:type rdf:resource="http://sbols.org/v3#SubComponent"/>
+    <sbol:instanceOf rdf:resource="http://sbols.org/unspecified_namespace/BBa_B0034"/>
+    <sbol:hasLocation rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent17/Range1"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint8">
+    <sbol:displayId>Constraint8</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Constraint"/>
+    <sbol:restriction rdf:resource="http://sbols.org/v3#precedes"/>
+    <sbol:subject rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent8"/>
+    <sbol:object rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent9"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent13/Range1">
+    <sbol:displayId>Range1</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Range"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200_sequence"/>
+    <sbol:start rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1919</sbol:start>
+    <sbol:end rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3071</sbol:end>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200">
+    <sbol:displayId>BBa_I5200</sbol:displayId>
+    <sbol:name>BBa_I5200_1</sbol:name>
+    <sbol:description>Olmecs: Repressilator version 1 (HK022 cI)</sbol:description>
+    <rdf:type rdf:resource="http://sbols.org/v3#Component"/>
+    <sbol:hasNamespace rdf:resource="http://sbols.org/unspecified_namespace"/>
+    <sbol:type rdf:resource="https://identifiers.org/SBO:0000251"/>
+    <sbol:role rdf:resource="https://identifiers.org/SO:0000804"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200_sequence"/>
+    <sbol:hasFeature rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent1"/>
+    <sbol:hasFeature rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent2"/>
+    <sbol:hasFeature rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent3"/>
+    <sbol:hasFeature rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent4"/>
+    <sbol:hasFeature rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent5"/>
+    <sbol:hasFeature rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent6"/>
+    <sbol:hasFeature rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent7"/>
+    <sbol:hasFeature rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent8"/>
+    <sbol:hasFeature rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent9"/>
+    <sbol:hasFeature rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent10"/>
+    <sbol:hasFeature rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent11"/>
+    <sbol:hasFeature rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent12"/>
+    <sbol:hasFeature rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent13"/>
+    <sbol:hasFeature rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent14"/>
+    <sbol:hasFeature rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent15"/>
+    <sbol:hasFeature rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent16"/>
+    <sbol:hasFeature rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent17"/>
+    <sbol:hasFeature rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent18"/>
+    <sbol:hasFeature rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent19"/>
+    <sbol:hasFeature rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent20"/>
+    <sbol:hasConstraint rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint1"/>
+    <sbol:hasConstraint rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint2"/>
+    <sbol:hasConstraint rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint3"/>
+    <sbol:hasConstraint rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint4"/>
+    <sbol:hasConstraint rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint5"/>
+    <sbol:hasConstraint rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint6"/>
+    <sbol:hasConstraint rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint7"/>
+    <sbol:hasConstraint rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint8"/>
+    <sbol:hasConstraint rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint9"/>
+    <sbol:hasConstraint rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint10"/>
+    <sbol:hasConstraint rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint11"/>
+    <sbol:hasConstraint rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint12"/>
+    <sbol:hasConstraint rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint13"/>
+    <sbol:hasConstraint rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint14"/>
+    <sbol:hasConstraint rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint15"/>
+    <sbol:hasConstraint rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint16"/>
+    <sbol:hasConstraint rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint17"/>
+    <sbol:hasConstraint rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint18"/>
+    <sbol:hasConstraint rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint19"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent6/Range1">
+    <sbol:displayId>Range1</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Range"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200_sequence"/>
+    <sbol:start rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">878</sbol:start>
+    <sbol:end rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">931</sbol:end>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent7/Range1">
+    <sbol:displayId>Range1</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Range"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200_sequence"/>
+    <sbol:start rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">940</sbol:start>
+    <sbol:end rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">951</sbol:end>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_B0012">
+    <sbol:displayId>BBa_B0012</sbol:displayId>
+    <sbol:name>BBa_B0012_1</sbol:name>
+    <sbol:description>TE from coliphageT7</sbol:description>
+    <rdf:type rdf:resource="http://sbols.org/v3#Component"/>
+    <sbol:hasNamespace rdf:resource="http://sbols.org/unspecified_namespace"/>
+    <sbol:type rdf:resource="https://identifiers.org/SBO:0000251"/>
+    <sbol:role rdf:resource="https://identifiers.org/SO:0000141"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_B0012_seq"/>
+    <ns2:owning_group_id></ns2:owning_group_id>
+    <ns2:status></ns2:status>
+    <ns2:dominant>false</ns2:dominant>
+    <ns2:discontinued>false</ns2:discontinued>
+    <ns2:part_status></ns2:part_status>
+    <ns2:sample_status></ns2:sample_status>
+    <ns2:created></ns2:created>
+    <ns2:modified></ns2:modified>
+    <ns2:m_user_id></ns2:m_user_id>
+    <ns2:experience></ns2:experience>
+    <ns2:bookmark>false</ns2:bookmark>
+    <ns2:owner_id></ns2:owner_id>
+    <ns2:group_u_list></ns2:group_u_list>
+    <ns2:mutableNotes></ns2:mutableNotes>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent12">
+    <sbol:displayId>SubComponent12</sbol:displayId>
+    <sbol:name>BBa_B0034_3</sbol:name>
+    <rdf:type rdf:resource="http://sbols.org/v3#SubComponent"/>
+    <sbol:instanceOf rdf:resource="http://sbols.org/unspecified_namespace/BBa_B0034"/>
+    <sbol:hasLocation rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent12/Range1"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_R0011">
+    <sbol:displayId>BBa_R0011</sbol:displayId>
+    <sbol:name>BBa_R0011_1</sbol:name>
+    <sbol:description>Promoter (lacI regulated, lambda pL hybrid)</sbol:description>
+    <rdf:type rdf:resource="http://sbols.org/v3#Component"/>
+    <sbol:hasNamespace rdf:resource="http://sbols.org/unspecified_namespace"/>
+    <sbol:type rdf:resource="https://identifiers.org/SBO:0000251"/>
+    <sbol:role rdf:resource="https://identifiers.org/SO:0000167"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_R0011_seq"/>
+    <ns7:owning_group_id></ns7:owning_group_id>
+    <ns7:status></ns7:status>
+    <ns7:dominant>false</ns7:dominant>
+    <ns7:discontinued>false</ns7:discontinued>
+    <ns7:part_status></ns7:part_status>
+    <ns7:sample_status></ns7:sample_status>
+    <ns7:created></ns7:created>
+    <ns7:modified></ns7:modified>
+    <ns7:m_user_id></ns7:m_user_id>
+    <ns7:experience></ns7:experience>
+    <ns7:bookmark>false</ns7:bookmark>
+    <ns7:owner_id></ns7:owner_id>
+    <ns7:group_u_list></ns7:group_u_list>
+    <ns7:mutableNotes></ns7:mutableNotes>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_C0012">
+    <sbol:displayId>BBa_C0012</sbol:displayId>
+    <sbol:name>BBa_C0012_1</sbol:name>
+    <sbol:description>lacI repressor  from E. coli (+LVA)</sbol:description>
+    <rdf:type rdf:resource="http://sbols.org/v3#Component"/>
+    <sbol:hasNamespace rdf:resource="http://sbols.org/unspecified_namespace"/>
+    <sbol:type rdf:resource="https://identifiers.org/SBO:0000251"/>
+    <sbol:role rdf:resource="https://identifiers.org/SO:0000316"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_C0012_seq"/>
+    <ns11:owning_group_id></ns11:owning_group_id>
+    <ns11:status></ns11:status>
+    <ns11:dominant>false</ns11:dominant>
+    <ns11:discontinued>false</ns11:discontinued>
+    <ns11:part_status></ns11:part_status>
+    <ns11:sample_status></ns11:sample_status>
+    <ns11:created></ns11:created>
+    <ns11:modified></ns11:modified>
+    <ns11:m_user_id></ns11:m_user_id>
+    <ns11:experience></ns11:experience>
+    <ns11:bookmark>false</ns11:bookmark>
+    <ns11:owner_id></ns11:owner_id>
+    <ns11:group_u_list></ns11:group_u_list>
+    <ns11:mutableNotes></ns11:mutableNotes>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_R0050">
+    <sbol:displayId>BBa_R0050</sbol:displayId>
+    <sbol:name>BBa_R0050_1</sbol:name>
+    <sbol:description>Promoter (HK022 cI regulated)</sbol:description>
+    <rdf:type rdf:resource="http://sbols.org/v3#Component"/>
+    <sbol:hasNamespace rdf:resource="http://sbols.org/unspecified_namespace"/>
+    <sbol:type rdf:resource="https://identifiers.org/SBO:0000251"/>
+    <sbol:role rdf:resource="https://identifiers.org/SO:0000167"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_R0050_seq"/>
+    <ns4:owning_group_id></ns4:owning_group_id>
+    <ns4:status></ns4:status>
+    <ns4:dominant>false</ns4:dominant>
+    <ns4:discontinued>false</ns4:discontinued>
+    <ns4:part_status></ns4:part_status>
+    <ns4:sample_status></ns4:sample_status>
+    <ns4:created></ns4:created>
+    <ns4:modified></ns4:modified>
+    <ns4:m_user_id></ns4:m_user_id>
+    <ns4:experience></ns4:experience>
+    <ns4:bookmark>false</ns4:bookmark>
+    <ns4:owner_id></ns4:owner_id>
+    <ns4:group_u_list></ns4:group_u_list>
+    <ns4:mutableNotes></ns4:mutableNotes>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent16/Range1">
+    <sbol:displayId>Range1</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Range"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200_sequence"/>
+    <sbol:start rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3183</sbol:start>
+    <sbol:end rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3237</sbol:end>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_B0034">
+    <sbol:displayId>BBa_B0034</sbol:displayId>
+    <sbol:name>BBa_B0034_1</sbol:name>
+    <sbol:description>RBS (Elowitz 1999) -- defines RBS efficiency</sbol:description>
+    <rdf:type rdf:resource="http://sbols.org/v3#Component"/>
+    <sbol:hasNamespace rdf:resource="http://sbols.org/unspecified_namespace"/>
+    <sbol:type rdf:resource="https://identifiers.org/SBO:0000251"/>
+    <sbol:role rdf:resource="https://identifiers.org/SO:0000139"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_B0034_seq"/>
+    <ns6:owning_group_id></ns6:owning_group_id>
+    <ns6:status></ns6:status>
+    <ns6:dominant>false</ns6:dominant>
+    <ns6:discontinued>false</ns6:discontinued>
+    <ns6:part_status></ns6:part_status>
+    <ns6:sample_status></ns6:sample_status>
+    <ns6:created></ns6:created>
+    <ns6:modified></ns6:modified>
+    <ns6:m_user_id></ns6:m_user_id>
+    <ns6:experience></ns6:experience>
+    <ns6:bookmark>false</ns6:bookmark>
+    <ns6:owner_id></ns6:owner_id>
+    <ns6:group_u_list></ns6:group_u_list>
+    <ns6:mutableNotes></ns6:mutableNotes>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_B0034_seq">
+    <sbol:displayId>BBa_B0034_seq</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Sequence"/>
+    <sbol:hasNamespace rdf:resource="http://sbols.org/unspecified_namespace"/>
+    <sbol:elements>aaagaggagaaa</sbol:elements>
+    <sbol:encoding rdf:resource="https://identifiers.org/edam:format_1207"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_C0040">
+    <sbol:displayId>BBa_C0040</sbol:displayId>
+    <sbol:name>BBa_C0040_1</sbol:name>
+    <sbol:description>tetracycline repressor from transposon Tn10 (+LVA)</sbol:description>
+    <rdf:type rdf:resource="http://sbols.org/v3#Component"/>
+    <sbol:hasNamespace rdf:resource="http://sbols.org/unspecified_namespace"/>
+    <sbol:type rdf:resource="https://identifiers.org/SBO:0000251"/>
+    <sbol:role rdf:resource="https://identifiers.org/SO:0000316"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_C0040_seq"/>
+    <ns9:owning_group_id></ns9:owning_group_id>
+    <ns9:status></ns9:status>
+    <ns9:dominant>false</ns9:dominant>
+    <ns9:discontinued>false</ns9:discontinued>
+    <ns9:part_status></ns9:part_status>
+    <ns9:sample_status></ns9:sample_status>
+    <ns9:created></ns9:created>
+    <ns9:modified></ns9:modified>
+    <ns9:m_user_id></ns9:m_user_id>
+    <ns9:experience></ns9:experience>
+    <ns9:bookmark>false</ns9:bookmark>
+    <ns9:owner_id></ns9:owner_id>
+    <ns9:group_u_list></ns9:group_u_list>
+    <ns9:mutableNotes></ns9:mutableNotes>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint2">
+    <sbol:displayId>Constraint2</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Constraint"/>
+    <sbol:restriction rdf:resource="http://sbols.org/v3#precedes"/>
+    <sbol:subject rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent2"/>
+    <sbol:object rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent3"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_B0010">
+    <sbol:displayId>BBa_B0010</sbol:displayId>
+    <sbol:name>BBa_B0010_1</sbol:name>
+    <sbol:description>T1 from E. coli rrnB</sbol:description>
+    <rdf:type rdf:resource="http://sbols.org/v3#Component"/>
+    <sbol:hasNamespace rdf:resource="http://sbols.org/unspecified_namespace"/>
+    <sbol:type rdf:resource="https://identifiers.org/SBO:0000251"/>
+    <sbol:role rdf:resource="https://identifiers.org/SO:0000141"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_B0010_seq"/>
+    <ns5:owning_group_id></ns5:owning_group_id>
+    <ns5:status></ns5:status>
+    <ns5:dominant>false</ns5:dominant>
+    <ns5:discontinued>false</ns5:discontinued>
+    <ns5:part_status></ns5:part_status>
+    <ns5:sample_status></ns5:sample_status>
+    <ns5:created></ns5:created>
+    <ns5:modified></ns5:modified>
+    <ns5:m_user_id></ns5:m_user_id>
+    <ns5:experience></ns5:experience>
+    <ns5:bookmark>false</ns5:bookmark>
+    <ns5:owner_id></ns5:owner_id>
+    <ns5:group_u_list></ns5:group_u_list>
+    <ns5:mutableNotes></ns5:mutableNotes>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent14/Range1">
+    <sbol:displayId>Range1</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Range"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200_sequence"/>
+    <sbol:start rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3080</sbol:start>
+    <sbol:end rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3120</sbol:end>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent13">
+    <sbol:displayId>SubComponent13</sbol:displayId>
+    <sbol:name>BBa_C0012_1</sbol:name>
+    <rdf:type rdf:resource="http://sbols.org/v3#SubComponent"/>
+    <sbol:instanceOf rdf:resource="http://sbols.org/unspecified_namespace/BBa_C0012"/>
+    <sbol:hasLocation rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent13/Range1"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_R0050_seq">
+    <sbol:displayId>BBa_R0050_seq</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Sequence"/>
+    <sbol:hasNamespace rdf:resource="http://sbols.org/unspecified_namespace"/>
+    <sbol:elements>ttaggtattgactgtactatcagttccgtcataatatgaaccataagttcaccac</sbol:elements>
+    <sbol:encoding rdf:resource="https://identifiers.org/edam:format_1207"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint10">
+    <sbol:displayId>Constraint10</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Constraint"/>
+    <sbol:restriction rdf:resource="http://sbols.org/v3#precedes"/>
+    <sbol:subject rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent10"/>
+    <sbol:object rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent11"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent3">
+    <sbol:displayId>SubComponent3</sbol:displayId>
+    <sbol:name>BBa_C0040_1</sbol:name>
+    <rdf:type rdf:resource="http://sbols.org/v3#SubComponent"/>
+    <sbol:instanceOf rdf:resource="http://sbols.org/unspecified_namespace/BBa_C0040"/>
+    <sbol:hasLocation rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent3/Range1"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent10/Range1">
+    <sbol:displayId>Range1</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Range"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200_sequence"/>
+    <sbol:start rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1784</sbol:start>
+    <sbol:end rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1829</sbol:end>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_B0011">
+    <sbol:displayId>BBa_B0011</sbol:displayId>
+    <sbol:name>BBa_B0011_1</sbol:name>
+    <sbol:description>LuxICDABEG (+/-)</sbol:description>
+    <rdf:type rdf:resource="http://sbols.org/v3#Component"/>
+    <sbol:hasNamespace rdf:resource="http://sbols.org/unspecified_namespace"/>
+    <sbol:type rdf:resource="https://identifiers.org/SBO:0000251"/>
+    <sbol:role rdf:resource="https://identifiers.org/SO:0000141"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_B0011_seq"/>
+    <ns10:owning_group_id></ns10:owning_group_id>
+    <ns10:status></ns10:status>
+    <ns10:dominant>false</ns10:dominant>
+    <ns10:discontinued>false</ns10:discontinued>
+    <ns10:part_status></ns10:part_status>
+    <ns10:sample_status></ns10:sample_status>
+    <ns10:created></ns10:created>
+    <ns10:modified></ns10:modified>
+    <ns10:m_user_id></ns10:m_user_id>
+    <ns10:experience></ns10:experience>
+    <ns10:bookmark>false</ns10:bookmark>
+    <ns10:owner_id></ns10:owner_id>
+    <ns10:group_u_list></ns10:group_u_list>
+    <ns10:mutableNotes></ns10:mutableNotes>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_C0050">
+    <sbol:displayId>BBa_C0050</sbol:displayId>
+    <sbol:name>BBa_C0050_1</sbol:name>
+    <sbol:description>cI repressor from phage HK022  (+LVA?)</sbol:description>
+    <rdf:type rdf:resource="http://sbols.org/v3#Component"/>
+    <sbol:hasNamespace rdf:resource="http://sbols.org/unspecified_namespace"/>
+    <sbol:type rdf:resource="https://identifiers.org/SBO:0000251"/>
+    <sbol:role rdf:resource="https://identifiers.org/SO:0000316"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_C0050_seq"/>
+    <ns3:owning_group_id></ns3:owning_group_id>
+    <ns3:status></ns3:status>
+    <ns3:dominant>false</ns3:dominant>
+    <ns3:discontinued>false</ns3:discontinued>
+    <ns3:part_status></ns3:part_status>
+    <ns3:sample_status></ns3:sample_status>
+    <ns3:created></ns3:created>
+    <ns3:modified></ns3:modified>
+    <ns3:m_user_id></ns3:m_user_id>
+    <ns3:experience></ns3:experience>
+    <ns3:bookmark>false</ns3:bookmark>
+    <ns3:owner_id></ns3:owner_id>
+    <ns3:group_u_list></ns3:group_u_list>
+    <ns3:mutableNotes></ns3:mutableNotes>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_R0040_seq">
+    <sbol:displayId>BBa_R0040_seq</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Sequence"/>
+    <sbol:hasNamespace rdf:resource="http://sbols.org/unspecified_namespace"/>
+    <sbol:elements>tccctatcagtgatagagattgacatccctatcagtgatagagatactgagcac</sbol:elements>
+    <sbol:encoding rdf:resource="https://identifiers.org/edam:format_1207"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent4/Range1">
+    <sbol:displayId>Range1</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Range"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200_sequence"/>
+    <sbol:start rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">775</sbol:start>
+    <sbol:end rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">815</sbol:end>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint15">
+    <sbol:displayId>Constraint15</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Constraint"/>
+    <sbol:restriction rdf:resource="http://sbols.org/v3#precedes"/>
+    <sbol:subject rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent15"/>
+    <sbol:object rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent16"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint18">
+    <sbol:displayId>Constraint18</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Constraint"/>
+    <sbol:restriction rdf:resource="http://sbols.org/v3#precedes"/>
+    <sbol:subject rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent18"/>
+    <sbol:object rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent19"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_C0012_seq">
+    <sbol:displayId>BBa_C0012_seq</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Sequence"/>
+    <sbol:hasNamespace rdf:resource="http://sbols.org/unspecified_namespace"/>
+    <sbol:elements>atggtgaatgtgaaaccagtaacgttatacgatgtcgcagagtatgccggtgtctcttatcagaccgtttcccgcgtggtgaaccaggccagccacgtttctgcgaaaacgcgggaaaaagtggaagcggcgatggcggagctgaattacattcccaaccgcgtggcacaacaactggcgggcaaacagtcgttgctgattggcgttgccacctccagtctggccctgcacgcgccgtcgcaaattgtcgcggcgattaaatctcgcgccgatcaactgggtgccagcgtggtggtgtcgatggtagaacgaagcggcgtcgaagcctgtaaagcggcggtgcacaatcttctcgcgcaacgcgtcagtgggctgatcattaactatccgctggatgaccaggatgccattgctgtggaagctgcctgcactaatgttccggcgttatttcttgatgtctctgaccagacacccatcaacagtattattttctcccatgaagacggtacgcgactgggcgtggagcatctggtcgcattgggtcaccagcaaatcgcgctgttagcgggcccattaagttctgtctcggcgcgtctgcgtctggctggctggcataaatatctcactcgcaatcaaattcagccgatagcggaacgggaaggcgactggagtgccatgtccggttttcaacaaaccatgcaaatgctgaatgagggcatcgttcccactgcgatgctggttgccaacgatcagatggcgctgggcgcaatgcgcgccattaccgagtccgggctgcgcgttggtgcggatatctcggtagtgggatacgacgataccgaagacagctcatgttatatcccgccgttaaccaccatcaaacaggattttcgcctgctggggcaaaccagcgtggaccgcttgctgcaactctctcagggccaggcggtgaagggcaatcagctgttgcccgtctcactggtgaaaagaaaaaccaccctggcgcccaatacgcaaaccgcctctccccgcgcgttggccgattcattaatgcagctggcacgacaggtttcccgactggaaagcgggcaggctgcaaacgacgaaaactacgctttagtagcttaataactctgatagtgctagtgtagatctc</sbol:elements>
+    <sbol:encoding rdf:resource="https://identifiers.org/edam:format_1207"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint7">
+    <sbol:displayId>Constraint7</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Constraint"/>
+    <sbol:restriction rdf:resource="http://sbols.org/v3#precedes"/>
+    <sbol:subject rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent7"/>
+    <sbol:object rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent8"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint19">
+    <sbol:displayId>Constraint19</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Constraint"/>
+    <sbol:restriction rdf:resource="http://sbols.org/v3#precedes"/>
+    <sbol:subject rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent19"/>
+    <sbol:object rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent20"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent10">
+    <sbol:displayId>SubComponent10</sbol:displayId>
+    <sbol:name>BBa_B0011_2</sbol:name>
+    <rdf:type rdf:resource="http://sbols.org/v3#SubComponent"/>
+    <sbol:instanceOf rdf:resource="http://sbols.org/unspecified_namespace/BBa_B0011"/>
+    <sbol:hasLocation rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent10/Range1"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent20/Range1">
+    <sbol:displayId>Range1</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Range"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200_sequence"/>
+    <sbol:start rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4080</sbol:start>
+    <sbol:end rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4120</sbol:end>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint3">
+    <sbol:displayId>Constraint3</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Constraint"/>
+    <sbol:restriction rdf:resource="http://sbols.org/v3#precedes"/>
+    <sbol:subject rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent3"/>
+    <sbol:object rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent4"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent14">
+    <sbol:displayId>SubComponent14</sbol:displayId>
+    <sbol:name>BBa_B0012_3</sbol:name>
+    <rdf:type rdf:resource="http://sbols.org/v3#SubComponent"/>
+    <sbol:instanceOf rdf:resource="http://sbols.org/unspecified_namespace/BBa_B0012"/>
+    <sbol:hasLocation rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent14/Range1"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent5">
+    <sbol:displayId>SubComponent5</sbol:displayId>
+    <sbol:name>BBa_B0011_1</sbol:name>
+    <rdf:type rdf:resource="http://sbols.org/v3#SubComponent"/>
+    <sbol:instanceOf rdf:resource="http://sbols.org/unspecified_namespace/BBa_B0011"/>
+    <sbol:hasLocation rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent5/Range1"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent5/Range1">
+    <sbol:displayId>Range1</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Range"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200_sequence"/>
+    <sbol:start rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">824</sbol:start>
+    <sbol:end rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">869</sbol:end>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_R0011_seq">
+    <sbol:displayId>BBa_R0011_seq</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Sequence"/>
+    <sbol:hasNamespace rdf:resource="http://sbols.org/unspecified_namespace"/>
+    <sbol:elements>aattgtgagcggataacaattgacattgtgagcggataacaagatactgagcaca</sbol:elements>
+    <sbol:encoding rdf:resource="https://identifiers.org/edam:format_1207"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_E0040_seq">
+    <sbol:displayId>BBa_E0040_seq</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Sequence"/>
+    <sbol:hasNamespace rdf:resource="http://sbols.org/unspecified_namespace"/>
+    <sbol:elements>atgcgtaaaggagaagaacttttcactggagttgtcccaattcttgttgaattagatggtgatgttaatgggcacaaattttctgtcagtggagagggtgaaggtgatgcaacatacggaaaacttacccttaaatttatttgcactactggaaaactacctgttccatggccaacacttgtcactactttcggttatggtgttcaatgctttgcgagatacccagatcatatgaaacagcatgactttttcaagagtgccatgcccgaaggttatgtacaggaaagaactatatttttcaaagatgacgggaactacaagacacgtgctgaagtcaagtttgaaggtgatacccttgttaatagaatcgagttaaaaggtattgattttaaagaagatggaaacattcttggacacaaattggaatacaactataactcacacaatgtatacatcatggcagacaaacaaaagaatggaatcaaagttaacttcaaaattagacacaacattgaagatggaagcgttcaactagcagaccattatcaacaaaatactccaattggcgatggccctgtccttttaccagacaaccattacctgtccacacaatctgccctttcgaaagatcccaacgaaaagagagaccacatggtccttcttgagtttgtaacagctgctgggattacacatggcatggatgaactatacaaataataa</sbol:elements>
+    <sbol:encoding rdf:resource="https://identifiers.org/edam:format_1207"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent1/Range1">
+    <sbol:displayId>Range1</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Range"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200_sequence"/>
+    <sbol:start rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</sbol:start>
+    <sbol:end rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">55</sbol:end>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent20">
+    <sbol:displayId>SubComponent20</sbol:displayId>
+    <sbol:name>BBa_B0012_4</sbol:name>
+    <rdf:type rdf:resource="http://sbols.org/v3#SubComponent"/>
+    <sbol:instanceOf rdf:resource="http://sbols.org/unspecified_namespace/BBa_B0012"/>
+    <sbol:hasLocation rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent20/Range1"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint14">
+    <sbol:displayId>Constraint14</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Constraint"/>
+    <sbol:restriction rdf:resource="http://sbols.org/v3#precedes"/>
+    <sbol:subject rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent14"/>
+    <sbol:object rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent15"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_B0010_seq">
+    <sbol:displayId>BBa_B0010_seq</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Sequence"/>
+    <sbol:hasNamespace rdf:resource="http://sbols.org/unspecified_namespace"/>
+    <sbol:elements>ccaggcatcaaataaaacgaaaggctcagtcgaaagactgggcctttcgttttatctgttgtttgtcggtgaacgctctc</sbol:elements>
+    <sbol:encoding rdf:resource="https://identifiers.org/edam:format_1207"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent6">
+    <sbol:displayId>SubComponent6</sbol:displayId>
+    <sbol:name>BBa_R0040_1</sbol:name>
+    <rdf:type rdf:resource="http://sbols.org/v3#SubComponent"/>
+    <sbol:instanceOf rdf:resource="http://sbols.org/unspecified_namespace/BBa_R0040"/>
+    <sbol:hasLocation rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent6/Range1"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint1">
+    <sbol:displayId>Constraint1</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Constraint"/>
+    <sbol:restriction rdf:resource="http://sbols.org/v3#precedes"/>
+    <sbol:subject rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent1"/>
+    <sbol:object rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent2"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent19/Range1">
+    <sbol:displayId>Range1</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Range"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200_sequence"/>
+    <sbol:start rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3992</sbol:start>
+    <sbol:end rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4071</sbol:end>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent18/Range1">
+    <sbol:displayId>Range1</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Range"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200_sequence"/>
+    <sbol:start rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3264</sbol:start>
+    <sbol:end rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3983</sbol:end>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint12">
+    <sbol:displayId>Constraint12</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Constraint"/>
+    <sbol:restriction rdf:resource="http://sbols.org/v3#precedes"/>
+    <sbol:subject rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent12"/>
+    <sbol:object rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent13"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent7">
+    <sbol:displayId>SubComponent7</sbol:displayId>
+    <sbol:name>BBa_B0034_2</sbol:name>
+    <rdf:type rdf:resource="http://sbols.org/v3#SubComponent"/>
+    <sbol:instanceOf rdf:resource="http://sbols.org/unspecified_namespace/BBa_B0034"/>
+    <sbol:hasLocation rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent7/Range1"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_C0050_seq">
+    <sbol:displayId>BBa_C0050_seq</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Sequence"/>
+    <sbol:hasNamespace rdf:resource="http://sbols.org/unspecified_namespace"/>
+    <sbol:elements>atggttcaacagaaagagcgtgaaactttctcgcagaggcttgcgctggcctgtgataaagcgggattacctttgcatggtaggcaggctgatttagctgtcaggcttaaggtcacaccaaaagccattagtaaatggttcaacggggagtcaataccaagaaaagacaagatggaatctctggcttcggtgctgggaactactgctgcatatctgcatggctatgctgatgatgacggtatcacggtaaatcatctatcaagatcaaatgattattatcgtgttgatgtattggatgttcaggcgagcgccgggccaggaaccatggtttccaatgaatttatagaaaagataagagcaattgaatatacgaccgagcaggcaagaattttatttaatggaaggccacaggaaagcgtaaaagtcatcacggttcgcggtgacagcatggagggaaccatcaatccgggagatgagatctttgttgatgtatccataacctgttttgatggcgatggcatttatgtgtttgtatacgggaaaacaatgcacgttaagcgcctgcaaatgcaaaagaacaggcttgccgtcatctctgacaatgccgcttatgatcgatggtacatagaagaaggtgaagaagagcaacttcacattctagccaaagtcctcattaggcagtcaatcgattacaagcgattcggagctgcaaacgacgaaaactacgctttagtagcttaataaccctgatagtgctagtgtagatccc</sbol:elements>
+    <sbol:encoding rdf:resource="https://identifiers.org/edam:format_1207"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent11">
+    <sbol:displayId>SubComponent11</sbol:displayId>
+    <sbol:name>BBa_R0050_1</sbol:name>
+    <rdf:type rdf:resource="http://sbols.org/v3#SubComponent"/>
+    <sbol:instanceOf rdf:resource="http://sbols.org/unspecified_namespace/BBa_R0050"/>
+    <sbol:hasLocation rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent11/Range1"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent18">
+    <sbol:displayId>SubComponent18</sbol:displayId>
+    <sbol:name>BBa_E0040_1</sbol:name>
+    <rdf:type rdf:resource="http://sbols.org/v3#SubComponent"/>
+    <sbol:instanceOf rdf:resource="http://sbols.org/unspecified_namespace/BBa_E0040"/>
+    <sbol:hasLocation rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent18/Range1"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint11">
+    <sbol:displayId>Constraint11</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Constraint"/>
+    <sbol:restriction rdf:resource="http://sbols.org/v3#precedes"/>
+    <sbol:subject rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent11"/>
+    <sbol:object rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent12"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_B0012_seq">
+    <sbol:displayId>BBa_B0012_seq</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Sequence"/>
+    <sbol:hasNamespace rdf:resource="http://sbols.org/unspecified_namespace"/>
+    <sbol:elements>tcacactggctcaccttcgggtgggcctttctgcgtttata</sbol:elements>
+    <sbol:encoding rdf:resource="https://identifiers.org/edam:format_1207"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent9/Range1">
+    <sbol:displayId>Range1</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Range"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200_sequence"/>
+    <sbol:start rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1735</sbol:start>
+    <sbol:end rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1775</sbol:end>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent15">
+    <sbol:displayId>SubComponent15</sbol:displayId>
+    <sbol:name>BBa_B0011_3</sbol:name>
+    <rdf:type rdf:resource="http://sbols.org/v3#SubComponent"/>
+    <sbol:instanceOf rdf:resource="http://sbols.org/unspecified_namespace/BBa_B0011"/>
+    <sbol:hasLocation rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent15/Range1"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent17/Range1">
+    <sbol:displayId>Range1</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Range"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200_sequence"/>
+    <sbol:start rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3246</sbol:start>
+    <sbol:end rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3257</sbol:end>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint13">
+    <sbol:displayId>Constraint13</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Constraint"/>
+    <sbol:restriction rdf:resource="http://sbols.org/v3#precedes"/>
+    <sbol:subject rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent13"/>
+    <sbol:object rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent14"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent8/Range1">
+    <sbol:displayId>Range1</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Range"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200_sequence"/>
+    <sbol:start rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">958</sbol:start>
+    <sbol:end rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1726</sbol:end>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint16">
+    <sbol:displayId>Constraint16</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Constraint"/>
+    <sbol:restriction rdf:resource="http://sbols.org/v3#precedes"/>
+    <sbol:subject rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent16"/>
+    <sbol:object rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent17"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent15/Range1">
+    <sbol:displayId>Range1</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Range"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200_sequence"/>
+    <sbol:start rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3129</sbol:start>
+    <sbol:end rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3174</sbol:end>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint6">
+    <sbol:displayId>Constraint6</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Constraint"/>
+    <sbol:restriction rdf:resource="http://sbols.org/v3#precedes"/>
+    <sbol:subject rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent6"/>
+    <sbol:object rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent7"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent2">
+    <sbol:displayId>SubComponent2</sbol:displayId>
+    <sbol:name>BBa_B0034_1</sbol:name>
+    <rdf:type rdf:resource="http://sbols.org/v3#SubComponent"/>
+    <sbol:instanceOf rdf:resource="http://sbols.org/unspecified_namespace/BBa_B0034"/>
+    <sbol:hasLocation rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent2/Range1"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint9">
+    <sbol:displayId>Constraint9</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Constraint"/>
+    <sbol:restriction rdf:resource="http://sbols.org/v3#precedes"/>
+    <sbol:subject rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent9"/>
+    <sbol:object rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent10"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent19">
+    <sbol:displayId>SubComponent19</sbol:displayId>
+    <sbol:name>BBa_B0010_1</sbol:name>
+    <rdf:type rdf:resource="http://sbols.org/v3#SubComponent"/>
+    <sbol:instanceOf rdf:resource="http://sbols.org/unspecified_namespace/BBa_B0010"/>
+    <sbol:hasLocation rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent19/Range1"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent4">
+    <sbol:displayId>SubComponent4</sbol:displayId>
+    <sbol:name>BBa_B0012_1</sbol:name>
+    <rdf:type rdf:resource="http://sbols.org/v3#SubComponent"/>
+    <sbol:instanceOf rdf:resource="http://sbols.org/unspecified_namespace/BBa_B0012"/>
+    <sbol:hasLocation rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent4/Range1"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent12/Range1">
+    <sbol:displayId>Range1</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Range"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200_sequence"/>
+    <sbol:start rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1901</sbol:start>
+    <sbol:end rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1912</sbol:end>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent8">
+    <sbol:displayId>SubComponent8</sbol:displayId>
+    <sbol:name>BBa_C0050_1</sbol:name>
+    <rdf:type rdf:resource="http://sbols.org/v3#SubComponent"/>
+    <sbol:instanceOf rdf:resource="http://sbols.org/unspecified_namespace/BBa_C0050"/>
+    <sbol:hasLocation rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent8/Range1"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_B0011_seq">
+    <sbol:displayId>BBa_B0011_seq</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Sequence"/>
+    <sbol:hasNamespace rdf:resource="http://sbols.org/unspecified_namespace"/>
+    <sbol:elements>agagaatataaaaagccagattattaatccggcttttttattattt</sbol:elements>
+    <sbol:encoding rdf:resource="https://identifiers.org/edam:format_1207"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_C0040_seq">
+    <sbol:displayId>BBa_C0040_seq</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Sequence"/>
+    <sbol:hasNamespace rdf:resource="http://sbols.org/unspecified_namespace"/>
+    <sbol:elements>atgtccagattagataaaagtaaagtgattaacagcgcattagagctgcttaatgaggtcggaatcgaaggtttaacaacccgtaaactcgcccagaagctaggtgtagagcagcctacattgtattggcatgtaaaaaataagcgggctttgctcgacgccttagccattgagatgttagataggcaccatactcacttttgccctttagaaggggaaagctggcaagattttttacgtaataacgctaaaagttttagatgtgctttactaagtcatcgcgatggagcaaaagtacatttaggtacacggcctacagaaaaacagtatgaaactctcgaaaatcaattagcctttttatgccaacaaggtttttcactagagaatgcattatatgcactcagcgctgtggggcattttactttaggttgcgtattggaagatcaagagcatcaagtcgctaaagaagaaagggaaacacctactactgatagtatgccgccattattacgacaagctatcgaattatttgatcaccaaggtgcagagccagccttcttattcggccttgaattgatcatatgcggattagaaaaacaacttaaatgtgaaagtgggtccgctgcaaacgacgaaaactacgctttagtagcttaataacactgatagtgctagtgtagatcac</sbol:elements>
+    <sbol:encoding rdf:resource="https://identifiers.org/edam:format_1207"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent1">
+    <sbol:displayId>SubComponent1</sbol:displayId>
+    <sbol:name>BBa_R0011_1</sbol:name>
+    <rdf:type rdf:resource="http://sbols.org/v3#SubComponent"/>
+    <sbol:instanceOf rdf:resource="http://sbols.org/unspecified_namespace/BBa_R0011"/>
+    <sbol:hasLocation rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent1/Range1"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent3/Range1">
+    <sbol:displayId>Range1</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Range"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200_sequence"/>
+    <sbol:start rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">82</sbol:start>
+    <sbol:end rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">766</sbol:end>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent11/Range1">
+    <sbol:displayId>Range1</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Range"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200_sequence"/>
+    <sbol:start rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1838</sbol:start>
+    <sbol:end rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1892</sbol:end>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200_sequence">
+    <sbol:displayId>BBa_I5200_sequence</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Sequence"/>
+    <sbol:hasNamespace rdf:resource="http://sbols.org/unspecified_namespace"/>
+    <sbol:elements>aattgtgagcggataacaattgacattgtgagcggataacaagatactgagcacatactagagaaagaggagaaatactagatgtccagattagataaaagtaaagtgattaacagcgcattagagctgcttaatgaggtcggaatcgaaggtttaacaacccgtaaactcgcccagaagctaggtgtagagcagcctacattgtattggcatgtaaaaaataagcgggctttgctcgacgccttagccattgagatgttagataggcaccatactcacttttgccctttagaaggggaaagctggcaagattttttacgtaataacgctaaaagttttagatgtgctttactaagtcatcgcgatggagcaaaagtacatttaggtacacggcctacagaaaaacagtatgaaactctcgaaaatcaattagcctttttatgccaacaaggtttttcactagagaatgcattatatgcactcagcgctgtggggcattttactttaggttgcgtattggaagatcaagagcatcaagtcgctaaagaagaaagggaaacacctactactgatagtatgccgccattattacgacaagctatcgaattatttgatcaccaaggtgcagagccagccttcttattcggccttgaattgatcatatgcggattagaaaaacaacttaaatgtgaaagtgggtccgctgcaaacgacgaaaactacgctttagtagcttaataacactgatagtgctagtgtagatcactactagagtcacactggctcaccttcgggtgggcctttctgcgtttatatactagagagagaatataaaaagccagattattaatccggcttttttattattttactagagtccctatcagtgatagagattgacatccctatcagtgatagagatactgagcactactagagaaagaggagaaatactagatggttcaacagaaagagcgtgaaactttctcgcagaggcttgcgctggcctgtgataaagcgggattacctttgcatggtaggcaggctgatttagctgtcaggcttaaggtcacaccaaaagccattagtaaatggttcaacggggagtcaataccaagaaaagacaagatggaatctctggcttcggtgctgggaactactgctgcatatctgcatggctatgctgatgatgacggtatcacggtaaatcatctatcaagatcaaatgattattatcgtgttgatgtattggatgttcaggcgagcgccgggccaggaaccatggtttccaatgaatttatagaaaagataagagcaattgaatatacgaccgagcaggcaagaattttatttaatggaaggccacaggaaagcgtaaaagtcatcacggttcgcggtgacagcatggagggaaccatcaatccgggagatgagatctttgttgatgtatccataacctgttttgatggcgatggcatttatgtgtttgtatacgggaaaacaatgcacgttaagcgcctgcaaatgcaaaagaacaggcttgccgtcatctctgacaatgccgcttatgatcgatggtacatagaagaaggtgaagaagagcaacttcacattctagccaaagtcctcattaggcagtcaatcgattacaagcgattcggagctgcaaacgacgaaaactacgctttagtagcttaataaccctgatagtgctagtgtagatccctactagagtcacactggctcaccttcgggtgggcctttctgcgtttatatactagagagagaatataaaaagccagattattaatccggcttttttattattttactagagttaggtattgactgtactatcagttccgtcataatatgaaccataagttcaccactactagagaaagaggagaaatactagatggtgaatgtgaaaccagtaacgttatacgatgtcgcagagtatgccggtgtctcttatcagaccgtttcccgcgtggtgaaccaggccagccacgtttctgcgaaaacgcgggaaaaagtggaagcggcgatggcggagctgaattacattcccaaccgcgtggcacaacaactggcgggcaaacagtcgttgctgattggcgttgccacctccagtctggccctgcacgcgccgtcgcaaattgtcgcggcgattaaatctcgcgccgatcaactgggtgccagcgtggtggtgtcgatggtagaacgaagcggcgtcgaagcctgtaaagcggcggtgcacaatcttctcgcgcaacgcgtcagtgggctgatcattaactatccgctggatgaccaggatgccattgctgtggaagctgcctgcactaatgttccggcgttatttcttgatgtctctgaccagacacccatcaacagtattattttctcccatgaagacggtacgcgactgggcgtggagcatctggtcgcattgggtcaccagcaaatcgcgctgttagcgggcccattaagttctgtctcggcgcgtctgcgtctggctggctggcataaatatctcactcgcaatcaaattcagccgatagcggaacgggaaggcgactggagtgccatgtccggttttcaacaaaccatgcaaatgctgaatgagggcatcgttcccactgcgatgctggttgccaacgatcagatggcgctgggcgcaatgcgcgccattaccgagtccgggctgcgcgttggtgcggatatctcggtagtgggatacgacgataccgaagacagctcatgttatatcccgccgttaaccaccatcaaacaggattttcgcctgctggggcaaaccagcgtggaccgcttgctgcaactctctcagggccaggcggtgaagggcaatcagctgttgcccgtctcactggtgaaaagaaaaaccaccctggcgcccaatacgcaaaccgcctctccccgcgcgttggccgattcattaatgcagctggcacgacaggtttcccgactggaaagcgggcaggctgcaaacgacgaaaactacgctttagtagcttaataactctgatagtgctagtgtagatctctactagagtcacactggctcaccttcgggtgggcctttctgcgtttatatactagagagagaatataaaaagccagattattaatccggcttttttattattttactagagaattgtgagcggataacaattgacattgtgagcggataacaagatactgagcacatactagagaaagaggagaaatactagatgcgtaaaggagaagaacttttcactggagttgtcccaattcttgttgaattagatggtgatgttaatgggcacaaattttctgtcagtggagagggtgaaggtgatgcaacatacggaaaacttacccttaaatttatttgcactactggaaaactacctgttccatggccaacacttgtcactactttcggttatggtgttcaatgctttgcgagatacccagatcatatgaaacagcatgactttttcaagagtgccatgcccgaaggttatgtacaggaaagaactatatttttcaaagatgacgggaactacaagacacgtgctgaagtcaagtttgaaggtgatacccttgttaatagaatcgagttaaaaggtattgattttaaagaagatggaaacattcttggacacaaattggaatacaactataactcacacaatgtatacatcatggcagacaaacaaaagaatggaatcaaagttaacttcaaaattagacacaacattgaagatggaagcgttcaactagcagaccattatcaacaaaatactccaattggcgatggccctgtccttttaccagacaaccattacctgtccacacaatctgccctttcgaaagatcccaacgaaaagagagaccacatggtccttcttgagtttgtaacagctgctgggattacacatggcatggatgaactatacaaataataatactagagccaggcatcaaataaaacgaaaggctcagtcgaaagactgggcctttcgttttatctgttgtttgtcggtgaacgctctctactagagtcacactggctcaccttcgggtgggcctttctgcgtttata</sbol:elements>
+    <sbol:encoding rdf:resource="https://identifiers.org/edam:format_1207"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/Constraint4">
+    <sbol:displayId>Constraint4</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Constraint"/>
+    <sbol:restriction rdf:resource="http://sbols.org/v3#precedes"/>
+    <sbol:subject rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent4"/>
+    <sbol:object rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent5"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent2/Range1">
+    <sbol:displayId>Range1</sbol:displayId>
+    <rdf:type rdf:resource="http://sbols.org/v3#Range"/>
+    <sbol:hasSequence rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200_sequence"/>
+    <sbol:start rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">64</sbol:start>
+    <sbol:end rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">75</sbol:end>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent9">
+    <sbol:displayId>SubComponent9</sbol:displayId>
+    <sbol:name>BBa_B0012_2</sbol:name>
+    <rdf:type rdf:resource="http://sbols.org/v3#SubComponent"/>
+    <sbol:instanceOf rdf:resource="http://sbols.org/unspecified_namespace/BBa_B0012"/>
+    <sbol:hasLocation rdf:resource="http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent9/Range1"/>
+  </rdf:Description>
+</rdf:RDF>

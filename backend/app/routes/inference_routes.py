@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from app.utils.custom_error import CustomError
 from app.models.inference import process_image
 import numpy as np
-from app.config import model
+from app.config import get_model
 import cv2
 import base64
 import logging
@@ -31,7 +31,7 @@ def inference():
     logger.info(f"Processing image: {file.filename}")
     image_input = file.read()
     
-    result_image, draw_boxes, pred_classes = process_image(image_input, model)
+    result_image, draw_boxes, pred_classes = process_image(image_input, get_model())
 
     _, img_encoded = cv2.imencode('.png', result_image)
     img_base64 = base64.b64encode(img_encoded).decode('utf-8')
@@ -57,5 +57,7 @@ def inference():
       'has_predictions': True
     })
     
+  except CustomError:
+    raise
   except Exception as e:
     raise CustomError(f"Image processing failed: {e}", 500)

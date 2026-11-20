@@ -15,6 +15,7 @@ import ConfirmationDialog from '../../components/ConfirmationDialog/Confirmation
 import ConversionDialog from '../../components/ConversionDialog/ConversionDialog';
 import { validateForm } from '../../utils/ValidationUtils.jsx';
 import JSZip from 'jszip';
+import { functionalPayload, responseError } from '../../utils/FunctionalPayload.js';
 import ErrorAlertDialog from '../../components/ErrorAlertDialog/ErrorAlertDialog.jsx';
 import Welcome from '../../components/Welcome/Welcome.jsx';
 import LoadingScreen from '../../components/LoadingScreen/LoadingScreen.jsx';
@@ -99,11 +100,6 @@ export default function Home() {
 
   const handleSubmit = async () => {
 
-    if (expressions.length === 0) {
-      interactions.length = 0
-      eds.length = 0
-    }
-
     const validationErrors = validateForm({ namespace, prediction, expressions, interactions, eds }, participantRoles);
 
     if (validationErrors) {
@@ -123,60 +119,10 @@ export default function Home() {
 
     const processedComponents = prediction.map(({ availableNames, ...rest }) => rest);
 
-    const concatenateNameAndInstanceId = (items) => {
-      return items.map((item) => {
-        const updatedComponents = item.components.map((component) => {
-          return `${component.name}_${component.instance_id || 1}`;
-        });
-
-        const updatedUnions = item.unions.map((union) => ({
-          from: union.from.name
-            ? `${union.from.name}_${union.from.instance_id || 1}`
-            : union.from,
-          to: union.to.name
-            ? `${union.to.name}_${union.to.instance_id || 1}`
-            : union.to,
-          type: union.type,
-        }));
-
-        return {
-          ...item,
-          components: updatedComponents,
-          unions: updatedUnions,
-        };
-      });
-    };
-
-    const updatedExpressions = concatenateNameAndInstanceId(expressions);
-
-    const concatenateInteractionsNameAndInstanceId = (interactions, eds) => {
-      return interactions.map((interaction) => {
-        const updatedParticipants = Object.fromEntries(
-          Object.entries(interaction.participants).map(([role, participants]) => {
-            const formattedParticipants = participants.map((participant) => {
-              const isEd = eds.some(ed => ed.name === participant.name);
-
-              return isEd ? participant.name : `${participant.name}_${participant.instance_id || 1}`;
-            });
-            return [role, formattedParticipants];
-          })
-        );
-
-        return {
-          ...interaction,
-          participants: updatedParticipants,
-        };
-      });
-    };
-
-    const updatedInteractions = concatenateInteractionsNameAndInstanceId(interactions, eds);
-
     const dataToSend = {
-      namespace,
+      ...(namespace.trim() ? { namespace } : {}),
       components: processedComponents,
-      expressions: updatedExpressions,
-      interactions: updatedExpressions && updatedExpressions.length > 0 ? updatedInteractions : [],
-      eds: updatedExpressions && updatedExpressions.length > 0 ? eds : [],
+      ...functionalPayload(expressions, interactions, eds),
     };
 
     try {
@@ -201,21 +147,20 @@ export default function Home() {
         setOpenConversionDialog(true);
         const filePathStructural = response.headers.get('file_path_structural');
         setPathDownloadedFile(filePathStructural);
+        setPredictionName(prediction[0].name);
+        setPrediction(null);
+        setNamespace("");
+        setExpressions([]);
+        setInteractions([]);
+        setEds([]);
         setLoading(null);
       } else {
-        setLoading(null);
-        showModal("Error", "An error occurred while creating the file. Please try again.", "error");
+        showModal("Error", await responseError(response), "error");
       }
     } catch (error) {
       setLoading(null);
       showModal("Error", "Database connection error. Please try again later.", "error");
     } finally {
-      setPredictionName(prediction[0].name)
-      setPrediction(null);
-      setNamespace("");
-      setExpressions([]);
-      setInteractions([]);
-      setEds([]);
       setLoading(null);
     }
   };

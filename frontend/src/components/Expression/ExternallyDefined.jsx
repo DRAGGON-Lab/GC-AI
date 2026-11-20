@@ -4,7 +4,7 @@ import { Box, Autocomplete, TextField, IconButton, Divider } from '@mui/material
 
 import DeleteIcon from '@mui/icons-material/Delete';
 
-const edTypeOptions = ['Simple Chemical', 'Protein', 'Restriction Enzyme'];
+const edTypeOptions = ['DNA', 'RNA', 'Simple Chemical', 'Protein', 'Restriction Enzyme'];
 
 const ExternallyDefined = ({ eds, setEds, ed, edIndex, helperText, setErrors }) => {
 
@@ -44,7 +44,7 @@ const ExternallyDefined = ({ eds, setEds, ed, edIndex, helperText, setErrors }) 
               helperText={helperText?.type} focused />}
           />
           <TextField
-            label="URI"
+            label="Definition URI (optional for a local species)"
             value={ed.uri}
             error={helperText?.uri ? true : false}
             helperText={helperText?.uri}

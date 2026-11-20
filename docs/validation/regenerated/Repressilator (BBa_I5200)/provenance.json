@@ -1,0 +1,29 @@
+{
+  "request": "docs/examples/Repressilator (BBa_I5200)/request.json",
+  "request_sha256": "c53277aa39f17574e7795d35f7c544230c172987bc9cfe9c4479dca8839cd25e",
+  "metadata_source": "docs/examples/Repressilator (BBa_I5200)/BBa_I5200.xml",
+  "metadata_sha256": "eb1b568916ec62769db48a3ed809e6b4428012996e2c543adf6bd1bddced5de6",
+  "database": "offline fixture cursor: recorded part sequence and description; other metadata defaults",
+  "backend_sources": {
+    "backend/app/__init__.py": "085142688474d6f3e0980de9b4367f7c951c78a78ad70b1b601cd17ac01e8866",
+    "backend/app/config.py": "24d2136f67c4e27c10fdd24788cb6078b66ea6057e5ccdd8417b9ccd404a9bf0",
+    "backend/app/models/__init__.py": "c95841fc280b6a84a41622aac26153cb3c4ccbdca144dc2874cc4028cf528461",
+    "backend/app/models/create_fasterrcnn_model.py": "4e951446e9b27a0809e4149c3cac9e5dab77b2fc993f1a3c502c4dfbcb1aa070",
+    "backend/app/models/fasterrcnn_resnet50_fpn.py": "7fcb1dc3a39ea64db2c49a77f500f8b49d99c5cd7189c81355783ef4702f9dd9",
+    "backend/app/models/fasterrcnn_resnet50_fpn_v2.py": "2be09352c510da369554f3d0b8adddf8cc1f8caf19b1f1728fc847ac51dd844c",
+    "backend/app/models/inference.py": "dabaefab643b0d4972921946949fac5c329c47279bdfdd73ceaf8471620f579e",
+    "backend/app/routes/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/app/routes/component_routes.py": "4ef2aeb51ea50fcd0ac21bfadd5b5a7b187b4e38167ada0bc451991e1cda6030",
+    "backend/app/routes/file_routes.py": "f5b71a3901ff1877f53e0d4d1c2eac2f99aaaa50b7812a7462a6a6b69dd9ca9f",
+    "backend/app/routes/healthcheck_routes.py": "f003a5e051fd1d3f120ace411ca5e85152fa67784ffc695de485b654170cc107",
+    "backend/app/routes/inference_routes.py": "f5a13f796dff5254f9dcefd7c73f05cd06c4894239e9a0d654950b31f6ad07a4",
+    "backend/app/utils/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/app/utils/annotations.py": "ba1e87b2887afcb0151ab08b284832a7d02718c8a7d6f51a118263eca2e2b147",
+    "backend/app/utils/calculate_seq.py": "7afc6375f7031235caff09b8cdb6a026e7ab723610d817b9d8991c655e7c9013",
+    "backend/app/utils/cleanup.py": "6a3bb23042a57cbe0430c995cb15dddcbc6996192a4fef99ef4bc5677f2021b5",
+    "backend/app/utils/custom_error.py": "da99ba900c5e8dc6347a0d6877c25d3f3848cf40dbd328a2d3c9218e2c4f047d",
+    "backend/app/utils/file.py": "980d256cca9e5050e3e652067fc66e8d5d4c66b842cd7e02161ce5781a1d1f6f",
+    "backend/app/utils/p_constitutive.py": "2a3c0514a916c192dade69247835377613849d64560bb1dccd1251b472f4eebd",
+    "backend/app/utils/validation.py": "3a6c8ccb5bf088ae83b9278b8a7bfb72f15de4bdee576ef1d664b05f4c069aeb"
+  }
+}

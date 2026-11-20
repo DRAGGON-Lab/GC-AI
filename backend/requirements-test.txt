@@ -1,0 +1,9 @@
+# Detector-free API/scientific regression environment (Python 3.12).
+Flask==2.0.1
+Werkzeug==2.0.3
+flask-cors==6.0.5
+python-dotenv==1.2.4
+PyYAML==6.0.3
+sbol3==1.2.0.post0
+sbol-utilities==1.0a17
+pytest==9.2.0

@@ -89,6 +89,8 @@ For a detailed API reference, user guide, and additional resources, visit the `d
 -  **API Documentation:** Detailed explanations of each endpoint, including parameters, request examples, and responses.
 -  **User Guide:** Step-by-step instructions on how to use the application.
 -  **Examples Folder:** Contains example files and use cases to better understand the functionality.
+-  **[`examples/`](examples/):** Runnable scripts that take a diagram to SBOL3 and put the result in a registry.
+-  **[`client/`](client/):** A Python client and command line tool for the API, and an MCP server over it.
 
 [**Video Tutorial**](https://drive.google.com/file/d/1RuKLGXI1q8kWlBau8AR73cHA5y5vItGI/view?usp=sharing)
 
