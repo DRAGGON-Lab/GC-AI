@@ -27,8 +27,7 @@ from mcp.types import CallToolResult, TextContent, ToolAnnotations
 from pydantic import Field
 
 from gcai.client import GCAIClient
-from gcai.constants import Role
-from gcai.design import Design, Operon, Part
+from gcai.design import Design, Operon, name_parts
 from gcai.errors import GCAIConnectionError, GCAIError, GCAIResponseError
 from gcai.mcp.schemas import Glyph, Result
 
@@ -110,33 +109,6 @@ def _fail(exc: Exception) -> ToolError:
         return ToolError(str(exc))
     logger.exception("unhandled error")
     return ToolError(f"internal error: {type(exc).__name__}")
-
-
-def _parts_for(roles: list[Role], part_names: list[str] | None) -> list[Part]:
-    """One part per detected role.
-
-    A name that was given binds the part to the service's registry, which
-    supplies its description and sequence. Where no name was given the part is
-    named after its role and carries no sequence, which is everything the
-    diagram says about it.
-    """
-    parts: list[Part] = []
-    counts: dict[str, int] = {}
-    for index, role in enumerate(roles):
-        given = ((part_names[index] if part_names and index < len(part_names) else "") or "").strip()
-        if given:
-            parts.append(Part(name=given, role=role, new=False))
-            continue
-        counts[role.value] = counts.get(role.value, 0) + 1
-        parts.append(
-            Part(
-                name=f"{role.value.lower().replace('-', '_')}_{counts[role.value]}",
-                role=role,
-                new=True,
-                description=f"{role.value} read from the diagram",
-            )
-        )
-    return parts
 
 
 def _register(mcp: MCPServer) -> None:
@@ -239,8 +211,8 @@ def _register(mcp: MCPServer) -> None:
                 "the number of names does not match the number of parts",
             )
 
-        design = Design(name=name, namespace=namespace, description=description)
-        design.parts.extend(_parts_for(roles, part_names))
+        design = Design.from_detection(detection, name=name, namespace=namespace, description=description)
+        name_parts(design, part_names)
         design.operons.append(Operon(name=f"{name}_operon", parts=list(design.parts)).chain())
 
         errors = [issue for issue in design.validate() if issue.severity == "error"]
@@ -255,8 +227,12 @@ def _register(mcp: MCPServer) -> None:
                 "the design is not valid",
             )
 
+        # GenBank and FASTA come from a conversion to SBOL2, which rejects a
+        # part whose range ends at zero. A part with no bases has one: either it
+        # carries a sequence of its own, or it names a part the service looks up.
+        bases = all(part.sequence or not part.new for part in design.parts)
         try:
-            built = app.service.build(design, genbank=genbank, fasta=fasta, validate=False)
+            built = app.service.build(design, genbank=genbank and bases, fasta=fasta and bases, validate=False)
         except Exception as exc:
             raise _fail(exc) from exc
 
@@ -272,6 +248,11 @@ def _register(mcp: MCPServer) -> None:
                 "parts named after their role carry no sequence, so the document records their "
                 "role and their place in the order. The parent's sequence is the assembly scars "
                 "between them. Pass part_names to bind them to registry parts."
+            )
+        if (genbank or fasta) and not bases:
+            result.notes.append(
+                "GenBank and FASTA were not produced: they need every part to carry bases, and "
+                "parts named after their role carry none."
             )
 
         if output_dir:

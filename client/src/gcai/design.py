@@ -387,3 +387,29 @@ def iter_parts(items: Iterable[Sequence[Part]]) -> list[Part]:
             if not any(part is known for known in seen):
                 seen.append(part)
     return seen
+
+
+def name_parts(design: Design, part_names: Sequence[str] | None = None) -> None:
+    """Give a name to every part in `design` that does not have one.
+
+    An entry in `part_names`, taken positionally over the unnamed parts, binds
+    that part to one the service's registry holds, which supplies its
+    description and sequence. Where no entry is given the part is named after
+    its role and carries no sequence, which is everything a diagram says about
+    it.
+    """
+    counts: dict[str, int] = {}
+    position = 0
+    for part in design.parts:
+        if part.name:
+            continue
+        given = ((part_names[position] if part_names and position < len(part_names) else "") or "").strip()
+        position += 1
+        if given:
+            part.name = given
+            part.new = False
+            continue
+        counts[part.role.value] = counts.get(part.role.value, 0) + 1
+        part.name = f"{part.role.value.lower().replace('-', '_')}_{counts[part.role.value]}"
+        part.new = True
+        part.description = f"{part.role.value} read from the diagram"
