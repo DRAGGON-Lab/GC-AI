@@ -30,6 +30,7 @@ with GCAIClient("http://localhost:5001") as client:
 ```sh
 pip install -e client              # the client and its CLI
 pip install -e "client[db]"        # also storing designs in SBOL DB
+pip install -e "client[mcp]"       # also the MCP server
 ```
 
 ## What it handles
@@ -124,6 +125,38 @@ gcai build "docs/examples/YES GATE/request.json" -o out
 `--url` or `GCAI_URL` points at a service other than `http://localhost:5001`.
 `--registry` or `SBOL_DB_URL` points at a registry; `publish` also needs
 `--yes`, because it writes somewhere other people can read.
+
+## MCP server
+
+`gcai-mcp` serves the GC-AI service over MCP, with one tool. Needs the `mcp`
+extra.
+
+```sh
+claude mcp add --transport stdio gc-ai --scope project -- \
+  uv run --with "gc-ai-client[mcp]" gcai-mcp --url http://localhost:5001 --allow-root .
+```
+
+The tool is `design_from_image`. Call it with just an image and it returns the
+glyphs the detector found, left to right, with the role of each, and the image
+with the detections drawn on it. Call it again with `part_names` and it builds
+the SBOL3.
+
+The image arrives one of two ways. `image_path` when the server shares a
+filesystem with the caller, which is the stdio case. `image_base64` when it
+does not. Give exactly one.
+
+The two calls are separate because detection finds roles, not names, and it
+misses parts. A photograph of a hand-drawn circuit here gives 2 glyphs for an
+8-part design. Whoever is driving has to look at the picture and decide what
+the design really is.
+
+`output_dir` writes the documents there and returns the paths. Without it the
+SBOL3 comes back in the result, which is tens of thousands of tokens for a
+real design. `--allow-root` bounds which directories the server will read
+images from or write files to; it defaults to the working directory.
+
+`--http` serves streamable HTTP instead of stdio. On a non-loopback address it
+requires `--allowed-host`, without which every request is rejected.
 
 ## Tests
 
