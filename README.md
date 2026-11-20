@@ -48,54 +48,22 @@ Please refer to that repository for detailed instructions on setting up and runn
 
 ## 🔗 API Endpoints
 
-### 1. Component Endpoints
+The full contract is in [`docs/openapi.yaml`](docs/openapi.yaml), with a guide
+and a worked walkthrough in [`docs/api_documentation.md`](docs/api_documentation.md).
 
-#### 1.1 Get Component Names
-- **Path:** `/names`
-- **Method:** `GET`
-- **Description:** Returns a list of part names based on a specific role.
+| Method | Path | Description |
+| --- | --- | --- |
+| `POST` | `/inference/` | Detects SBOL Visual glyphs in an image and returns their classes and bounding boxes. |
+| `GET` | `/component/names` | Lists registry part names for a role. |
+| `GET` | `/component/interactions` | Lists the participation roles an interaction type expects. |
+| `GET` | `/component/details` | Returns one registry part with its description and sequence. |
+| `POST` | `/file/create` | Generates SBOL3 documents for a design. |
+| `POST` | `/file/convert` | Converts a generated document to GenBank and/or FASTA. |
+| `GET` | `/healthcheck/` | Reports service status. Always answers `500` in the current build. |
 
-#### 1.2 Get Interaction Participations
-- **Path:** `/interactions`
-- **Method:** `GET`
-- **Description:** Returns participation types for a specific interaction type.
-
-#### 1.3 Get Component Details
-- **Path:** `/details`
-- **Method:** `GET`
-- **Description:** Returns details of a component based on its name.
-
----
-
-### 2. File Endpoints
-
-#### 2.1 Generate SBOL3 File
-- **Path:** `/create`
-- **Method:** `POST`
-- **Description:** Generates validated SBOL3 files.
-
-#### 2.2 Convert SBOL3 Files
-- **Path:** `/convert`
-- **Method:** `POST`
-- **Description:** Converts SBOL3 files to GenBank and/or FASTA formats.
-
----
-
-### 3. Inference Endpoints
-
-#### 3.1 Process Image
-- **Path:** `/`
-- **Method:** `POST`
-- **Description:** Processes an image and returns predictions.
-
----
-
-### 4. Health Endpoints
-
-#### 4.1 Healthcheck
-- **Path:** `/`
-- **Method:** `GET`
-- **Description:** Checks the application's health and its services.
+To check whether a running instance is usable, call
+`GET /component/names?role=Promoter`: it succeeds only when the application is
+serving, the detection model has loaded and the parts database answers.
 
 ---
 
