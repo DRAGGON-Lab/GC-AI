@@ -33,26 +33,25 @@ pip install -e "client[sbol]"      # also validation and the round-trip check
 pip install -e "client[db]"        # also publishing to an SBOL DB registry
 ```
 
-## What it does for you
+## What it handles
 
-**Builds the request.** `Design.to_payload()` produces exactly what
-`POST /file/create` expects: the parent component first, parts in 5'-to-3'
-order, instance numbers worked out for parts that share a name, and operon and
-interaction members written as the `{name}_{instance}` references the service
-reads. Parts are linked by object identity, so two parts may share a name and
-still be told apart.
+`Design.to_payload()` produces what `POST /file/create` expects: the parent
+component first, parts in 5'-to-3' order, instance numbers worked out for
+parts that share a name, and operon and interaction members written as the
+`{name}_{instance}` references the service reads. Parts are linked by object
+identity, so two parts can share a name and still be told apart.
 
-**Checks the design first.** `design.validate()` returns the problems the
-service will not tell you about: names that are not valid SBOL displayIds, a
-part URI that does not end in a separator, a participation role that does not
-belong to its interaction type, a species URI with whitespace in it. Errors
-stop `build` unless you pass `validate=False`.
+`design.validate()` catches what the service will not tell you about. Names
+that are not valid SBOL displayIds. Part URIs that do not end in a separator.
+A participation role that does not belong to its interaction type. A species
+URI with whitespace in it. Errors stop `build` unless you pass
+`validate=False`.
 
-**Hides the file handoff.** `POST /file/create` returns the path of a second
-document in a response header, and `POST /file/convert` takes that path.
-`build()` does both and hands back the bytes.
+`build()` hides the file handoff. `POST /file/create` returns the path of a
+second document in a response header and `POST /file/convert` wants that path,
+so `build()` does both calls and hands back the bytes.
 
-## Things about the service worth knowing
+## Service behaviour that will catch you out
 
 - **`/healthcheck/` always answers 500.** It closes its database cursor without
   reading the result of its test query. `client.health()` calls
@@ -72,9 +71,8 @@ document in a response header, and `POST /file/convert` takes that path.
 
 ## Working with what comes back
 
-The `interop` module handles a generated document after the service has
-written it. `validate` and `check_order` need the `sbol` extra; publishing
-needs `db`.
+Three things you can do with a document once the service has written it.
+`validate` and `check_order` need the `sbol` extra. Publishing needs `db`.
 
 ```python
 from gcai.interop import validate, check_order, SbolDb
@@ -95,33 +93,36 @@ with SbolDb("http://localhost:8888") as registry:
     sbol2 = registry.to_sbol2("https://example.org/designs/my-circuit")
 ```
 
-**Validation.** The service reports whether it could *write* a document, not
-whether that document is valid: it discards its own validation result before
-checking it. `validate` runs that check. It also reports a document that holds
-no SBOL objects at all, which would otherwise look valid.
+**Validation.** The service never validates what it writes. It builds the
+document, calls `validate()`, drops the result without looking at it, and
+returns the file. `validate` runs the check that got skipped.
 
-**Round-trip.** `check_order` compares the glyphs detected in an image with
-the parts the document encodes, matching a glyph class against the role it
-becomes, so `cds` and `cds-arrow` both satisfy a CDS. The order comes from the
-Range locations the service writes, falling back to its chain of `meets`
-constraints; when a document carries both and they disagree, that is raised
-rather than guessed at. A design is usually completed by hand after detection,
-so a report that is not `ok` normally means the document holds parts the image
-did not show.
+It also flags a document with no SBOL objects in it. Any XML parses as RDF, so
+validating the wrong file comes back clean otherwise.
+
+**Round-trip.** `check_order` compares the glyphs detected in an image to the
+parts in the document and reports the differences as inserts, deletes and
+replacements. `cds` and `cds-arrow` both count as a CDS.
+
+Part order comes from the Range locations on each part. If those are missing
+it walks the `meets` constraint chain instead. If a document has both and they
+disagree, it raises rather than picking one.
+
+Most of a design gets typed in by hand after detection, so a failing report is
+normal. It tells you how much came from the drawing.
 
 **Publishing.** `SbolDb` talks to an [SBOL DB](https://github.com/marpaia/sbol-db)
-registry. `publish` sends a generated document as `application/rdf+xml` and
-returns what the registry made of it: the graph it created, how many objects
-and triples it holds, and the result of the registry's own validation, which
-it runs on every import. `fetch` reads an object back, and `to_sbol2` asks the
-registry for the SBOL2 form of one. The registry holds SBOL3 and serves either
-vocabulary, so both directions are a single call.
+registry. `publish` POSTs the document as `application/rdf+xml` and gives you
+back the graph id, the object and triple counts, and the registry's validation
+result. It validates every import. `fetch` pulls an object back out.
+`to_sbol2` pulls the SBOL2 version; the registry does that conversion.
 
-`overwrite` decides what a second publish to the same `document_iri` does: 0
+`overwrite` says what a second publish to the same `document_iri` does. 0
 fails, 1 replaces, 2 merges.
 
-Health is served on a separate loopback listener, port 9090 by default, so
-pass `operations_url` when it differs from the registry's own address.
+Health is on a different port. The registry serves `/healthz` on a loopback
+operations listener, 9090 by default, so pass `operations_url` if it is not
+the same address as the registry.
 
 ## Command line
 
