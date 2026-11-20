@@ -1,0 +1,415 @@
+{
+  "schema_version": 1,
+  "source_revision": "38906ca3c653b12af678bc03c3df253ca2b91b24",
+  "probe_version": "0.2.2",
+  "fixtures": {
+    "docs/examples/Lux System (BBa_I13263)/BBa_I13263.xml": {
+      "sha256": "3e0233be85d8c824c13ccc77f7f53b0861cc91c63ee9350f0042cbfc76ecadec",
+      "pysbol3": [],
+      "sbol_rs": [
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I13263/Constraint1",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I13263/Constraint2",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I13263/Constraint3",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I13263/Constraint4",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I13263/Constraint5",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I13263/Constraint6",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I13263/Constraint7",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I13263/Constraint8",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I13263/Constraint9",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I13263_system/Constraint10",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I13263_system/Constraint16",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I13263_system/Constraint17",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I13263_system/Constraint18",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I13263_system/Constraint19",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I13263_system/Constraint7",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I13263_system/Constraint8",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I13263_system/Constraint9",
+          "property": "http://sbols.org/v3#restriction"
+        }
+      ]
+    },
+    "docs/examples/Repressilator (BBa_I5200)/BBa_I5200.xml": {
+      "sha256": "eb1b568916ec62769db48a3ed809e6b4428012996e2c543adf6bd1bddced5de6",
+      "pysbol3": [],
+      "sbol_rs": [
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint1",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint10",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint11",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint12",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint13",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint14",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint15",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint16",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint17",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint18",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint19",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint2",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint3",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint4",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint5",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint6",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint7",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint8",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint9",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint15",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint16",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint17",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint18",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint24",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint25",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint26",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint27",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint33",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint34",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint35",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint36",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint6",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint7",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint8",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint9",
+          "property": "http://sbols.org/v3#restriction"
+        }
+      ]
+    },
+    "docs/examples/YES GATE/YES-GATE.xml": {
+      "sha256": "f5a106263f81a5ba7076d102db706cda140dcd6152ebbe9fd4ec0760d39d161d",
+      "pysbol3": [],
+      "sbol_rs": [
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_0000/Constraint1",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_0000/Constraint2",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_0000/Constraint3",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_0000/Constraint4",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_0000/Constraint5",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_0000/Constraint6",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_0000/Constraint7",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_0000_system/Constraint13",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_0000_system/Constraint14",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_0000_system/Constraint15",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_0000_system/Constraint6",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_0000_system/Constraint7",
+          "property": "http://sbols.org/v3#restriction"
+        },
+        {
+          "severity": "error",
+          "rule_id": "sbol3-11706",
+          "subject": "http://sbols.org/unspecified_namespace/BBa_0000_system/Constraint8",
+          "property": "http://sbols.org/v3#restriction"
+        }
+      ]
+    }
+  }
+}

@@ -4,7 +4,7 @@ The original YES gate reproduces **0 pySBOL3 findings versus 13 sbol-rs findings
 All thirteen are concrete `sbol3-11706` errors: positional `meets` constraints
 contradict ranges separated by BioBrick scars. Lux has 17 and Repressilator 35
 errors of the same kind. These are document defects missed by pySBOL3, rather
-than a reason to relax validation. The approved relative-order semantics correct
+than a reason to relax validation. The proposed relative-order semantics correct
 these constraints to `precedes`.
 
 | Fixture | Original pySBOL3 | Original sbol-rs | Regenerated full, both validators | Regenerated structural, both validators |
@@ -28,7 +28,7 @@ From the repository root, with the backend's test dependencies installed:
 
 ```sh
 cargo build --locked --manifest-path tools/sbol-diagnostics/Cargo.toml
-python tools/reconcile_sbol_validation.py \
+python tools/reconcile_sbol_validation.py --mode verify \
   --probe tools/sbol-diagnostics/target/debug/gcai-sbol-diagnostics \
   --regenerate docs/validation/regenerated \
   --output docs/validation/committed-examples.json
@@ -39,7 +39,7 @@ This execution used writable temporary Cargo directories and cached dependencies
 ```sh
 CARGO_HOME=/private/tmp/gcai-cargo CARGO_TARGET_DIR=/private/tmp/gcai-sbol-target \
   cargo build --offline --manifest-path tools/sbol-diagnostics/Cargo.toml
-/private/tmp/gcai-venv/bin/python tools/reconcile_sbol_validation.py \
+/private/tmp/gcai-venv/bin/python tools/reconcile_sbol_validation.py --mode verify \
   --probe /private/tmp/gcai-sbol-target/debug/gcai-sbol-diagnostics \
   --regenerate docs/validation/regenerated \
   --output docs/validation/committed-examples.json
@@ -79,3 +79,27 @@ graph IRIs and deletes its graphs in `finally`. Record the registry server versi
 separately from the Python client version, then rerun the integration suites.
 Scientific human review and merged-main verification remain required before
 closing the epic or claiming release readiness.
+
+## Automated conformance gate
+
+`--mode verify` is the default. Verification requires the pinned sbol-rs probe
+and `--regenerate`; it compares the complete historical fixture set, exact RDF
+hashes and complete diagnostic identities against `historical-baseline.json`.
+That baseline is frozen evidence and is never rewritten by this command. Both
+validators must report zero findings, including warnings, for all six freshly
+regenerated full/structural files. Equal historical counts with different rule,
+subject, severity or property identities fail the gate.
+
+Exit codes: **0** verified pass; **1** conformance or baseline violation; **2**
+missing prerequisite, malformed RDF/report, unsupported probe version or execution
+failure. Explicit `--mode capture` saves non-gating exploratory evidence, labelled
+`captured_non_gating`; it does not enforce the baseline or zero-finding policy.
+Capture still exits 2 for parse/execution errors. Report output must be outside
+the regeneration directory and cannot replace historical input or baseline files.
+
+The `SBOL conformance` workflow builds the locked Rust probe, regenerates into
+a runner temporary directory, verifies those exact bytes, and uploads reports and
+RDF/provenance artifacts even when the gate fails. External temporary paths are
+supported; generated files are explicitly grouped separately from historical
+fixtures. Changes to the historical baseline require a deliberate reviewed change
+with source provenance, rather than recapturing expected failures during verify.

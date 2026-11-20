@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Capture complete diagnostics without rewriting historical RDF fixtures."""
+"""Verify conformance and immutable historical diagnostics, or explicitly capture evidence."""
 
 from __future__ import annotations
 
@@ -30,7 +30,7 @@ def version(name):
 def inspect(path, probe=None, registry_url=None):
     raw = path.read_bytes()
     result = {
-        "path": str(path.relative_to(ROOT)),
+        "path": display_path(path),
         "sha256": hashlib.sha256(raw).hexdigest(),
     }
     graph = rdflib.Graph().parse(data=raw, format="xml")
@@ -68,6 +68,15 @@ def inspect(path, probe=None, registry_url=None):
             }
         else:
             result["sbol_rs"] = json.loads(process.stdout)
+            diagnostic = result["sbol_rs"]
+            if (
+                not isinstance(diagnostic, dict)
+                or diagnostic.get("validator") != "sbol-rs"
+                or not isinstance(diagnostic.get("version"), str)
+                or not isinstance(diagnostic.get("findings"), list)
+            ):
+                raise ValueError("Malformed probe diagnostic report")
+            identities(diagnostic["findings"])
             result["sbol_rs"]["status"] = "completed"
             result["sbol_rs"]["count"] = len(result["sbol_rs"]["findings"])
     result["registry"] = {
@@ -177,36 +186,162 @@ def regenerate(directory):
     return paths
 
 
-def main():
+BASELINE = ROOT / "docs/validation/historical-baseline.json"
+PROBE_VERSION = "0.2.2"
+
+
+def display_path(path):
+    try:
+        return str(path.resolve().relative_to(ROOT.resolve()))
+    except ValueError:
+        return str(path.resolve())
+
+
+def identities(findings):
+    """Canonical diagnostic identity, preserving duplicate findings."""
+    return sorted(
+        [
+            {
+                "severity": f["severity"],
+                "rule_id": f["rule_id"],
+                "subject": f["subject"],
+                "property": f.get("property"),
+            }
+            for f in findings
+        ],
+        key=lambda item: json.dumps(item, sort_keys=True),
+    )
+
+
+def verify(report, baseline, generated_paths):
+    """Return policy violations. Missing/execution evidence is handled separately."""
+    violations = []
+    historical = {
+        f["path"]: f for f in report["fixtures"] if f.get("group") == "historical"
+    }
+    if set(historical) != set(baseline["fixtures"]):
+        violations.append("Historical fixture set differs from baseline")
+    for path, expected in baseline["fixtures"].items():
+        if path not in historical:
+            continue
+        observed = historical[path]
+        if observed["sha256"] != expected["sha256"]:
+            violations.append(f"{path}: historical RDF hash changed")
+        for validator in ("pysbol3", "sbol_rs"):
+            if identities(observed[validator]["findings"]) != expected[validator]:
+                violations.append(f"{path}: {validator} diagnostic identities changed")
+    generated = {display_path(path) for path in generated_paths}
+    if len(generated) != 6:
+        violations.append("Expected exactly six regenerated full/structural documents")
+    for fixture in report["fixtures"]:
+        if fixture["path"] in generated:
+            for validator in ("pysbol3", "sbol_rs"):
+                if fixture[validator]["findings"]:
+                    violations.append(
+                        f"{fixture['path']}: {validator} reported findings"
+                    )
+    return violations
+
+
+def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--mode", choices=("verify", "capture"), default="verify")
     parser.add_argument("--probe", type=Path)
     parser.add_argument(
         "--regenerate",
         type=Path,
-        help="Save offline request replays in this directory inside the repository",
+        help="Save offline request replays; temporary paths outside the repository are supported",
     )
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--baseline", type=Path, default=BASELINE)
     parser.add_argument("--registry-url", default=os.environ.get("SBOL_DB_URL"))
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     report = {
+        "mode": args.mode,
+        "gating": args.mode == "verify",
         "python": platform.python_version(),
         "versions": {
             name: version(name) for name in ("sbol3", "rdflib", "pyshacl", "sbol-db")
         },
         "fixtures": [],
+        "violations": [],
+        "execution_errors": [],
     }
-    paths = sorted((ROOT / "docs/examples").glob("*/*.xml"))
-    if args.regenerate:
-        paths += regenerate(args.regenerate.resolve())
-    for path in paths:
-        report["fixtures"].append(inspect(path, args.probe, args.registry_url))
+    historical_paths = sorted((ROOT / "docs/examples").glob("*/*.xml"))
+    # Verification must never replace its expected evidence or historical inputs.
+    protected = {
+        args.baseline.resolve(),
+        *(path.resolve() for path in historical_paths),
+    }
+    if (
+        args.output.resolve() in protected
+        or (ROOT / "docs/examples").resolve() in args.output.resolve().parents
+    ):
+        print("Refusing to overwrite historical baseline or RDF input", file=sys.stderr)
+        return 2
+    if args.regenerate and (
+        args.output.resolve() == args.regenerate.resolve()
+        or args.regenerate.resolve() in args.output.resolve().parents
+    ):
+        print(
+            "Report output must be outside the regenerated evidence directory",
+            file=sys.stderr,
+        )
+        return 2
+    try:
+        if args.regenerate and (
+            (ROOT / "docs/examples").resolve() == args.regenerate.resolve()
+            or (ROOT / "docs/examples").resolve() in args.regenerate.resolve().parents
+        ):
+            raise ValueError("Regeneration cannot overwrite historical fixtures")
+        if args.mode == "verify" and (args.probe is None or args.regenerate is None):
+            raise ValueError("Verification requires --probe and --regenerate")
+        baseline = (
+            json.loads(args.baseline.read_text()) if args.mode == "verify" else None
+        )
+        if baseline is not None and (
+            baseline.get("schema_version") != 1
+            or baseline.get("probe_version") != PROBE_VERSION
+        ):
+            raise ValueError("Unsupported historical baseline or probe pin")
+        if args.probe is not None and not args.probe.is_file():
+            raise ValueError("Probe executable is missing")
+        generated_paths = (
+            regenerate(args.regenerate.resolve()) if args.regenerate else []
+        )
+        for path in historical_paths + generated_paths:
+            fixture = inspect(path, args.probe, args.registry_url)
+            fixture["group"] = (
+                "historical" if path in historical_paths else "regenerated"
+            )
+            report["fixtures"].append(fixture)
+            diagnostic = fixture["sbol_rs"]
+            if diagnostic.get("status") == "error":
+                raise RuntimeError(
+                    f"Probe execution failed for {fixture['path']}: {diagnostic.get('stderr', '')}"
+                )
+            if args.mode == "verify" and diagnostic.get("version") != PROBE_VERSION:
+                raise ValueError(
+                    f"Expected pinned sbol-rs {PROBE_VERSION}, got {diagnostic.get('version')}"
+                )
+        if args.mode == "verify":
+            report["violations"] = verify(report, baseline, generated_paths)
+    except Exception as exc:
+        report["execution_errors"].append(f"{type(exc).__name__}: {exc}")
+    report["result"] = (
+        "error"
+        if report["execution_errors"]
+        else (
+            "failed"
+            if report["violations"]
+            else "passed" if args.mode == "verify" else "captured_non_gating"
+        )
+    )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, indent=2) + "\n")
-    return (
-        0
-        if all(f["sbol_rs"].get("status") != "error" for f in report["fixtures"])
-        else 1
-    )
+    if report["execution_errors"]:
+        return 2
+    return 1 if report["violations"] else 0
 
 
 if __name__ == "__main__":
