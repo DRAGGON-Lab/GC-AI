@@ -1,6 +1,7 @@
 # Examples
 
-Each folder holds one circuit end to end:
+Captured output: each folder holds one circuit end to end. For the code that
+produces this kind of output, see [`examples/`](../../examples/).
 
 | File | What it is |
 | --- | --- |

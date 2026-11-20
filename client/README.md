@@ -25,6 +25,9 @@ with GCAIClient("http://localhost:5001") as client:
     result.write("out", stem="my_circuit")
 ```
 
+Two runnable scripts using it, from a diagram through to a registry, are in
+[`../examples/`](../examples/).
+
 ## Install
 
 ```sh

@@ -2,9 +2,9 @@ name: client
 
 on:
   push:
-    paths: ["client/**", ".github/workflows/client.yml", ".pre-commit-config.yaml"]
+    paths: ["client/**", "examples/**", ".github/workflows/client.yml", ".pre-commit-config.yaml"]
   pull_request:
-    paths: ["client/**", ".github/workflows/client.yml", ".pre-commit-config.yaml"]
+    paths: ["client/**", "examples/**", ".github/workflows/client.yml", ".pre-commit-config.yaml"]
 
 jobs:
   lint:
