@@ -1,4 +1,6 @@
 {
+  "mode": "verify",
+  "gating": true,
   "python": "3.12.13",
   "versions": {
     "sbol3": "1.2.0.post0",
@@ -165,7 +167,8 @@
       "registry": {
         "status": "not_run",
         "reason": "SBOL_DB_URL not configured; no live registry available"
-      }
+      },
+      "group": "historical"
     },
     {
       "path": "docs/examples/Repressilator (BBa_I5200)/BBa_I5200.xml",
@@ -469,7 +472,8 @@
       "registry": {
         "status": "not_run",
         "reason": "SBOL_DB_URL not configured; no live registry available"
-      }
+      },
+      "group": "historical"
     },
     {
       "path": "docs/examples/YES GATE/YES-GATE.xml",
@@ -597,12 +601,13 @@
       "registry": {
         "status": "not_run",
         "reason": "SBOL_DB_URL not configured; no live registry available"
-      }
+      },
+      "group": "historical"
     },
     {
       "path": "docs/validation/regenerated/Lux System (BBa_I13263)/full.xml",
-      "sha256": "82948f06ce65dacac15fa537674ab46dc1d00f28f506a1c64f65949488bccf0f",
-      "rdf_triples": 651,
+      "sha256": "222b5bd9ba249769c33721deca424412ff79bde40af5ee4264ddef783e07f59e",
+      "rdf_triples": 649,
       "pysbol3": {
         "status": "passed",
         "count": 0,
@@ -620,11 +625,12 @@
       "registry": {
         "status": "not_run",
         "reason": "SBOL_DB_URL not configured; no live registry available"
-      }
+      },
+      "group": "regenerated"
     },
     {
       "path": "docs/validation/regenerated/Lux System (BBa_I13263)/structural.xml",
-      "sha256": "2ad92f8e16b7cd8d616e7da1586ef5dbbc0d8b3ef1abaf8bd43a4df979696c4b",
+      "sha256": "d6d4ad4b25ba94c6bf34fc9d7193efb97717aa517bec0a529f15377567c8aed5",
       "rdf_triples": 366,
       "pysbol3": {
         "status": "passed",
@@ -643,12 +649,13 @@
       "registry": {
         "status": "not_run",
         "reason": "SBOL_DB_URL not configured; no live registry available"
-      }
+      },
+      "group": "regenerated"
     },
     {
       "path": "docs/validation/regenerated/Repressilator (BBa_I5200)/full.xml",
-      "sha256": "d480ba823c869c0c1ff0bb79bf3492064c8543d8ab14b032fc9073f84ee972c0",
-      "rdf_triples": 1138,
+      "sha256": "f3ed98363efc1a0ff244332a80de231db017ee92ced1bef1f99123d8d876ebc1",
+      "rdf_triples": 1134,
       "pysbol3": {
         "status": "passed",
         "count": 0,
@@ -666,11 +673,12 @@
       "registry": {
         "status": "not_run",
         "reason": "SBOL_DB_URL not configured; no live registry available"
-      }
+      },
+      "group": "regenerated"
     },
     {
       "path": "docs/validation/regenerated/Repressilator (BBa_I5200)/structural.xml",
-      "sha256": "0a099218f185bf395b193e3a4373198997e5e8704e4eed6fdf61bb565ff6b193",
+      "sha256": "ea757903c9e2e88b036e3376cc0ff8bd8fabffdfd844223caa8ee1412d60ad3f",
       "rdf_triples": 644,
       "pysbol3": {
         "status": "passed",
@@ -689,12 +697,13 @@
       "registry": {
         "status": "not_run",
         "reason": "SBOL_DB_URL not configured; no live registry available"
-      }
+      },
+      "group": "regenerated"
     },
     {
       "path": "docs/validation/regenerated/YES GATE/full.xml",
-      "sha256": "32605145e598f18fd1749e403b07f5a2e42b6e196bfaea1399a9f9bd69c1ff44",
-      "rdf_triples": 546,
+      "sha256": "e7f9f3c723259ecf470d601752ac27474ac3f7720d6d899bbcac1101bd44bbd2",
+      "rdf_triples": 544,
       "pysbol3": {
         "status": "passed",
         "count": 0,
@@ -712,11 +721,12 @@
       "registry": {
         "status": "not_run",
         "reason": "SBOL_DB_URL not configured; no live registry available"
-      }
+      },
+      "group": "regenerated"
     },
     {
       "path": "docs/validation/regenerated/YES GATE/structural.xml",
-      "sha256": "28caa652255117ba1b89b82977c5e63de253e2354cbeb411745419cf6fe773e2",
+      "sha256": "8203f0a16fd1afde105c6cffb4ba797118f3cc92c82b8aa7f48b42b090214e31",
       "rdf_triples": 305,
       "pysbol3": {
         "status": "passed",
@@ -735,7 +745,11 @@
       "registry": {
         "status": "not_run",
         "reason": "SBOL_DB_URL not configured; no live registry available"
-      }
+      },
+      "group": "regenerated"
     }
-  ]
+  ],
+  "violations": [],
+  "execution_errors": [],
+  "result": "passed"
 }

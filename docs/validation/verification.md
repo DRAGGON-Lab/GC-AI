@@ -7,9 +7,9 @@ means the check completed; unavailable services are not counted as passes.
 
 | Command / check | Result |
 | --- | --- |
-| `python -m pytest backend/tests -q --disable-warnings` | 46 passed; exit 0. Dependency deprecation warnings remain. |
+| `python -m pytest backend/tests -q --disable-warnings` | 67 passed (52 export/identity/annotation tests and 15 reconciliation tests); exit 0. Dependency deprecation warnings remain. |
 | `cd client && python -m pytest -q` | 123 passed, 22 live integration tests deselected; exit 0. |
-| `cd frontend && npm test` | 4 passed; exit 0. |
+| `cd frontend && npm test` | 10 passed; exit 0. |
 | `cd frontend && npm run build` | Passed; exit 0. |
 | ESLint on changed frontend files | Passed; exit 0. Global lint retains two existing hook dependency warnings in Interaction.jsx and PredictionAccordion.jsx. |
 | `python -m mypy --config-file client/pyproject.toml client/src examples` | 15 source files; exit 0. |
@@ -29,10 +29,40 @@ and fixture hashes are in committed-examples.json and regenerated provenance.
 
 Independent engineering/scientific code review found and corrected retention,
 optional-description validation and species/operon reference ambiguity defects.
-This is not the human scientific approval required before merge. See
-scientific-review.md for the inherited protein-role mapping concern.
+This is not the human scientific approval required before merge. The inherited blanket protein-role mapping has been removed; see
+scientific-review.md.
 
 PR #5 provenance: https://github.com/DRAGGON-Lab/GC-AI/pull/5 . Its intended
 examples/client delta is included, with corrections for the changed semantics.
 Original docs/examples artifacts are unchanged. See acceptance-matrix.md for
 remaining issue-closure gates. No live integration or issue closure is claimed.
+
+## Four review corrections
+
+The React selection stores source kind and stable source ID separately from the
+interaction row ID. Four cross-layer tests invoke those exact JavaScript helpers,
+submit through Flask, parse returned RDF/XML, and assert that same-name GFP DNA
+instances and local/external GFP proteins remain different participation targets.
+Two export tests assert protein molecular type/definition are retained without
+inferred transcription-factor activity. All 123 client tests still pass.
+
+Reconciliation now defaults to verification: original hashes and diagnostic
+identities must match an immutable baseline; all six fresh generated files must
+have zero findings from both pinned validators. Capture mode is explicitly
+non-gating. Fifteen tests cover findings, changed historical evidence, missing
+prerequisites, parse/execution failures and output-overwrite protection.
+The new conformance workflow builds the locked probe, regenerates temporary RDF
+and uploads verification evidence; remote CI execution is not claimed here.
+
+The final local command was:
+
+```sh
+/private/tmp/gcai-venv/bin/python tools/reconcile_sbol_validation.py --mode verify \
+  --probe /private/tmp/gcai-sbol-target/debug/gcai-sbol-diagnostics \
+  --regenerate docs/validation/regenerated \
+  --output docs/validation/committed-examples.json
+```
+
+Exit 0, result passed. All regenerated RDF/provenance and raw reports were
+refreshed after the backend correction. Original examples remain unchanged.
+ADR 0001 is Proposed — pending scientific review; no formal approval is claimed.
