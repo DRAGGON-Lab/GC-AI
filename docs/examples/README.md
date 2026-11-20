@@ -40,15 +40,30 @@ the species — is entered by hand in the web interface. `request.json` records 
 finished design, not the detector's output. `detections.json` records what the
 detector actually returned, so the two can be compared.
 
-## How `request.json` was produced
+## How these files were produced
 
-Each one is derived from the committed `.xml` and verified by replaying it
-against the service and comparing the result with that `.xml` triple by triple.
-`YES GATE` reproduces its document exactly. The other two reproduce theirs
-exactly apart from the species URIs, which are trimmed here: the committed
-documents carry leading or trailing spaces in `ExternallyDefined.definition`,
-and a URI with a space in it cannot be canonicalised by standard RDF tooling.
-One species in the Lux system has no URI at all, which is reproduced as it is.
+Each `request.json` is derived from the document that was committed for that
+example, and verified by replaying it against the service and comparing the
+result with that document triple by triple. The YES gate reproduced its
+document exactly, so its files are untouched.
 
-The service does not check the `uri` field of an entry in `eds`, so whitespace in
-it reaches the generated document unchanged.
+The Repressilator and Lux documents carried leading or trailing spaces in
+`ExternallyDefined.definition` — all four species URIs in the Repressilator,
+two of four in the Lux system. A URI containing a space cannot be
+canonicalised by standard RDF tooling, so those documents could not be
+processed by ordinary RDF libraries at all. The requests here hold the
+trimmed URIs and the two documents are regenerated from them, which changes
+nothing else: both still hold the same number of triples, and their GenBank
+and FASTA files are byte for byte what they were.
+
+All three documents now canonicalise, and validate with no errors and no
+warnings.
+
+One species in the Lux system, `LuxR-AHL Complex`, has no URI at all. That is
+kept as it is, because it is what the design says. Be aware that an empty
+`rdf:resource` is resolved against the document's own location when the file
+is parsed, so that species appears to be defined by whatever path the file
+happens to sit at.
+
+The service does not check the `uri` field of an entry in `eds`, so whatever
+is typed into the web interface reaches the generated document unchanged.
