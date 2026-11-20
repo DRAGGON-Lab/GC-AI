@@ -1,0 +1,525 @@
+{
+  "namespace": "http://sbols.org/unspecified_namespace",
+  "components": [
+    {
+      "id": "component-principal",
+      "uri": "http://parts.igem.org/",
+      "new": true,
+      "identifier": "BBa_I5200",
+      "name": "BBa_I5200",
+      "description": "Olmecs: Repressilator version 1 (HK022 cI)",
+      "role": "Engineered-Region"
+    },
+    {
+      "id": "bba_r0011-1",
+      "uri": "http://parts.igem.org/",
+      "new": false,
+      "identifier": "BBa_R0011",
+      "name": "BBa_R0011",
+      "description": "",
+      "role": "Promoter",
+      "sequence": "",
+      "sequence_length": "",
+      "instance_id": 1
+    },
+    {
+      "id": "bba_b0034-1",
+      "uri": "http://parts.igem.org/",
+      "new": false,
+      "identifier": "BBa_B0034",
+      "name": "BBa_B0034",
+      "description": "",
+      "role": "RBS",
+      "sequence": "",
+      "sequence_length": "",
+      "instance_id": 1
+    },
+    {
+      "id": "bba_c0040-1",
+      "uri": "http://parts.igem.org/",
+      "new": false,
+      "identifier": "BBa_C0040",
+      "name": "BBa_C0040",
+      "description": "",
+      "role": "CDS",
+      "sequence": "",
+      "sequence_length": ""
+    },
+    {
+      "id": "bba_b0012-1",
+      "uri": "http://parts.igem.org/",
+      "new": false,
+      "identifier": "BBa_B0012",
+      "name": "BBa_B0012",
+      "description": "",
+      "role": "Terminator",
+      "sequence": "",
+      "sequence_length": "",
+      "instance_id": 1
+    },
+    {
+      "id": "bba_b0011-1",
+      "uri": "http://parts.igem.org/",
+      "new": false,
+      "identifier": "BBa_B0011",
+      "name": "BBa_B0011",
+      "description": "",
+      "role": "Terminator",
+      "sequence": "",
+      "sequence_length": "",
+      "instance_id": 1
+    },
+    {
+      "id": "bba_r0040-1",
+      "uri": "http://parts.igem.org/",
+      "new": false,
+      "identifier": "BBa_R0040",
+      "name": "BBa_R0040",
+      "description": "",
+      "role": "Promoter",
+      "sequence": "",
+      "sequence_length": ""
+    },
+    {
+      "id": "bba_b0034-2",
+      "uri": "http://parts.igem.org/",
+      "new": false,
+      "identifier": "BBa_B0034",
+      "name": "BBa_B0034",
+      "description": "",
+      "role": "RBS",
+      "sequence": "",
+      "sequence_length": "",
+      "instance_id": 2
+    },
+    {
+      "id": "bba_c0050-1",
+      "uri": "http://parts.igem.org/",
+      "new": false,
+      "identifier": "BBa_C0050",
+      "name": "BBa_C0050",
+      "description": "",
+      "role": "CDS",
+      "sequence": "",
+      "sequence_length": ""
+    },
+    {
+      "id": "bba_b0012-2",
+      "uri": "http://parts.igem.org/",
+      "new": false,
+      "identifier": "BBa_B0012",
+      "name": "BBa_B0012",
+      "description": "",
+      "role": "Terminator",
+      "sequence": "",
+      "sequence_length": "",
+      "instance_id": 2
+    },
+    {
+      "id": "bba_b0011-2",
+      "uri": "http://parts.igem.org/",
+      "new": false,
+      "identifier": "BBa_B0011",
+      "name": "BBa_B0011",
+      "description": "",
+      "role": "Terminator",
+      "sequence": "",
+      "sequence_length": "",
+      "instance_id": 2
+    },
+    {
+      "id": "bba_r0050-1",
+      "uri": "https://parts.igem.org/",
+      "new": false,
+      "identifier": "BBa_R0050",
+      "name": "BBa_R0050",
+      "description": "",
+      "role": "Promoter",
+      "sequence": "",
+      "sequence_length": ""
+    },
+    {
+      "id": "bba_b0034-3",
+      "uri": "http://parts.igem.org/",
+      "new": false,
+      "identifier": "BBa_B0034",
+      "name": "BBa_B0034",
+      "description": "",
+      "role": "RBS",
+      "sequence": "",
+      "sequence_length": "",
+      "instance_id": 3
+    },
+    {
+      "id": "bba_c0012-1",
+      "uri": "https://parts.igem.org/",
+      "new": false,
+      "identifier": "BBa_C0012",
+      "name": "BBa_C0012",
+      "description": "",
+      "role": "CDS",
+      "sequence": "",
+      "sequence_length": ""
+    },
+    {
+      "id": "bba_b0012-3",
+      "uri": "http://parts.igem.org/",
+      "new": false,
+      "identifier": "BBa_B0012",
+      "name": "BBa_B0012",
+      "description": "",
+      "role": "Terminator",
+      "sequence": "",
+      "sequence_length": "",
+      "instance_id": 3
+    },
+    {
+      "id": "bba_b0011-3",
+      "uri": "http://parts.igem.org/",
+      "new": false,
+      "identifier": "BBa_B0011",
+      "name": "BBa_B0011",
+      "description": "",
+      "role": "Terminator",
+      "sequence": "",
+      "sequence_length": "",
+      "instance_id": 3
+    },
+    {
+      "id": "bba_r0011-2",
+      "uri": "http://parts.igem.org/",
+      "new": false,
+      "identifier": "BBa_R0011",
+      "name": "BBa_R0011",
+      "description": "",
+      "role": "Promoter",
+      "sequence": "",
+      "sequence_length": "",
+      "instance_id": 2
+    },
+    {
+      "id": "bba_b0034-4",
+      "uri": "http://parts.igem.org/",
+      "new": false,
+      "identifier": "BBa_B0034",
+      "name": "BBa_B0034",
+      "description": "",
+      "role": "RBS",
+      "sequence": "",
+      "sequence_length": "",
+      "instance_id": 4
+    },
+    {
+      "id": "bba_e0040-1",
+      "uri": "https://parts.igem.org/",
+      "new": false,
+      "identifier": "BBa_E0040",
+      "name": "BBa_E0040",
+      "description": "",
+      "role": "CDS",
+      "sequence": "",
+      "sequence_length": ""
+    },
+    {
+      "id": "bba_b0010-1",
+      "uri": "https://parts.igem.org/",
+      "new": false,
+      "identifier": "BBa_B0010",
+      "name": "BBa_B0010",
+      "description": "",
+      "role": "Terminator",
+      "sequence": "",
+      "sequence_length": ""
+    },
+    {
+      "id": "bba_b0012-4",
+      "uri": "http://parts.igem.org/",
+      "new": false,
+      "identifier": "BBa_B0012",
+      "name": "BBa_B0012",
+      "description": "",
+      "role": "Terminator",
+      "sequence": "",
+      "sequence_length": "",
+      "instance_id": 4
+    }
+  ],
+  "expressions": [
+    {
+      "id": "op-localsubcomponent1",
+      "name": "TetR Operon",
+      "constitutive": false,
+      "components": [
+        "BBa_R0011_1",
+        "BBa_B0034_1",
+        "BBa_C0040_1",
+        "BBa_B0012_1",
+        "BBa_B0011_1"
+      ],
+      "unions": [
+        {
+          "id": "u-BBa_R0011_1-BBa_B0034_1",
+          "type": "Order",
+          "from": "BBa_R0011_1",
+          "to": "BBa_B0034_1"
+        },
+        {
+          "id": "u-BBa_B0034_1-BBa_C0040_1",
+          "type": "Order",
+          "from": "BBa_B0034_1",
+          "to": "BBa_C0040_1"
+        },
+        {
+          "id": "u-BBa_C0040_1-BBa_B0012_1",
+          "type": "Order",
+          "from": "BBa_C0040_1",
+          "to": "BBa_B0012_1"
+        },
+        {
+          "id": "u-BBa_B0012_1-BBa_B0011_1",
+          "type": "Order",
+          "from": "BBa_B0012_1",
+          "to": "BBa_B0011_1"
+        }
+      ]
+    },
+    {
+      "id": "op-localsubcomponent2",
+      "name": "cI Operon",
+      "constitutive": false,
+      "components": [
+        "BBa_R0040_1",
+        "BBa_B0034_2",
+        "BBa_C0050_1",
+        "BBa_B0012_2",
+        "BBa_B0011_2"
+      ],
+      "unions": [
+        {
+          "id": "u-BBa_R0040_1-BBa_B0034_2",
+          "type": "Order",
+          "from": "BBa_R0040_1",
+          "to": "BBa_B0034_2"
+        },
+        {
+          "id": "u-BBa_B0034_2-BBa_C0050_1",
+          "type": "Order",
+          "from": "BBa_B0034_2",
+          "to": "BBa_C0050_1"
+        },
+        {
+          "id": "u-BBa_C0050_1-BBa_B0012_2",
+          "type": "Order",
+          "from": "BBa_C0050_1",
+          "to": "BBa_B0012_2"
+        },
+        {
+          "id": "u-BBa_B0012_2-BBa_B0011_2",
+          "type": "Order",
+          "from": "BBa_B0012_2",
+          "to": "BBa_B0011_2"
+        }
+      ]
+    },
+    {
+      "id": "op-localsubcomponent3",
+      "name": "LacI Operon",
+      "constitutive": false,
+      "components": [
+        "BBa_R0050_1",
+        "BBa_B0034_3",
+        "BBa_C0012_1",
+        "BBa_B0012_3",
+        "BBa_B0011_3"
+      ],
+      "unions": [
+        {
+          "id": "u-BBa_R0050_1-BBa_B0034_3",
+          "type": "Order",
+          "from": "BBa_R0050_1",
+          "to": "BBa_B0034_3"
+        },
+        {
+          "id": "u-BBa_B0034_3-BBa_C0012_1",
+          "type": "Order",
+          "from": "BBa_B0034_3",
+          "to": "BBa_C0012_1"
+        },
+        {
+          "id": "u-BBa_C0012_1-BBa_B0012_3",
+          "type": "Order",
+          "from": "BBa_C0012_1",
+          "to": "BBa_B0012_3"
+        },
+        {
+          "id": "u-BBa_B0012_3-BBa_B0011_3",
+          "type": "Order",
+          "from": "BBa_B0012_3",
+          "to": "BBa_B0011_3"
+        }
+      ]
+    },
+    {
+      "id": "op-localsubcomponent4",
+      "name": "GFP Operon",
+      "constitutive": false,
+      "components": [
+        "BBa_R0011_2",
+        "BBa_B0034_4",
+        "BBa_E0040_1",
+        "BBa_B0010_1",
+        "BBa_B0012_4"
+      ],
+      "unions": [
+        {
+          "id": "u-BBa_R0011_2-BBa_B0034_4",
+          "type": "Order",
+          "from": "BBa_R0011_2",
+          "to": "BBa_B0034_4"
+        },
+        {
+          "id": "u-BBa_B0034_4-BBa_E0040_1",
+          "type": "Order",
+          "from": "BBa_B0034_4",
+          "to": "BBa_E0040_1"
+        },
+        {
+          "id": "u-BBa_E0040_1-BBa_B0010_1",
+          "type": "Order",
+          "from": "BBa_E0040_1",
+          "to": "BBa_B0010_1"
+        },
+        {
+          "id": "u-BBa_B0010_1-BBa_B0012_4",
+          "type": "Order",
+          "from": "BBa_B0010_1",
+          "to": "BBa_B0012_4"
+        }
+      ]
+    }
+  ],
+  "interactions": [
+    {
+      "id": "i-interaction1",
+      "type": "Genetic Production",
+      "participants": {
+        "Product": [
+          "cI"
+        ],
+        "Promoter": [
+          "BBa_R0040_1"
+        ],
+        "Template": [
+          "BBa_C0050_1"
+        ]
+      }
+    },
+    {
+      "id": "i-interaction2",
+      "type": "Genetic Production",
+      "participants": {
+        "Product": [
+          "TetR"
+        ],
+        "Promoter": [
+          "BBa_R0011_1"
+        ],
+        "Template": [
+          "BBa_C0040_1"
+        ]
+      }
+    },
+    {
+      "id": "i-interaction3",
+      "type": "Genetic Production",
+      "participants": {
+        "Product": [
+          "LacI"
+        ],
+        "Promoter": [
+          "BBa_R0050_1"
+        ],
+        "Template": [
+          "BBa_C0012_1"
+        ]
+      }
+    },
+    {
+      "id": "i-interaction4",
+      "type": "Genetic Production",
+      "participants": {
+        "Product": [
+          "GFP"
+        ],
+        "Promoter": [
+          "BBa_R0011_2"
+        ],
+        "Template": [
+          "BBa_E0040_1"
+        ]
+      }
+    },
+    {
+      "id": "i-interaction5",
+      "type": "Inhibition",
+      "participants": {
+        "Inhibitor": [
+          "LacI"
+        ],
+        "Inhibited": [
+          "BBa_R0011_1"
+        ]
+      }
+    },
+    {
+      "id": "i-interaction6",
+      "type": "Inhibition",
+      "participants": {
+        "Inhibitor": [
+          "cI"
+        ],
+        "Inhibited": [
+          "BBa_R0050_1"
+        ]
+      }
+    },
+    {
+      "id": "i-interaction7",
+      "type": "Inhibition",
+      "participants": {
+        "Inhibitor": [
+          "TetR"
+        ],
+        "Inhibited": [
+          "BBa_R0040_1"
+        ]
+      }
+    }
+  ],
+  "eds": [
+    {
+      "id": "ed-tetr",
+      "name": "TetR",
+      "type": "Protein",
+      "uri": "https://www.uniprot.org/uniprotkb/P04483/entry"
+    },
+    {
+      "id": "ed-ci",
+      "name": "cI",
+      "type": "Protein",
+      "uri": "https://www.uniprot.org/uniprotkb/P03034/entry"
+    },
+    {
+      "id": "ed-laci",
+      "name": "LacI",
+      "type": "Protein",
+      "uri": "https://www.uniprot.org/uniprotkb/P03023/entry"
+    },
+    {
+      "id": "ed-gfp",
+      "name": "GFP",
+      "type": "Protein",
+      "uri": "https://www.uniprot.org/uniprotkb/P42212/entry"
+    }
+  ]
+}
