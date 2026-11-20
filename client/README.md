@@ -30,6 +30,7 @@ with GCAIClient("http://localhost:5001") as client:
 ```sh
 pip install -e client              # the client and its CLI
 pip install -e "client[db]"        # also storing designs in SBOL DB
+pip install -e "client[mcp]"       # also the MCP server
 ```
 
 ## What it handles
@@ -124,6 +125,47 @@ gcai build "docs/examples/YES GATE/request.json" -o out
 `--url` or `GCAI_URL` points at a service other than `http://localhost:5001`.
 `--registry` or `SBOL_DB_URL` points at a registry; `publish` also needs
 `--yes`, because it writes somewhere other people can read.
+
+## MCP server
+
+`gcai-mcp` serves the GC-AI service over MCP, with one tool. Needs the `mcp`
+extra.
+
+```sh
+claude mcp add --transport stdio gc-ai --scope project -- \
+  uv run --with "gc-ai-client[mcp]" gcai-mcp --url http://localhost:5001 --allow-root .
+```
+
+The tool is `design_from_image`, and one call gives you a document. It returns
+the SBOL3, the glyphs the detector found left to right, and the image with the
+detections drawn on it.
+
+The image arrives one of two ways, and exactly one has to be given.
+`image_path` when the server shares a filesystem with the caller, which is the
+stdio case. `image_base64` when it does not.
+
+A diagram says what the parts are and what order they come in. It does not say
+which registry parts they are, so each part is named after its role, like
+`promoter_1`, and carries no sequence: the document records the role and the
+place in the order. The parent's sequence is the assembly scars between the
+parts.
+
+Pass `part_names`, one per part in 5' to 3' order, to bind them to parts the
+service knows, which fills in the sequences. Leave an entry empty to name that
+one after its role instead.
+
+Detection misses parts. On a photograph of a hand-drawn circuit here it finds
+2 glyphs for an 8-part design, so check the annotated image against the glyph
+list.
+
+`output_dir` writes the documents there and returns the paths. Without it the
+SBOL3 comes back in the result, which is 11 KB for two parts and 56 to 121 KB
+for the designs in `docs/examples`. `--allow-root` bounds which directories the
+server reads images from and writes files to, and defaults to the working
+directory.
+
+`--http` serves streamable HTTP instead of stdio. On a non-loopback address it
+requires `--allowed-host`, without which every request is rejected.
 
 ## Tests
 

@@ -49,10 +49,12 @@ def test_a_part_uri_without_a_separator_is_an_error() -> None:
     assert "has to end in" in issues_for(design, "parts[0].uri")[0]
 
 
-def test_a_new_part_without_a_sequence_is_an_error() -> None:
+def test_a_new_part_without_a_sequence_is_a_warning() -> None:
+    """The service builds it: the document gets the role and the order, no bases."""
     design = minimal()
     design.parts[0].new = True
-    assert severities(design, "parts[0].sequence") == {"error"}
+    assert severities(design, "parts[0].sequence") == {"warning"}
+    assert "no bases" in issues_for(design, "parts[0].sequence")[0]
 
 
 def test_a_sequence_that_is_not_dna_is_an_error() -> None:

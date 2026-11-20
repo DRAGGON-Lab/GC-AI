@@ -103,7 +103,16 @@ def _check_parts(design: "Design") -> list[Issue]:
 
         if part.new:
             if not part.sequence:
-                issues.append(Issue("error", f"{path}.sequence", "a part marked new has to carry its sequence"))
+                # The service accepts this: the document records the part's
+                # role and its place in the order, with no bases. It is what a
+                # diagram on its own can say.
+                issues.append(
+                    Issue(
+                        "warning",
+                        f"{path}.sequence",
+                        "no sequence, so the document will record this part's role and position " "but no bases",
+                    )
+                )
             else:
                 bad = sorted(set(part.sequence.lower()) - IUPAC_DNA)
                 if bad:
