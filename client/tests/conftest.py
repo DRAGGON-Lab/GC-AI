@@ -14,6 +14,17 @@ import pytest
 
 from gcai import GCAIClient
 
+
+def pytest_configure(config: pytest.Config) -> None:
+    """Register the marker here as well as in pyproject.toml.
+
+    A conftest is loaded whatever directory pytest starts from, while the
+    configuration in pyproject.toml is only read when pytest's rootdir is the
+    client directory.
+    """
+    config.addinivalue_line("markers", "integration: needs a running GC-AI stack (set GCAI_URL)")
+
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 EXAMPLES = REPO_ROOT / "docs" / "examples"
 

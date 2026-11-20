@@ -39,4 +39,6 @@ ignore_missing_imports = true
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 markers = ["integration: needs a running GC-AI stack (set GCAI_URL)"]
-addopts = "-m 'not integration'"
+# --strict-markers turns an unregistered marker into an error, so running the
+# tests without this configuration fails loudly instead of quietly skipping.
+addopts = "-m 'not integration' --strict-markers"

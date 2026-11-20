@@ -84,7 +84,14 @@ gcai build "docs/examples/YES GATE/request.json" -o out
 
 ## Tests
 
+Run them from `client/`, so pytest reads the configuration in its
+`pyproject.toml`:
+
 ```sh
-uv run pytest                                   # unit tests, no service needed
-GCAI_URL=http://localhost:5001 uv run pytest -m integration
+cd client
+uv run --extra dev pytest                       # unit tests, no service needed
+
+# Against a running service. The sbol extra is needed as well: without it the
+# tests that compare generated documents skip instead of running.
+GCAI_URL=http://localhost:5001 uv run --extra dev --extra sbol pytest -m integration
 ```
