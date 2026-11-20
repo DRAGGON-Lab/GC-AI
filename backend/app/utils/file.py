@@ -449,8 +449,6 @@ def create_ed_components(ed_data, system):
             if data.get("uri")
             else sbol3.LocalSubComponent(**kwargs)
         )
-        if data["type"] == "Protein":
-            feature.roles = ["http://identifiers.org/GO:0003700"]
         result.append(add_feature(system, feature))
     return result
 

@@ -431,3 +431,76 @@ def test_real_validator_report_is_not_lost():
     assert valid is False
     assert issues and all(issue["message"] and issue["object_id"] for issue in issues)
     assert all("rule_id" in issue for issue in issues)  # pySBOL3 may omit a rule ID
+
+
+@pytest.mark.parametrize("uri", ["", "https://example.org/GFP"])
+def test_protein_molecular_type_does_not_imply_transcription_factor(client, uri):
+    data = payload()
+    data["eds"] = [{"name": "GFP", "type": "Protein", "uri": uri}]
+    response = client.post("/file/create", json=data)
+    assert response.status_code == 200
+    system = read(response).find("https://example.org/test/Design_system")
+    protein = next(f for f in system.features if f.name == "GFP")
+    assert sbol3.SBO_PROTEIN in protein.types
+    assert not protein.roles
+    if uri:
+        assert str(protein.definition) == uri
+
+
+@pytest.mark.parametrize("uri", ["", "https://example.org/GFP"])
+@pytest.mark.parametrize("instance", [1, 2])
+def test_react_selection_preserves_same_name_dna_and_protein_in_export(
+    client, uri, instance
+):
+    import json
+    import subprocess
+
+    data = payload()
+    data["components"][0]["id"] = "component-principal"
+    for i, component in enumerate(data["components"][1:]):
+        component.update(id=f"dna-{i}", name="GFP", instance_id=i + 1, sequence="ATGC")
+    data["eds"] = [{"id": "protein-gfp", "name": "GFP", "type": "Protein", "uri": uri}]
+    data["selected_instance"] = instance
+    script = r"""
+import fs from 'node:fs';
+const {participantOptions, selectParticipant, functionalPayload} = await import(process.argv[1]);
+const data = JSON.parse(fs.readFileSync(0, 'utf8'));
+const options = participantOptions(data.components, data.eds);
+const choose = (kind, id) => selectParticipant({id: `row-${kind}`}, options.find(o => o.sourceKind === kind && o.sourceId === id));
+const interactions = [{type:'Genetic Production', participants:{
+  Template:[choose('component', `dna-${data.selected_instance - 1}`)],
+  Product:[choose('species', 'protein-gfp')]
+}}];
+console.log(JSON.stringify(functionalPayload([], interactions, data.eds, data.components)));
+"""
+    module = (
+        Path(__file__).resolve().parents[2] / "frontend/src/utils/FunctionalPayload.js"
+    )
+    result = subprocess.run(
+        ["node", "--input-type=module", "-e", script, module.as_uri()],
+        input=json.dumps(data),
+        text=True,
+        capture_output=True,
+        check=True,
+    )
+    data.update(json.loads(result.stdout))
+    response = client.post("/file/create", json=data)
+    assert response.status_code == 200, response.json
+    document = read(response)
+    system = document.find("https://example.org/test/Design_system")
+    participations = system.interactions[0].participations
+    template = next(
+        p.participant.lookup() for p in participations if sbol3.SBO_TEMPLATE in p.roles
+    )
+    product = next(
+        p.participant.lookup() for p in participations if sbol3.SBO_PRODUCT in p.roles
+    )
+    assert template.identity != product.identity
+    assert isinstance(template, sbol3.ComponentReference)
+    dna = template.refers_to.lookup()
+    assert dna.name == f"GFP_{instance}"
+    assert sbol3.SBO_DNA in dna.instance_of.lookup().types
+    assert product.name == "GFP" and sbol3.SBO_PROTEIN in product.types
+    assert isinstance(
+        product, sbol3.ExternallyDefined if uri else sbol3.LocalSubComponent
+    )

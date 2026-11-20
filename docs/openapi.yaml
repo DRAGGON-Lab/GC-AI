@@ -597,8 +597,7 @@ components:
       description: |
         The type of a species that is not encoded on the DNA. `Protein` and
         `Restriction Enzyme` are both typed as protein in the generated
-        document, and `Protein` additionally receives the DNA-binding
-        transcription factor role GO:0003700.
+        document, and molecular type alone does not imply a functional role.
       enum:
         - Simple Chemical
         - Protein

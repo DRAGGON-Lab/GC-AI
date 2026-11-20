@@ -455,8 +455,7 @@ Species that take part in interactions but are not encoded on the DNA.
 
 `type` is `Simple Chemical`, `Protein` or `Restriction Enzyme`. `Protein` and
 `Restriction Enzyme` are both typed as protein in the generated document, and
-`Protein` additionally receives the DNA-binding transcription factor role
-GO:0003700.
+`Protein` denotes molecular type only; no transcription-factor activity is inferred.
 
 A resolvable identifier is the useful choice for `uri` — for example
 `https://identifiers.org/CHEBI:61448` for IPTG, or
