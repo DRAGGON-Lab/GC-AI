@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useState, useContext, useRef, useEffect } from 'react';
+import { useState, useContext, useRef, useEffect, useCallback } from 'react';
 import { Container, Paper, Box, Button, Typography } from '@mui/material';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import NameContext from '../../context/NameContext';
@@ -15,7 +15,7 @@ import ConfirmationDialog from '../../components/ConfirmationDialog/Confirmation
 import ConversionDialog from '../../components/ConversionDialog/ConversionDialog';
 import { validateForm } from '../../utils/ValidationUtils.jsx';
 import JSZip from 'jszip';
-import { functionalPayload, responseError } from '../../utils/FunctionalPayload.js';
+import { functionalPayload, responseError, ParticipantSelectionError } from '../../utils/FunctionalPayload.js';
 import ErrorAlertDialog from '../../components/ErrorAlertDialog/ErrorAlertDialog.jsx';
 import Welcome from '../../components/Welcome/Welcome.jsx';
 import LoadingScreen from '../../components/LoadingScreen/LoadingScreen.jsx';
@@ -73,9 +73,9 @@ export default function Home() {
     };
   }, [stream]);
 
-  const showModal = (title, message, type) => {
+  const showModal = useCallback((title, message, type) => {
     setModalConfig({ open: true, title, message, type });
-  };
+  }, []);
 
   const closeModal = () => {
     setModalConfig({ ...modalConfig, open: false });
@@ -115,17 +115,15 @@ export default function Home() {
       setErrors({});
     }
 
-    setLoading("sbolGeneration");
-
     const processedComponents = prediction.map(({ availableNames, ...rest }) => rest);
 
-    const dataToSend = {
-      ...(namespace.trim() ? { namespace } : {}),
-      components: processedComponents,
-      ...functionalPayload(expressions, interactions, eds),
-    };
-
     try {
+      const dataToSend = {
+        ...(namespace.trim() ? { namespace } : {}),
+        components: processedComponents,
+        ...functionalPayload(expressions, interactions, eds, processedComponents),
+      };
+      setLoading("sbolGeneration");
       const response = await fetch(`${API_BASE_URL}/file/create`, {
         method: 'POST',
         headers: {
@@ -159,7 +157,8 @@ export default function Home() {
       }
     } catch (error) {
       setLoading(null);
-      showModal("Error", "Database connection error. Please try again later.", "error");
+      showModal("Error", error instanceof ParticipantSelectionError
+        ? error.message : "The request could not be completed. Your design has been kept; please retry.", "error");
     } finally {
       setLoading(null);
     }
