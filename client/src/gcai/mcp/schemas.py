@@ -17,8 +17,8 @@ class Glyph(BaseModel):
 class Result(BaseModel):
     """What came of an image.
 
-    Without part names, `detected` is the answer and nothing is built. With
-    them, the documents are built and either returned here or written to disk.
+    The document is built on the one call. It is returned here, or written to
+    disk when `output_dir` was given.
     """
 
     detected: list[Glyph] = Field(description="Glyphs found, left to right, which is 5' to 3'")
