@@ -5,12 +5,12 @@ from __future__ import annotations
 from typing import Any
 
 import pytest
-from conftest import detection_payload
 
 from gcai.constants import ExternalType, InteractionType, ParticipationRole, Role, UnionType
 from gcai.design import Design, ExternalSpecies, Interaction, Operon, Part
 from gcai.errors import DesignValidationError
 from gcai.models import Detection
+from tests.helpers import detection_payload
 
 
 def design_with(*parts: Part) -> Design:

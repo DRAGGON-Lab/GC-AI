@@ -29,4 +29,8 @@ jobs:
         # pyproject.toml: that is what registers the integration marker and
         # deselects the tests needing a running service.
         working-directory: client
-        run: uv run --python ${{ matrix.python-version }} --extra dev pytest
+        # Every extra, so the tests that need one run rather than skip.
+        run: >
+          uv run --python ${{ matrix.python-version }}
+          --extra dev --extra db
+          pytest

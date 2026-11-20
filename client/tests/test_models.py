@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-from conftest import PNG, detection_payload
-
 from gcai.constants import GlyphClass, Role
 from gcai.models import Detection, PartDetails
+from tests.helpers import PNG, detection_payload
 
 
 def test_detection_reads_boxes_and_classes() -> None:

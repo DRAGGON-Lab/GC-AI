@@ -29,29 +29,28 @@ with GCAIClient("http://localhost:5001") as client:
 
 ```sh
 pip install -e client              # the client and its CLI
-pip install -e "client[sbol]"      # also the SBOL libraries, for validating output
+pip install -e "client[db]"        # also storing designs in SBOL DB
 ```
 
-## What it does for you
+## What it handles
 
-**Builds the request.** `Design.to_payload()` produces exactly what
-`POST /file/create` expects: the parent component first, parts in 5'-to-3'
-order, instance numbers worked out for parts that share a name, and operon and
-interaction members written as the `{name}_{instance}` references the service
-reads. Parts are linked by object identity, so two parts may share a name and
-still be told apart.
+`Design.to_payload()` produces what `POST /file/create` expects: the parent
+component first, parts in 5'-to-3' order, instance numbers worked out for
+parts that share a name, and operon and interaction members written as the
+`{name}_{instance}` references the service reads. Parts are linked by object
+identity, so two parts can share a name and still be told apart.
 
-**Checks the design first.** `design.validate()` returns the problems the
-service will not tell you about: names that are not valid SBOL displayIds, a
-part URI that does not end in a separator, a participation role that does not
-belong to its interaction type, a species URI with whitespace in it. Errors
-stop `build` unless you pass `validate=False`.
+`design.validate()` catches what the service will not tell you about. Names
+that are not valid SBOL displayIds. Part URIs that do not end in a separator.
+A participation role that does not belong to its interaction type. A species
+URI with whitespace in it. Errors stop `build` unless you pass
+`validate=False`.
 
-**Hides the file handoff.** `POST /file/create` returns the path of a second
-document in a response header, and `POST /file/convert` takes that path.
-`build()` does both and hands back the bytes.
+`build()` hides the file handoff. `POST /file/create` returns the path of a
+second document in a response header and `POST /file/convert` wants that path,
+so `build()` does both calls and hands back the bytes.
 
-## Things about the service worth knowing
+## Service behaviour that will catch you out
 
 - **`/healthcheck/` always answers 500.** It closes its database cursor without
   reading the result of its test query. `client.health()` calls
@@ -69,11 +68,53 @@ document in a response header, and `POST /file/convert` takes that path.
 - **Generated files are deleted after 24 hours**, so a structural path is only
   good for that long.
 
+## Storing designs in SBOL DB
+
+`gcai.storage` is a few helpers over the [sbol-db](https://pypi.org/project/sbol-db/)
+client. They carry the two facts about a GC-AI document that every call needs:
+it is RDF/XML, and it is SBOL3. Needs the `db` extra.
+
+```python
+from sbol_db import SbolDbClient
+from gcai.storage import publish, fetch, to_sbol2
+
+with SbolDbClient("http://localhost:8888") as registry:
+    report = publish(
+        registry,
+        result.sbol3,
+        document_iri="https://example.org/designs/my-circuit",
+        name="My circuit",
+        description="built from a photo of a whiteboard",
+    )
+    print(report.object_count, report.triple_count, report.validation_status)
+
+    sbol2 = to_sbol2(registry, "https://example.org/designs/my-circuit")
+```
+
+`publish` POSTs the document and returns sbol-db's `ImportReport`: the graph
+id, the object and triple counts, and the registry's validation result. The
+registry validates every import.
+
+`overwrite` says what a second publish to the same `document_iri` does. 0
+fails, 1 replaces, 2 merges.
+
+`fetch` pulls an object and everything it references back out as SBOL3.
+`to_sbol2` pulls the SBOL2 version; the registry does that conversion.
+
+Anything else is a direct call on `SbolDbClient`: `search`, `sequence_search`,
+`sparql`, `delete_graph_by_document_iri`, `healthz`. `storage.client(url)` is
+the same constructor with a clearer error when the `db` extra is missing.
+
+Health is on a different port. The registry serves `/healthz` on a loopback
+operations listener, 9090 by default, not on the registry's own address.
+
 ## Command line
 
 ```sh
 gcai health
 gcai detect circuit.png --json
+gcai publish design.xml --iri https://example.org/designs/mine --name Mine --yes
+gcai fetch https://example.org/designs/mine -o mine-sbol2.xml --sbol2
 gcai parts Promoter --grep R0010
 gcai part BBa_R0010
 gcai check "docs/examples/YES GATE/request.json"
@@ -81,6 +122,8 @@ gcai build "docs/examples/YES GATE/request.json" -o out
 ```
 
 `--url` or `GCAI_URL` points at a service other than `http://localhost:5001`.
+`--registry` or `SBOL_DB_URL` points at a registry; `publish` also needs
+`--yes`, because it writes somewhere other people can read.
 
 ## Tests
 
@@ -89,9 +132,9 @@ Run them from `client/`, so pytest reads the configuration in its
 
 ```sh
 cd client
-uv run --extra dev pytest                       # unit tests, no service needed
+uv run --extra dev pytest        # unit tests, no services needed
 
-# Against a running service. The sbol extra is needed as well: without it the
-# tests that compare generated documents skip instead of running.
-GCAI_URL=http://localhost:5001 uv run --extra dev --extra sbol pytest -m integration
+# Against a running GC-AI service, and an SBOL DB registry for the storage tests.
+GCAI_URL=http://localhost:5001 SBOL_DB_URL=http://localhost:8888 \
+  uv run --extra dev --extra db pytest -m integration
 ```

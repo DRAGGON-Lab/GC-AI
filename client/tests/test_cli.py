@@ -6,10 +6,10 @@ import json
 
 import httpx
 import pytest
-from conftest import EXAMPLES, Recorder, detection_payload, error_response, zip_bytes
 
 from gcai import GCAIClient
 from gcai.cli import main
+from tests.helpers import EXAMPLES, Recorder, detection_payload, error_response, zip_bytes
 
 
 @pytest.fixture

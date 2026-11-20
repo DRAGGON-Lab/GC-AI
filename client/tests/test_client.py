@@ -6,12 +6,12 @@ import json
 
 import httpx
 import pytest
-from conftest import Recorder, detection_payload, error_response, zip_bytes
 
 from gcai import GCAIClient
 from gcai.constants import InteractionType, ParticipationRole, Role
 from gcai.design import Design, Part
 from gcai.errors import DesignValidationError, GCAIConnectionError, GCAIError, GCAIResponseError
+from tests.helpers import Recorder, detection_payload, error_response, zip_bytes
 
 
 def promoter_names(handler: Recorder, names: list[str] | None = None) -> None:

@@ -12,8 +12,18 @@ license = { text = "MIT" }
 dependencies = ["httpx>=0.27"]
 
 [project.optional-dependencies]
-sbol = ["sbol3>=1.2", "sbol-utilities>=1.0a17", "rdflib>=6.2"]
-dev = ["pytest>=8.0", "mypy>=1.8", "black>=24.1", "isort>=5.13", "flake8>=7.0", "pyyaml>=6.0"]
+# Storing designs in an SBOL DB registry.
+db = ["sbol-db>=0.1"]
+dev = [
+    "pytest>=8.0",
+    "mypy>=1.8",
+    "black>=24.1",
+    "isort>=5.13",
+    "flake8>=7.0",
+    "pyyaml>=6.0",
+    # The integration tests compare generated documents as RDF graphs.
+    "rdflib>=6.2",
+]
 
 [project.scripts]
 gcai = "gcai.cli:main"
@@ -33,7 +43,7 @@ strict = true
 python_version = "3.10"
 
 [[tool.mypy.overrides]]
-module = ["sbol3.*", "sbol2.*", "sbol_utilities.*", "rdflib.*"]
+module = ["sbol_db.*", "rdflib.*"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
