@@ -29,8 +29,7 @@ with GCAIClient("http://localhost:5001") as client:
 
 ```sh
 pip install -e client              # the client and its CLI
-pip install -e "client[sbol]"      # also validation and the round-trip check
-pip install -e "client[db]"        # also publishing to an SBOL DB registry
+pip install -e "client[db]"        # also storing designs in SBOL DB
 ```
 
 ## What it handles
@@ -69,68 +68,51 @@ so `build()` does both calls and hands back the bytes.
 - **Generated files are deleted after 24 hours**, so a structural path is only
   good for that long.
 
-## Working with what comes back
+## Storing designs in SBOL DB
 
-Three things you can do with a document once the service has written it.
-`validate` and `check_order` need the `sbol` extra. Publishing needs `db`.
+`gcai.storage` is a few helpers over the [sbol-db](https://pypi.org/project/sbol-db/)
+client. They carry the two facts about a GC-AI document that every call needs:
+it is RDF/XML, and it is SBOL3. Needs the `db` extra.
 
 ```python
-from gcai.interop import validate, check_order, SbolDb
+from sbol_db import SbolDbClient
+from gcai.storage import publish, fetch, to_sbol2
 
-for issue in validate(result.sbol3):      # the check the service skips
-    print(issue)
-
-report = check_order(detection, result.sbol3)
-print(report.format())                     # what was drawn vs what was encoded
-
-with SbolDb("http://localhost:8888") as registry:
-    published = registry.publish(
+with SbolDbClient("http://localhost:8888") as registry:
+    report = publish(
+        registry,
         result.sbol3,
         document_iri="https://example.org/designs/my-circuit",
         name="My circuit",
         description="built from a photo of a whiteboard",
     )
-    sbol2 = registry.to_sbol2("https://example.org/designs/my-circuit")
+    print(report.object_count, report.triple_count, report.validation_status)
+
+    sbol2 = to_sbol2(registry, "https://example.org/designs/my-circuit")
 ```
 
-**Validation.** The service never validates what it writes. It builds the
-document, calls `validate()`, drops the result without looking at it, and
-returns the file. `validate` runs the check that got skipped.
-
-It also flags a document with no SBOL objects in it. Any XML parses as RDF, so
-validating the wrong file comes back clean otherwise.
-
-**Round-trip.** `check_order` compares the glyphs detected in an image to the
-parts in the document and reports the differences as inserts, deletes and
-replacements. `cds` and `cds-arrow` both count as a CDS.
-
-Part order comes from the Range locations on each part. If those are missing
-it walks the `meets` constraint chain instead. If a document has both and they
-disagree, it raises rather than picking one.
-
-Most of a design gets typed in by hand after detection, so a failing report is
-normal. It tells you how much came from the drawing.
-
-**Publishing.** `SbolDb` talks to an [SBOL DB](https://github.com/marpaia/sbol-db)
-registry. `publish` POSTs the document as `application/rdf+xml` and gives you
-back the graph id, the object and triple counts, and the registry's validation
-result. It validates every import. `fetch` pulls an object back out.
-`to_sbol2` pulls the SBOL2 version; the registry does that conversion.
+`publish` POSTs the document and returns sbol-db's `ImportReport`: the graph
+id, the object and triple counts, and the registry's validation result. The
+registry validates every import.
 
 `overwrite` says what a second publish to the same `document_iri` does. 0
 fails, 1 replaces, 2 merges.
 
+`fetch` pulls an object and everything it references back out as SBOL3.
+`to_sbol2` pulls the SBOL2 version; the registry does that conversion.
+
+Anything else is a direct call on `SbolDbClient`: `search`, `sequence_search`,
+`sparql`, `delete_graph_by_document_iri`, `healthz`. `storage.client(url)` is
+the same constructor with a clearer error when the `db` extra is missing.
+
 Health is on a different port. The registry serves `/healthz` on a loopback
-operations listener, 9090 by default, so pass `operations_url` if it is not
-the same address as the registry.
+operations listener, 9090 by default, not on the registry's own address.
 
 ## Command line
 
 ```sh
 gcai health
 gcai detect circuit.png --json
-gcai validate design.xml
-gcai roundtrip circuit.png design.xml
 gcai publish design.xml --iri https://example.org/designs/mine --name Mine --yes
 gcai fetch https://example.org/designs/mine -o mine-sbol2.xml --sbol2
 gcai parts Promoter --grep R0010
@@ -150,9 +132,9 @@ Run them from `client/`, so pytest reads the configuration in its
 
 ```sh
 cd client
-uv run --extra dev pytest                       # unit tests, no service needed
+uv run --extra dev pytest        # unit tests, no services needed
 
-# Against a running service. The sbol extra is needed as well: without it the
-# tests that compare generated documents skip instead of running.
-GCAI_URL=http://localhost:5001 uv run --extra dev --extra sbol pytest -m integration
+# Against a running GC-AI service, and an SBOL DB registry for the storage tests.
+GCAI_URL=http://localhost:5001 SBOL_DB_URL=http://localhost:8888 \
+  uv run --extra dev --extra db pytest -m integration
 ```
