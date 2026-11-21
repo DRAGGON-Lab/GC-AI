@@ -78,16 +78,9 @@ class GCAIClient:
     # ---------------------------------------------------------------- health
 
     def health(self) -> bool:
-        """Whether the service is usable.
-
-        This calls `GET /component/names`, not `/healthcheck/`: that endpoint
-        closes its database cursor without reading the result of its test
-        query, so it answers 500 whatever the state of the service. A
-        successful part lookup proves the application is serving, the detection
-        model has loaded, and the database answers.
-        """
+        """Whether detector and registry dependencies are ready."""
         try:
-            self.part_names(Role.PROMOTER)
+            self._request("GET", "/healthcheck/")
         except GCAIResponseError:
             return False
         return True

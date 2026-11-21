@@ -18,15 +18,14 @@ def promoter_names(handler: Recorder, names: list[str] | None = None) -> None:
     handler.json("GET", "/component/names", names if names is not None else ["BBa_R0010"])
 
 
-def test_health_is_true_when_a_part_lookup_works(client: GCAIClient, handler: Recorder) -> None:
-    promoter_names(handler)
+def test_health_is_true_when_readiness_succeeds(client: GCAIClient, handler: Recorder) -> None:
+    handler.json("GET", "/healthcheck/", {"status": "healthy"})
     assert client.health() is True
-    assert handler.last.url.path == "/component/names"
-    assert handler.last.url.params["role"] == "Promoter"
+    assert handler.last.url.path == "/healthcheck/"
 
 
 def test_health_is_false_when_the_service_fails(client: GCAIClient, handler: Recorder) -> None:
-    handler.route("GET", "/component/names", lambda _r: error_response(500, "database down"))
+    handler.route("GET", "/healthcheck/", lambda _r: error_response(503, "not ready"))
     assert client.health() is False
 
 

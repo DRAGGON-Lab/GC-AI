@@ -24,7 +24,7 @@ def run(handler: Recorder):
 
 
 def test_health_reports_a_working_service(run, handler: Recorder, capsys) -> None:
-    handler.json("GET", "/component/names", ["BBa_R0010"])
+    handler.json("GET", "/healthcheck/", {"status": "healthy"})
     assert run("health") == 0
     assert "healthy" in capsys.readouterr().out
 
