@@ -45,10 +45,11 @@ def create_app(test_config=None):
                 )
 
     from app.routes.inference_routes import inference_blueprint
+    from app.routes.healthcheck_routes import healthcheck_blueprint, liveness
+
     app.register_blueprint(inference_blueprint, url_prefix="/inference")
-    if not app.config.get("TESTING"):
-        from app.routes.healthcheck_routes import healthcheck_blueprint
-        app.register_blueprint(healthcheck_blueprint, url_prefix="/healthcheck")
+    app.register_blueprint(healthcheck_blueprint, url_prefix="/healthcheck")
+    app.add_url_rule("/livez", view_func=liveness)
     app.register_blueprint(file_blueprint, url_prefix="/file")
     app.register_blueprint(component_blueprint, url_prefix="/component")
 

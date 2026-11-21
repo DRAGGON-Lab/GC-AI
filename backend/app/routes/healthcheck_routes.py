@@ -1,41 +1,36 @@
+"""Readiness consumes dependency probes; liveness is dependency independent."""
+
 from flask import Blueprint, jsonify
+
+from app.config import get_db_connection, get_model
 from app.utils.custom_error import CustomError
-from app.config import get_db_connection
-from app.config import get_model
-import logging
 
-logger = logging.getLogger(__name__)
-logger.propagate = True
+healthcheck_blueprint = Blueprint("healthcheck", __name__)
 
-healthcheck_blueprint = Blueprint('healthcheck', __name__)
 
-@healthcheck_blueprint.route('/', methods=['GET'])
+@healthcheck_blueprint.route("/", methods=["GET"])
 def healthcheck():
-  """
-  Healthcheck endpoint to ensure the application and services are running correctly.
-  """
-  logger.info("Healthcheck endpoint called")
-  
-  try:
-    model = get_model()
-    if model is None:
-      logger.error("Healthcheck failed: Model not loaded")
-      raise CustomError("Model not loaded", 500)
-    logger.info("Model is loaded successfully")
-
-    connection = get_db_connection()
     try:
-      with connection.cursor() as cursor:
-        cursor.execute("SELECT 1")
-        logger.info("Database connection is active")
-    finally:
-      connection.close()
+        if get_model() is None:
+            raise RuntimeError("Detector unavailable")
+        connection = get_db_connection()
+        try:
+            cursor = connection.cursor()
+            try:
+                cursor.execute("SELECT 1")
+                if cursor.fetchone() != (1,):
+                    raise RuntimeError("Database probe returned an unexpected result")
+            finally:
+                cursor.close()
+        finally:
+            connection.close()
+    except Exception:
+        # Dependency diagnostics and credentials never belong in public errors.
+        raise CustomError(
+            "Application dependencies are unavailable", 503, code="not_ready"
+        ) from None
+    return jsonify({"status": "healthy", "message": "Application is running correctly"})
 
-    logger.info("Healthcheck passed successfully")
-    return jsonify({"status": "healthy", "message": "Application is running correctly"}), 200
-  
-  except CustomError:
-    raise
-  except Exception as e:
-    logger.error(f"Healthcheck failed: {e}", exc_info=True)
-    raise CustomError(f"Healthcheck failed: {e}", 500)
+
+def liveness():
+    return jsonify({"status": "alive"})
