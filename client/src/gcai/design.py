@@ -255,7 +255,7 @@ class Design:
             interactions.append({"id": interaction.id, "type": interaction.type.value, "participants": participants})
 
         return {
-            "namespace": self.namespace,
+            "namespace": self.namespace.rstrip("/"),
             "components": components,
             "expressions": expressions,
             "interactions": interactions,

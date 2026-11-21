@@ -1,19 +1,5 @@
-export const validateNamespace = (namespace) => {
-  if (!namespace || namespace.trim() === "") {
-    return null;
-  }
-
-  try {
-    const url = new URL(namespace);
-    if (!url.href.startsWith("http://") && !url.href.startsWith("https://")) {
-      return "'Namespace' must start with http or https";
-    }
-  } catch {
-    return "'Namespace' must be a valid URL starting with http or https";
-  }
-
-  return null;
-};
+import { validateNamespace } from './Namespace.js';
+export { validateNamespace };
 
 export const validateComponent = (component) => {
   const componentErrors = {};
