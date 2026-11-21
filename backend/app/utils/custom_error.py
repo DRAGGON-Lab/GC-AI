@@ -1,5 +1,5 @@
 class CustomError(Exception):
-    def __init__(self, message, status_code=400, code=None, issues=None):
+    def __init__(self, message, status_code=400, code=None, issues=None, headers=None):
         super().__init__(message)
         self.message = message
         self.status_code = status_code
@@ -9,11 +9,12 @@ class CustomError(Exception):
             422: "invalid_design",
         }.get(status_code, "internal_error")
         self.issues = issues or []
+        self.headers = headers or {}
 
     def details(self):
         issues = [
             (
-                {**i, "message": str(i.get("message", ""))[:1000]}
+                {k: str(i[k])[:1000] for k in ("severity", "path", "message") if k in i}
                 if isinstance(i, dict)
                 else {"severity": "error", "message": str(i)[:1000]}
             )
