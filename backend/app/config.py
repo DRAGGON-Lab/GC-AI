@@ -1,4 +1,5 @@
 import os
+from threading import Lock
 import yaml
 from app.utils.custom_error import CustomError
 from dotenv import load_dotenv
@@ -66,10 +67,17 @@ def get_db_connection():
 
 
 model = None
+_model_lock = Lock()
 
 
 def get_model():
+    """Initialize one detector per process; failed loads remain retryable."""
     global model
     if model is None:
-        model = load_model()
+        with _model_lock:
+            if model is None:
+                loaded = load_model()
+                if loaded is None:
+                    raise CustomError("Model not loaded", 500)
+                model = loaded
     return model

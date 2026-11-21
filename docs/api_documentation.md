@@ -73,8 +73,10 @@ It answers `500` whatever the state of the service, so it tells you nothing.
 
 To test whether the service is usable, call `GET /component/names?role=Promoter`.
 That succeeds only when the application is serving, the detection model has
-loaded (it loads at import, so the application does not serve without it), and
-the parts database answers queries.
+loaded, and the parts database answers queries. The first valid names lookup
+initializes the detector lazily before querying the database. Concurrent requests
+share one initialization per process; a failed load returns a sanitized 500 and
+a later request can retry.
 
 ### Inference
 

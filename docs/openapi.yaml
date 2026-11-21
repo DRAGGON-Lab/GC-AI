@@ -77,9 +77,10 @@ paths:
 
         To test whether the service is usable, call
         `GET /component/names?role=Promoter` instead. That succeeds only when the
-        application is serving, the detection model has loaded (it is loaded at
-        import, so the application does not serve without it), and the parts
-        database answers queries.
+        application is serving, the detection model has loaded, and the parts
+        database answers queries. The first valid names lookup initializes the
+        detector lazily. Concurrent requests share one initialization per process;
+        a failed load returns a sanitized 500 and a later request can retry.
       operationId: healthcheck
       responses:
         "200":
@@ -163,6 +164,9 @@ paths:
       description: |
         Returns the names of every part in the bundled registry whose part type
         maps to the given role and which has a sequence recorded.
+
+        A valid lookup initializes or verifies the detector before querying the
+        database, preserving the readiness guarantee used by the SDK.
 
         The result is unpaginated and large for common roles; CDS and
         Engineered-Region each return several thousand names.

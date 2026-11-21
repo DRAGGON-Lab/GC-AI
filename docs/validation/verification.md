@@ -66,3 +66,31 @@ The final local command was:
 Exit 0, result passed. All regenerated RDF/provenance and raw reports were
 refreshed after the backend correction. Original examples remain unchanged.
 ADR 0001 is Proposed — pending scientific review; no formal approval is claimed.
+
+## PR #30 detector readiness review corrections
+
+Follow-up to reviewed revision `281e0e84d7cf3d7666c68d8b0e0fee05c4c50ccc`,
+using the same Python 3.12.13 detector-free environment. The new readiness suite
+first reproduced five failures before the correction. The shared lazy loader now
+serializes initialization per process and rejects absent models; valid names
+lookups verify it before querying MySQL. Initialization failures remain retryable.
+Independent engineering review found no material issue in the final diff.
+
+Executed checks after the correction (all exit 0):
+
+- `/private/tmp/gcai-venv/bin/python -m pytest backend/tests -q --disable-warnings`:
+  77 passed, including nine new readiness/concurrency cases. Dependency warnings
+  remain. Torch and MySQL are replaced by controlled stubs in these cases.
+- From `client/`, `/private/tmp/gcai-venv/bin/python -m pytest -q`:
+  123 passed, 22 live integration tests deselected.
+- `/private/tmp/gcai-venv/bin/python tools/reconcile_sbol_validation.py --mode verify
+  --probe /private/tmp/gcai-sbol-target/debug/gcai-sbol-diagnostics
+  --regenerate /private/tmp/gcai-readiness-review/regenerated
+  --output /private/tmp/gcai-readiness-review/report.json`:
+  all six regenerated outputs have zero pySBOL3 and Rust findings; no violations
+  or execution errors. Original historical evidence was preserved.
+- OpenAPI YAML parsed successfully; `git diff --check` passed.
+
+Real checkpoint/GPU/MySQL verification: not_run; these checks establish the
+readiness and synchronization contract using stubs. The separate existing
+`/healthcheck/` unread-query defect is outside this correction.

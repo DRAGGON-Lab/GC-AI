@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.config import get_db_connection
+from app.config import get_db_connection, get_model
 from app.utils.custom_error import CustomError
 from dotenv import load_dotenv
 import os
@@ -47,6 +47,9 @@ def get_names():
     if not part_types:
       logger.warning(f"Invalid role: {role}")
       raise CustomError('Invalid role', 400)
+
+    # This lookup is also the SDK readiness probe: require the detector first.
+    get_model()
 
     placeholders = ', '.join(['%s'] * len(part_types))
     query = f"""
