@@ -77,9 +77,10 @@ paths:
 
         To test whether the service is usable, call
         `GET /component/names?role=Promoter` instead. That succeeds only when the
-        application is serving, the detection model has loaded (it is loaded at
-        import, so the application does not serve without it), and the parts
-        database answers queries.
+        application is serving, the detection model has loaded, and the parts
+        database answers queries. The first valid names lookup initializes the
+        detector lazily. Concurrent requests share one initialization per process;
+        a failed load returns a sanitized 500 and a later request can retry.
       operationId: healthcheck
       responses:
         "200":
@@ -164,6 +165,9 @@ paths:
         Returns the names of every part in the bundled registry whose part type
         maps to the given role and which has a sequence recorded.
 
+        A valid lookup initializes or verifies the detector before querying the
+        database, preserving the readiness guarantee used by the SDK.
+
         The result is unpaginated and large for common roles; CDS and
         Engineered-Region each return several thousand names.
       operationId: listPartNames
@@ -205,12 +209,8 @@ paths:
         Returns the participation roles an interaction of the given type expects.
         These are the keys to put in `Interaction.participants`.
 
-        The answer is advisory. `POST /file/create` checks a participation role
-        against the full set of ten roles in `ParticipationRole`, not against the
-        roles valid for the interaction type, so it accepts any of the ten for
-        any type and writes the corresponding SBO term unchanged. Use this
-        endpoint to build a correct design; do not rely on the service to reject
-        an incorrect one.
+        The same role table is enforced by POST /file/create. Unknown roles,
+        incompatible roles and unresolved participants are rejected with 422.
       operationId: listParticipationRoles
       parameters:
         - name: interaction_type
@@ -297,7 +297,7 @@ paths:
         two as the response body:
 
         - the **full** document, containing the structural parts and, when the
-          design has at least one operon, a functional system with the operons,
+          design supplies any functional data, a functional system with the operons,
           interactions and external species. This is the response body.
         - the **structural** document, containing only the parts and their order.
           This one is not returned; its path on the server is in the
@@ -311,8 +311,8 @@ paths:
 
         - `components[0]` is the design itself, and becomes the parent component.
           The remaining entries are its parts, in 5'-to-3' order.
-        - Consecutive parts are linked by `meets` constraints, and each part also
-          receives a `Range` location on the parent's computed sequence.
+        - Consecutive parts are linked by `precedes` constraints, and fully sequenced designs
+          give each part a `Range` on the computed parent sequence.
         - The parent's sequence is the concatenation of the part sequences joined
           by BioBrick assembly scars.
         - Each part's `name` becomes an SBOL `displayId`, so it has to match
@@ -324,8 +324,14 @@ paths:
           the string `{name}_{instance_id}`, defaulting to `{name}_1` when the
           part carries no `instance_id`. External species are referenced by their
           bare `name`.
-        - When `expressions` is empty, no functional system is built, and
-          `interactions` and `eds` are ignored.
+        - Operons are optional. Any supplied expressions, interactions or eds
+          create a functional system and every reference must resolve.
+        - Physical assembly members must be DNA. Functional DNA/RNA species
+          belong in eds and are never concatenated into the assembly.
+        - Unknown sequences preserve structure without a parent sequence or
+          parent-coordinate ranges; complete DNA assemblies receive BioBrick scars.
+        - Both documents are validated before publication. Every pySBOL3 finding
+          blocks export, including warnings.
       operationId: createSbol3
       requestBody:
         required: true
@@ -357,19 +363,16 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-        "500":
-          description: |
-            The document could not be built. Among the causes: a part marked
-            `new: false` whose name is not in the registry; a part whose `name`
-            is not a valid SBOL `displayId`; a `role` outside `ComponentRole`; a
-            participation key outside the ten roles of `ParticipationRole`.
-
-            A participation role that is valid in itself but wrong for its
-            interaction type does **not** fail; see `Interaction.participants`.
+        "404":
+          $ref: "#/components/responses/Error"
+        "422":
+          description: Invalid design semantics or SBOL validation findings.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+        "500":
+          $ref: "#/components/responses/Error"
 
   /file/convert:
     post:
@@ -400,15 +403,22 @@ paths:
       responses:
         "200":
           description: |
-            A ZIP of the requested formats. Requesting neither format returns an
-            empty ZIP rather than an error.
+            A ZIP of the requested formats. Select at least one format.
           content:
             application/zip:
               schema:
                 type: string
                 format: binary
+        "400":
+          $ref: "#/components/responses/Error"
+        "422":
+          description: A complete DNA sequence is required for conversion.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
         "404":
-          description: The path is missing from the body, or no file exists there.
+          description: No file exists at the supplied path.
           content:
             application/json:
               schema:
@@ -429,7 +439,7 @@ components:
     Error:
       type: object
       description: The body of every failed request, at every status code.
-      required: [status_code, error]
+      required: [status_code, error, code]
       properties:
         status_code:
           type: integer
@@ -439,6 +449,22 @@ components:
           type: string
           description: A human-readable message. Not a stable identifier.
           example: Component not found
+        code:
+          type: string
+          description: Stable machine-readable error code.
+        issues:
+          type: array
+          maxItems: 50
+          items:
+            type: object
+            properties:
+              path: {type: string}
+              message: {type: string, maxLength: 1000}
+              severity: {type: string}
+              rule_id: {type: string, nullable: true}
+              object_id: {type: string, nullable: true}
+        total_count: {type: integer}
+        truncated: {type: boolean}
 
     GlyphClass:
       type: string
@@ -487,11 +513,8 @@ components:
 
         Aptamer-RNA, Ncrna and PolyA-Site are given the RNA SBO type
         (SBO:0000250) rather than DNA (SBO:0000251); mRNA is given RNA as well.
-        A design may mix them with DNA parts, and their sequences are
-        concatenated into the parent's sequence like any other part: the DNA and
-        RNA sequence encodings both resolve to the same IUPAC nucleotide format
-        (`edam:format_1207`), so nothing rejects the combination. Whether the
-        result is meaningful is the design's business, not the service's.
+        RNA-typed roles are rejected as physical DNA assembly members. Use
+        functional species of type RNA to describe RNA interactions.
       enum:
         - Promoter
         - RBS
@@ -546,10 +569,9 @@ components:
       description: |
         A role a participant takes in an interaction.
 
-        The combinations below are the ones that are meaningful, and the ones
-        `GET /component/interactions` returns. They are not enforced:
-        `POST /file/create` accepts any of these ten roles for any interaction
-        type. A role outside these ten fails the request with a 500.
+        These combinations are enforced server-side. Unknown or incompatible
+        roles return 422. Each interaction needs a nonempty participant set;
+        every supplied role must have at least one resolved participant.
 
         Valid combinations:
 
@@ -579,18 +601,20 @@ components:
       description: |
         The type of a species that is not encoded on the DNA. `Protein` and
         `Restriction Enzyme` are both typed as protein in the generated
-        document, and `Protein` additionally receives the DNA-binding
-        transcription factor role GO:0003700.
+        document, and molecular type alone does not imply a functional role.
       enum:
         - Simple Chemical
         - Protein
         - Restriction Enzyme
+        - DNA
+        - RNA
 
     UnionType:
       type: string
       description: |
-        The relationship a union asserts between two features. Both are recorded
-        as a `meets` constraint in the generated document.
+        Relative sequence order, recorded as precedes. Regulate is a deprecated
+        alias for Order, with no functional regulatory meaning. Use an explicit
+        typed interaction for regulation.
       enum:
         - Order
         - Regulate
@@ -708,9 +732,8 @@ components:
         sequence:
           type: string
           description: |
-            Required for a part with `new: true`. Give it in lower case: the
-            assembly-scar rule that joins parts into the parent sequence
-            inspects the first bases literally.
+            Optional IUPAC DNA, case-insensitive, for a new physical part.
+            Missing bases preserve structure and disable complete-sequence conversion.
         sequence_length:
           oneOf:
             - type: integer
@@ -727,7 +750,7 @@ components:
 
     Union:
       type: object
-      description: An ordering or regulatory relationship between two members of an operon.
+      description: A relative positional relationship between two members of an operon.
       required: [type, from, to]
       properties:
         type:
@@ -787,11 +810,8 @@ components:
 
             Use the participation roles that
             `GET /component/interactions` returns for this interaction type. The
-            service does not check them against the interaction type: it accepts
-            any of the ten roles in `ParticipationRole` and writes the matching
-            SBO term, so a mismatched role produces a document that is
-            structurally valid and semantically wrong. A role outside those ten
-            fails with a 500.
+            service rejects incompatible or unknown roles and unresolved references
+            with 422; requested participants are never silently omitted.
           additionalProperties:
             type: array
             items:
@@ -825,7 +845,8 @@ components:
             An identifier for the species, used as the feature's definition. A
             resolvable term is the useful choice, for example
             `https://identifiers.org/uniprot:P03023` for a protein or
-            `https://identifiers.org/CHEBI:61448` for a chemical.
+            `https://identifiers.org/CHEBI:61448` for a chemical. An empty or
+            omitted URI creates a typed LocalSubComponent instead.
           example: https://identifiers.org/uniprot:P03023
 
     CreateRequest:
@@ -838,24 +859,20 @@ components:
           description: |
             The SBOL namespace for the generated document.
 
-            **Send it on every request.** It is applied process-wide when
-            present and left untouched when absent, so a request that omits it
-            is built under whatever namespace the previous request set — the
-            namespace leaks between requests, and between clients sharing the
-            service. With no namespace ever set, documents are built under
-            `http://sbols.org/unspecified_namespace/`.
+            If omitted, the deterministic default is
+            http://sbols.org/unspecified_namespace/.
           example: https://example.org/designs/
         components:
           type: array
-          minItems: 1
+          minItems: 2
           description: The design followed by its parts, in 5'-to-3' order.
           items:
             $ref: "#/components/schemas/Component"
         expressions:
           type: array
           description: |
-            Operons. An empty array means no functional system is built, and
-            `interactions` and `eds` are then ignored.
+            Optional operons. Species and interactions are preserved even when
+            this array is empty.
           items:
             $ref: "#/components/schemas/Expression"
         interactions:
@@ -870,7 +887,7 @@ components:
 
     ConvertRequest:
       type: object
-      required: [file_path]
+      required: [file_path, genbank, fasta]
       properties:
         file_path:
           type: string

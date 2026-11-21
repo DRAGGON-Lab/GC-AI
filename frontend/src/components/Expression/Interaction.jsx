@@ -3,68 +3,46 @@ import { useState, useEffect } from 'react';
 import { Box, Autocomplete, TextField, IconButton, Typography, Divider } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import { participantOptions, sameParticipantSource, selectParticipant } from '../../utils/FunctionalPayload.js';
 
 const interactionTypeOptions = ['Inhibition', 'Stimulation', 'Biochemical Reaction', 'Non-Covalent Binding', 'Degradation', 'Control', 'Genetic Production'];
 
 const Interaction = ({ interactions, setInteractions, interactionIndex, interaction = {}, eds, prediction, helperText, setErrors, participantRoles, setParticipantRoles, API_BASE_URL, showModal }) => {
   const [componentOptions, setComponentOptions] = useState([]);
 
-  const handleInteractionRolesChange = (roles, interactionId) => {
-    setParticipantRoles((prevRoles) => ({
-      ...prevRoles,
-      [interactionId]: Array.isArray(roles) ? roles : [],
-    }));
-  };
-
   useEffect(() => {
-    const transformedEds = (eds || [])
-      .filter((ed) => ed.name && ed.name.trim() !== '')
-      .map((ed) => ({
-        label: ed.name.trim(),
-        value: ed.uri ? ed.uri.trim() : '',
-        isEd: true,
-      }));
-
-    const transformedPrincipalComponents = (prediction || [])
-      .filter(subComponent => subComponent.id !== 'component-principal' && subComponent.name)
-      .map((subComponent) => ({
-        label: subComponent.instance_id ? `${subComponent.name} [${subComponent.instance_id}]` : subComponent.name,
-        value: subComponent.instance_id ? `${subComponent.name} [${subComponent.instance_id}]` : subComponent.name,
-        isEd: false,
-      }));
-
-    setComponentOptions([...transformedEds, ...transformedPrincipalComponents]);
+    setComponentOptions(participantOptions(prediction, eds));
   }, [eds, prediction]);
 
   useEffect(() => {
+    if (!interaction?.type) return;
+    const controller = new AbortController();
     const fetchParticipantRoles = async () => {
-      if (!interaction?.type) return;
-
       try {
         const response = await fetch(
-          `${API_BASE_URL}/component/interactions?interaction_type=${interaction.type}`
+          `${API_BASE_URL}/component/interactions?interaction_type=${encodeURIComponent(interaction.type)}`,
+          { signal: controller.signal },
         );
+        if (!response.ok) throw new Error('Cannot fetch participation roles');
         const roles = await response.json();
-        handleInteractionRolesChange(roles, interaction.id);
-
-        const updatedInteractions = [...interactions];
-        updatedInteractions[interactionIndex] = {
-          ...updatedInteractions[interactionIndex],
-          participants: roles.reduce((acc, role) => {
-            acc[role] = updatedInteractions[interactionIndex]?.participants?.[role] || [{ id: crypto.randomUUID(), name: "", instance_id: "" }];
-            return acc;
-          }, {}),
-        };
-        setInteractions(updatedInteractions);
-      } catch (error) {
-        handleRemoveInteraction(interactionIndex)
-        showModal("Error", "An error occurred while fetching participant roles. Please try again later.", "error");
-
+        if (!Array.isArray(roles)) throw new Error('Invalid participation roles');
+        if (controller.signal.aborted) return;
+        setParticipantRoles(previous => ({ ...previous, [interaction.id]: roles }));
+        setInteractions(previous => previous.map(item => item.id === interaction.id ? {
+          ...item,
+          participants: Object.fromEntries(roles.map(role => [role,
+            item.participants?.[role] || [{ id: crypto.randomUUID(), name: '', instance_id: '' }],
+          ])),
+        } : item));
+      } catch {
+        if (!controller.signal.aborted) {
+          showModal("Error", "Cannot load participation roles. Your interaction has been kept; please retry.", "error");
+        }
       }
     };
-
     fetchParticipantRoles();
-  }, [interaction?.type]);
+    return () => controller.abort();
+  }, [API_BASE_URL, interaction.id, interaction.type, setInteractions, setParticipantRoles, showModal]);
 
   const handleInteractionChange = (interactionIndex, field, value) => {
     const updatedInteractions = [...interactions];
@@ -76,29 +54,14 @@ const Interaction = ({ interactions, setInteractions, interactionIndex, interact
   };
 
   const handleParticipantChange = (interactionIndex, role, participantIndex, selectedOption) => {
-    const updatedInteractions = [...interactions];
-    const roleParticipants = updatedInteractions[interactionIndex].participants[role] || [];
-    const matches = selectedOption.value.match(/^(.*)\s\[(.*)\]$/);
-    const updatedParticipant = matches
-      ? {
-        ...roleParticipants[participantIndex],
-        name: matches[1],
-        instance_id: matches[2],
-      }
-      : {
-        ...roleParticipants[participantIndex],
-        name: selectedOption.label,
-        instance_id: "",
-      };
-
-    if (!updatedParticipant.id) {
-      updatedParticipant.id = crypto.randomUUID();
-    }
-
-    roleParticipants[participantIndex] = updatedParticipant;
-    updatedInteractions[interactionIndex].participants[role] = roleParticipants;
-
-    setInteractions(updatedInteractions);
+    setInteractions(previous => previous.map((item, index) => index === interactionIndex ? {
+      ...item,
+      participants: {
+        ...item.participants,
+        [role]: (item.participants[role] || []).map((row, rowIndex) => rowIndex === participantIndex
+          ? selectParticipant(row, selectedOption) : row),
+      },
+    } : item));
   };
 
   const handleAddParticipant = (interactionIndex, role) => {
@@ -209,22 +172,9 @@ const Interaction = ({ interactions, setInteractions, interactionIndex, interact
                 <Box key={pIdx} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                   <Autocomplete
                     options={componentOptions}
-                    value={
-                      componentOptions.find(option => {
-                        const expectedLabel = participant.instance_id
-                          ? `${participant.name} [${participant.instance_id}]`
-                          : participant.name;
-
-                        return option.label === expectedLabel;
-                      }) || null
-                    }
-
-                    getOptionLabel={(option) =>
-                      option.instance_id ? `${option.label} [${option.instance_id}]` : option.label
-                    }
-                    isOptionEqualToValue={(option, value) =>
-                      option.label === value.label && option.instance_id === value.instance_id
-                    }
+                    value={componentOptions.find(option => sameParticipantSource(option, participant)) || null}
+                    getOptionLabel={(option) => option.label}
+                    isOptionEqualToValue={sameParticipantSource}
                     onChange={(event, newValue) =>
                       handleParticipantChange(interactionIndex, role, pIdx, newValue)
                     }

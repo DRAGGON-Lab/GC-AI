@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:  # pragma: no cover
     from gcai.validation import Issue
@@ -23,11 +23,21 @@ class GCAIResponseError(GCAIError):
     a stable identifier.
     """
 
-    def __init__(self, status_code: int, message: str, body: str = "") -> None:
+    def __init__(
+        self,
+        status_code: int,
+        message: str,
+        body: str = "",
+        *,
+        code: str | None = None,
+        issues: list[dict[str, Any]] | None = None,
+    ) -> None:
         super().__init__(f"GC-AI returned {status_code}: {message}")
         self.status_code = status_code
         self.message = message
         self.body = body
+        self.code = code
+        self.issues = issues or []
 
 
 class DesignValidationError(GCAIError):

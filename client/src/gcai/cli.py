@@ -199,9 +199,10 @@ def _dispatch(args: argparse.Namespace, client: GCAIClient) -> int:
 
     if args.command == "fetch":
         with _registry(args.registry) as registry:
-            data = registry.to_sbol2(args.iri) if args.sbol2 else registry.fetch(args.iri)
-        args.out.write_bytes(data)
-        print(f"{args.out} ({len(data)} bytes)")
+            data = storage.to_sbol2(registry, args.iri) if args.sbol2 else storage.fetch(registry, args.iri)
+        encoded = data.encode("utf-8")
+        args.out.write_bytes(encoded)
+        print(f"{args.out} ({len(encoded)} bytes)")
         return 0
 
     raise AssertionError(f"unhandled command {args.command!r}")  # pragma: no cover

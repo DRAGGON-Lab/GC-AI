@@ -47,7 +47,7 @@ export default function FunctionalSystem({ expressions, setExpressions, interact
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', mt: 1 }}>
       <Typography sx={{ fontWeight: 600, mb: 1 }}>Functional System</Typography>
-      <Typography sx={{ textAlign: 'justify', mb: 2 }}>The functional part defines one or more circuit outputs, represented across different operons. These outputs enable the assignment of functions to the selected components.
+      <Typography sx={{ textAlign: 'justify', mb: 2 }}>Define functional species and interactions independently, and optionally group DNA parts into operons.
       </Typography>
       <Box sx={{ display: 'flex', flexDirection: 'row', mb: 2 }}>
         <Typography sx={{ mt: .5 }}>Operons</Typography>
@@ -74,7 +74,7 @@ export default function FunctionalSystem({ expressions, setExpressions, interact
           />
         ))}
       </Box>
-      {expressions.length > 0 ? (
+      {(
         <>
           <Box sx={{ display: 'flex', flexDirection: 'row' }}>
             <Typography sx={{ mt: .5 }}>Externally Defined</Typography>
@@ -161,7 +161,7 @@ export default function FunctionalSystem({ expressions, setExpressions, interact
           </Box>
 
         </>
-      ) : ''}
+      )}
 
     </Box>
   );

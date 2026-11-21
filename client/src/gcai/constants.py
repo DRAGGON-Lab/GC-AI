@@ -64,8 +64,8 @@ SEARCHABLE_ROLES: frozenset[Role] = frozenset(set(Role) - {Role.MRNA})
 class UnionType(str, Enum):
     """The relationship a union asserts between two features.
 
-    Both are written as a `meets` constraint, so they are indistinguishable in
-    a generated document.
+    `Order` asserts relative sequence order (`precedes`). `Regulate` is a
+    deprecated positional alias, not a functional regulatory interaction.
     """
 
     ORDER = "Order"
@@ -99,6 +99,8 @@ class ParticipationRole(str, Enum):
 
 # backend/app/utils/file.py, ed_mapping
 class ExternalType(str, Enum):
+    DNA = "DNA"
+    RNA = "RNA"
     SIMPLE_CHEMICAL = "Simple Chemical"
     PROTEIN = "Protein"
     RESTRICTION_ENZYME = "Restriction Enzyme"
@@ -124,9 +126,7 @@ PARTICIPATIONS: dict[InteractionType, tuple[ParticipationRole, ...]] = {
 }
 """The participation roles that are meaningful for each interaction type.
 
-The service does not enforce this: it accepts any `ParticipationRole` on any
-interaction type and writes the matching SBO term. `validate_design` reports a
-mismatch, because the service will not.
+The backend enforces the same compatibility table before generation.
 """
 
 # frontend/src/utils/PredictionUtils.jsx, with cds-arrow added.
@@ -180,8 +180,8 @@ SO_TO_ROLE: dict[str, Role] = {term: role for role, term in ROLE_TO_SO.items()}
 RNA_ROLES: frozenset[Role] = frozenset({Role.APTAMER_RNA, Role.NCRNA, Role.POLYA_SITE, Role.MRNA})
 """Roles given the RNA SBO type.
 
-A design may mix them with DNA parts: both sequence encodings resolve to the
-same IUPAC nucleotide format, so the service accepts the combination.
+These roles are rejected as physical DNA assembly members. Represent RNA
+species in the functional system using ExternalType.RNA.
 """
 
 IGEM_URI = "http://parts.igem.org/"

@@ -231,3 +231,24 @@ def test_requests_identify_the_client(client: GCAIClient, handler: Recorder) -> 
     promoter_names(handler)
     client.part_names(Role.PROMOTER)
     assert handler.last.headers["user-agent"].startswith("gcai-client/")
+
+
+def test_structured_semantic_error_preserves_code_and_findings(client: GCAIClient, handler: Recorder) -> None:
+    finding = {"path": "interactions[0].participants.Stimulator", "message": "incompatible role"}
+    handler.route(
+        "POST",
+        "/file/create",
+        lambda _r: httpx.Response(
+            422,
+            json={
+                "status_code": 422,
+                "error": "Invalid design",
+                "code": "invalid_design",
+                "issues": [finding],
+            },
+        ),
+    )
+    with pytest.raises(GCAIResponseError) as caught:
+        client.create({})
+    assert caught.value.code == "invalid_design"
+    assert caught.value.issues == [finding]

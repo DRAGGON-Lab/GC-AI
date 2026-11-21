@@ -181,6 +181,18 @@ async def test_the_other_formats_are_off_unless_asked_for(client, handler: Recor
     assert data["genbank"] == "LOCUS" and data["fasta"] == ">seq"
 
 
+async def test_the_other_formats_need_bases(client, handler: Recorder, image: Path) -> None:
+    """Parts named after their role have none, and a zero-length range will not convert."""
+    detects(handler)
+    builds(handler)
+    data = (await call(client, image_path=str(image), genbank=True, fasta=True)).structured_content
+
+    assert data["built"] is True, "the SBOL3 is still produced"
+    assert data["genbank"] is None and data["fasta"] is None
+    assert any("GenBank and FASTA were not produced" in note for note in data["notes"])
+    assert not any(request.url.path == "/file/convert" for request in handler.requests)
+
+
 async def test_output_dir_writes_the_files_instead(client, handler: Recorder, image: Path, workdir: Path) -> None:
     detects(handler)
     builds(handler)

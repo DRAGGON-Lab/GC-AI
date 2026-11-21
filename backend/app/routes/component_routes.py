@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.config import get_db_connection
+from app.config import get_db_connection, get_model
 from app.utils.custom_error import CustomError
 from dotenv import load_dotenv
 import os
@@ -48,6 +48,9 @@ def get_names():
       logger.warning(f"Invalid role: {role}")
       raise CustomError('Invalid role', 400)
 
+    # This lookup is also the SDK readiness probe: require the detector first.
+    get_model()
+
     placeholders = ', '.join(['%s'] * len(part_types))
     query = f"""
         SELECT DISTINCT part_name 
@@ -66,6 +69,8 @@ def get_names():
       connection.close()
 
     return jsonify(components_names)
+  except CustomError:
+    raise
   except Exception as e:
       logger.error(f"Failed to fetch names: {e}", exc_info=True)
       raise CustomError(f"Failed to fetch names: {e}", 500)
@@ -82,15 +87,8 @@ def get_participations():
       logger.warning("Interaction type parameter is missing")
       raise CustomError('Interaction type is required', 400)
 
-    participation_map = {
-      'Inhibition': ['Inhibitor', 'Inhibited'],
-      'Stimulation': ['Stimulator', 'Stimulated'],
-      'Biochemical Reaction': ['Reactant', 'Modifier',  'Product'],
-      'Non-Covalent Binding': ['Reactant', 'Product'],
-      'Degradation': ['Reactant'],
-      'Control': ['Modifier', 'Modified'],
-      'Genetic Production': ['Promoter', 'Template', 'Product']
-    }
+    from app.utils.validation import PARTICIPATIONS
+    participation_map = PARTICIPATIONS
 
     participations = participation_map.get(interaction_type)
     if not participations:
@@ -99,6 +97,8 @@ def get_participations():
 
     logger.info(f"Returning participation types for {interaction_type}: {participations}")
     return jsonify(participations)
+  except CustomError:
+    raise
   except Exception as e:
     logger.error(f"Failed to fetch participations: {e}", exc_info=True)
     raise CustomError(f"Failed to fetch participations: {e}", 500)
@@ -144,6 +144,8 @@ def get_component():
       'sequence': component[1],
       'sequence_length': component[2]
     })
+  except CustomError:
+    raise
   except Exception as e:
     logger.error(f"Failed to fetch component: {e}", exc_info=True)
     raise CustomError(f"Failed to fetch component: {e}", 500)

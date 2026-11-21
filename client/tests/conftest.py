@@ -3,13 +3,19 @@
 from __future__ import annotations
 
 import json
+import sys
 from typing import Any, Iterator
 
 import httpx
 import pytest
 
 from gcai import GCAIClient
-from tests.helpers import EXAMPLES, Recorder
+from tests.helpers import EXAMPLE_SCRIPTS, EXAMPLES, Recorder
+
+# The example scripts live outside the package, so they are imported by name
+# only once their directory is on the path.
+if str(EXAMPLE_SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(EXAMPLE_SCRIPTS))
 
 
 @pytest.fixture

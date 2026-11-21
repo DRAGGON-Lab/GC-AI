@@ -3,38 +3,38 @@ repos:
     rev: v6.0.0
     hooks:
       - id: end-of-file-fixer
-        files: ^client/
+        files: ^(client/|examples/)
       - id: trailing-whitespace
-        files: ^client/
+        files: ^(client/|examples/)
       - id: check-yaml
-        files: ^(client/|\.github/)
+        files: ^(client/|examples/|\.github/)
       - id: check-merge-conflict
 
   - repo: https://github.com/pycqa/isort
     rev: 7.0.0
     hooks:
       - id: isort
-        files: ^client/
+        files: ^(client/|examples/)
         args: ["--settings-path", "client/pyproject.toml"]
 
   - repo: https://github.com/psf/black
     rev: 25.9.0
     hooks:
       - id: black
-        files: ^client/
+        files: ^(client/|examples/)
         args: ["--config", "client/pyproject.toml"]
 
   - repo: https://github.com/pycqa/flake8
     rev: 7.3.0
     hooks:
       - id: flake8
-        files: ^client/
+        files: ^(client/|examples/)
         args: ["--config", "client/.flake8"]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.18.2
     hooks:
       - id: mypy
-        files: ^client/src/
+        files: ^(client/src/|examples/)
         args: ["--config-file", "client/pyproject.toml"]
         additional_dependencies: ["httpx>=0.27", "types-PyYAML", "pydantic>=2.12", "mcp>=2.3"]

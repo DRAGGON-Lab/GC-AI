@@ -1,9 +1,7 @@
 """Local checks on a design.
 
-The service builds a document and reports whether it could write it; it does
-not check a design beyond what it needs to do that. These checks cover the
-rest, so a caller learns what is wrong before sending a request, and learns
-about the things the service accepts but should not.
+These checks mirror backend invariants so callers can correct invalid designs
+before making a request. The backend independently validates every export.
 """
 
 from __future__ import annotations
@@ -42,11 +40,12 @@ def validate_design(design: "Design") -> list[Issue]:
     issues: list[Issue] = []
     issues += _check_namespace(design)
     issues += _check_component(design.name, design.role.value, design.uri, "design", is_parent=True)
+    if design.role in RNA_ROLES:
+        issues.append(Issue("error", "design.role", "the assembly parent must be DNA"))
     issues += _check_parts(design)
     issues += _check_operons(design)
     issues += _check_species(design)
     issues += _check_interactions(design)
-    issues += _check_shape(design)
     return sorted(issues, key=lambda issue: 0 if issue.severity == "error" else 1)
 
 
@@ -56,8 +55,7 @@ def _check_namespace(design: "Design") -> list[Issue]:
             Issue(
                 "error",
                 "namespace",
-                "set a namespace: the service applies it process-wide, so a request without one "
-                "is built under whatever namespace the previous request set",
+                "set an absolute namespace for reproducible design identities",
             )
         ]
     if not _is_http_url(design.namespace):
@@ -120,10 +118,10 @@ def _check_parts(design: "Design") -> list[Issue]:
         if part.role in RNA_ROLES:
             issues.append(
                 Issue(
-                    "warning",
+                    "error",
                     f"{path}.role",
-                    f"{part.role.value} is an RNA role; its sequence is still concatenated into the "
-                    "parent's DNA sequence, which the service accepts without complaint",
+                    f"{part.role.value} is an RNA role and cannot be a physical DNA assembly member; "
+                    "use an RNA functional species instead",
                 )
             )
         if part.name == design.name:
@@ -158,14 +156,6 @@ def _check_operons(design: "Design") -> list[Issue]:
         for part in operon.parts:
             if not any(part is candidate for candidate in known):
                 issues.append(Issue("error", f"{path}.parts", f"{part.name!r} is not one of this design's parts"))
-        if not operon.unions:
-            issues.append(
-                Issue(
-                    "warning",
-                    f"{path}.unions",
-                    "no unions: the web interface requires at least one, though the service does not",
-                )
-            )
         for union in operon.unions:
             for end, part in (("from", union.source), ("to", union.target)):
                 if not any(part is candidate for candidate in operon.parts):
@@ -197,15 +187,6 @@ def _check_species(design: "Design") -> list[Issue]:
                 )
             elif not _is_http_url(species.uri):
                 issues.append(Issue("error", f"{path}.uri", f"{species.uri!r} is not an http or https URL"))
-        else:
-            issues.append(
-                Issue(
-                    "warning",
-                    f"{path}.uri",
-                    "no URI: an empty definition is resolved against the document's own location "
-                    "when it is read back",
-                )
-            )
     return issues
 
 
@@ -223,8 +204,7 @@ def _check_interactions(design: "Design") -> list[Issue]:
                         "error",
                         f"{path}.participants.{role.value}",
                         f"{role.value} is not a participation role of {interaction.type.value} "
-                        f"(expected {', '.join(r.value for r in expected)}); the service accepts it "
-                        "and writes the wrong term",
+                        f"(expected {', '.join(r.value for r in expected)})",
                     )
                 )
             if not members:
@@ -246,26 +226,3 @@ def _is_known(design: "Design", member: "Part | ExternalSpecies") -> bool:
 
     pool = design.species if isinstance(member, ExternalSpecies) else design.parts
     return any(member is candidate for candidate in pool)
-
-
-def _check_shape(design: "Design") -> list[Issue]:
-    if design.operons:
-        return []
-    issues = []
-    if design.interactions:
-        issues.append(
-            Issue(
-                "warning",
-                "interactions",
-                "a design with no operons gets no functional system, so its interactions are dropped",
-            )
-        )
-    if design.species:
-        issues.append(
-            Issue(
-                "warning",
-                "species",
-                "a design with no operons gets no functional system, so its species are dropped",
-            )
-        )
-    return issues

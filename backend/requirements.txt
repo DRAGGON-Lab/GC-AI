@@ -21,8 +21,8 @@ protobuf<=3.20.1
 pandas
 mysql-connector-python
 python-dotenv
-sbol3
-sbol_utilities
+sbol3==1.2.0.post0
+sbol-utilities==1.0a17
 schedule
 
 

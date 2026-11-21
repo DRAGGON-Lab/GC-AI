@@ -91,7 +91,7 @@ def test_payload_refers_to_species_by_name_and_parts_by_instance() -> None:
     assert participants == {"Inhibitor": ["LacI"], "Inhibited": ["BBa_R0010_1"]}
 
 
-def test_a_design_without_operons_drops_interactions_and_species() -> None:
+def test_a_design_without_operons_preserves_interactions_and_species() -> None:
     promoter = Part(name="BBa_R0010", role=Role.PROMOTER)
     design = design_with(promoter)
     design.species.append(ExternalSpecies(name="LacI", type=ExternalType.PROTEIN))
@@ -99,8 +99,8 @@ def test_a_design_without_operons_drops_interactions_and_species() -> None:
         Interaction(type=InteractionType.DEGRADATION, participants={ParticipationRole.REACTANT: [promoter]})
     )
     payload = design.to_payload()
-    assert payload["interactions"] == []
-    assert payload["eds"] == []
+    assert payload["interactions"][0]["participants"] == {"Reactant": ["BBa_R0010_1"]}
+    assert payload["eds"][0]["name"] == "LacI"
 
 
 def test_chain_links_operon_members_in_sequence() -> None:
@@ -148,3 +148,23 @@ def strip_ids(payload: dict[str, Any]) -> dict[str, Any]:
 def test_round_trip_reproduces_each_committed_request(example_request: dict[str, Any]) -> None:
     rebuilt = Design.from_payload(example_request).to_payload()
     assert strip_ids(rebuilt) == strip_ids(example_request)
+
+
+def test_functional_dna_rna_species_round_trip_without_operons() -> None:
+    design = design_with(Part(name="DNA_part", role=Role.CDS, new=True, sequence="ACGT"))
+    dna = ExternalSpecies(name="Template", type=ExternalType.DNA)
+    rna = ExternalSpecies(name="Transcript", type=ExternalType.RNA)
+    design.species.extend([dna, rna])
+    design.interactions.append(
+        Interaction(
+            type=InteractionType.GENETIC_PRODUCTION,
+            participants={
+                ParticipationRole.TEMPLATE: [dna],
+                ParticipationRole.PRODUCT: [rna],
+            },
+        )
+    )
+    assert design.validate() == []
+    rebuilt = Design.from_payload(design.to_payload())
+    assert [species.type for species in rebuilt.species] == [ExternalType.DNA, ExternalType.RNA]
+    assert rebuilt.interactions[0].participants[ParticipationRole.PRODUCT][0] is rebuilt.species[1]

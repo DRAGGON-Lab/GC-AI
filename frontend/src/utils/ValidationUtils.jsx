@@ -51,14 +51,11 @@ export const validateComponent = (component) => {
     componentErrors.role = "'Role' cannot be empty";
   }
 
-  if (component.id !== "component-principal") {
-    if (!component.sequence?.trim()) {
-      componentErrors.sequence = "'Sequence' cannot be empty";
-    }
-
-    if (component.sequence_length === undefined || component.sequence_length === "") {
-      componentErrors.sequence_length = "'Sequence length' cannot be empty";
-    }
+  if (['Aptamer-RNA', 'Ncrna', 'PolyA-Site', 'mRNA'].includes(component.role)) {
+    componentErrors.role = 'Physical assembly members must be DNA; use an RNA functional species.';
+  }
+  if (component.new && component.sequence && !/^[acgtrykmswbdhvn]+$/i.test(component.sequence)) {
+    componentErrors.sequence = 'Sequence must contain IUPAC DNA bases.';
   }
 
   return Object.keys(componentErrors).length > 0 ? componentErrors : null;
@@ -164,8 +161,6 @@ export const validateExpressions = (expressions) => {
         expressionErrors.unions = unionsErrors;
       }
 
-    } else {
-      expressionErrors.unions = "'Unions' cannot be empty";
     }
 
     if (Object.keys(expressionErrors).length > 0) {
@@ -208,7 +203,7 @@ export const validateEds = (eds) => {
   return Object.keys(errors).length > 0 ? errors : null;
 };
 
-export const validateInteractions = (interactions) => {
+export const validateInteractions = (interactions, participantRoles = {}) => {
   const errors = {};
 
   interactions.forEach((interaction) => {
@@ -220,9 +215,17 @@ export const validateInteractions = (interactions) => {
 
     const participants = interaction.participants || {};
     const participantsErrors = {};
+    if (!Object.keys(participants).length) {
+      interactionErrors.participants = 'An interaction needs participants.';
+    }
 
     Object.keys(participants).forEach((role) => {
       const roleParticipants = participants[role] || [];
+      const accepted = participantRoles[interaction.id];
+      if (accepted && !accepted.includes(role)) {
+        participantsErrors[role] = `${role} is incompatible with ${interaction.type}.`;
+        return;
+      }
 
       if (roleParticipants.length === 0) {
         participantsErrors[role] = `No participants provided for the role '${role}'.`;

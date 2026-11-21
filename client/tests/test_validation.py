@@ -28,7 +28,7 @@ def test_a_missing_namespace_is_an_error() -> None:
     design = minimal()
     design.namespace = ""
     assert severities(design, "namespace") == {"error"}
-    assert "previous request" in issues_for(design, "namespace")[0]
+    assert "namespace" in issues_for(design, "namespace")[0]
 
 
 def test_a_namespace_that_is_not_a_url_is_an_error() -> None:
@@ -76,10 +76,10 @@ def test_a_part_named_after_the_design_is_an_error() -> None:
     assert severities(design, "parts[0].name") == {"error"}
 
 
-def test_an_rna_role_is_a_warning() -> None:
+def test_an_rna_role_is_an_error() -> None:
     design = minimal()
     design.parts[0].role = Role.NCRNA
-    assert severities(design, "parts[0].role") == {"warning"}
+    assert severities(design, "parts[0].role") == {"error"}
 
 
 def test_an_operon_holding_a_foreign_part_is_an_error() -> None:
@@ -88,10 +88,10 @@ def test_an_operon_holding_a_foreign_part_is_an_error() -> None:
     assert any("not one of this design's parts" in m for m in issues_for(design, "operons[0].parts"))
 
 
-def test_an_operon_without_unions_is_a_warning() -> None:
+def test_an_operon_without_unions_is_valid() -> None:
     design = minimal()
     design.operons.append(Operon(name="Operon", parts=[design.parts[0]]))
-    assert severities(design, "operons[0].unions") == {"warning"}
+    assert severities(design, "operons[0].unions") == set()
 
 
 def test_a_union_endpoint_outside_the_operon_is_an_error() -> None:
@@ -115,7 +115,6 @@ def test_a_participation_role_wrong_for_its_type_is_an_error() -> None:
     )
     message = issues_for(design, "interactions[0].participants.Stimulator")[0]
     assert "is not a participation role of Inhibition" in message
-    assert "the service accepts it" in message
 
 
 def test_a_species_uri_with_whitespace_is_an_error() -> None:
@@ -124,18 +123,18 @@ def test_a_species_uri_with_whitespace_is_an_error() -> None:
     assert "whitespace" in issues_for(design, "species[0].uri")[0]
 
 
-def test_a_species_without_a_uri_is_a_warning() -> None:
+def test_a_local_species_without_a_uri_is_valid() -> None:
     design = minimal()
     design.species.append(ExternalSpecies(name="LacI", type=ExternalType.PROTEIN))
-    assert severities(design, "species[0].uri") == {"warning"}
+    assert severities(design, "species[0].uri") == set()
 
 
-def test_interactions_without_operons_are_a_warning() -> None:
+def test_interactions_without_operons_are_valid() -> None:
     design = minimal()
     design.interactions.append(
         Interaction(type=InteractionType.DEGRADATION, participants={ParticipationRole.REACTANT: [design.parts[0]]})
     )
-    assert severities(design, "interactions") == {"warning"}
+    assert severities(design, "interactions") == set()
 
 
 def test_errors_sort_before_warnings() -> None:

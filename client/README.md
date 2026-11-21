@@ -25,6 +25,9 @@ with GCAIClient("http://localhost:5001") as client:
     result.write("out", stem="my_circuit")
 ```
 
+Two runnable scripts using it, from a diagram through to a registry, are in
+[`../examples/`](../examples/).
+
 ## Install
 
 ```sh
@@ -41,11 +44,11 @@ parts that share a name, and operon and interaction members written as the
 `{name}_{instance}` references the service reads. Parts are linked by object
 identity, so two parts can share a name and still be told apart.
 
-`design.validate()` catches what the service will not tell you about. Names
+`design.validate()` reports invalid input before a request is sent. Names
 that are not valid SBOL displayIds. Part URIs that do not end in a separator.
 A participation role that does not belong to its interaction type. A species
 URI with whitespace in it. Errors stop `build` unless you pass
-`validate=False`.
+`validate=False`; server validation always applies.
 
 `build()` hides the file handoff. `POST /file/create` returns the path of a
 second document in a response header and `POST /file/convert` wants that path,
@@ -57,15 +60,19 @@ so `build()` does both calls and hands back the bytes.
   reading the result of its test query. `client.health()` calls
   `GET /component/names` instead, which proves the application is serving, the
   model has loaded and the database answers.
-- **Send a namespace on every request.** The service applies it process-wide, so
-  a request without one is built under whatever namespace the previous request
-  set. `validate` reports a missing namespace as an error.
+- **Send a namespace for reproducible identities.** Local validation requires an
+  absolute namespace.
 - **A registry part ignores what you send.** With `new=False` the description
   and sequence come from the service's bundled registry, and a name that is not
   in it fails the request. Use `new=True` to supply your own, in lower case.
-- **Participation roles are not enforced.** The service accepts any of the ten
-  on any interaction type and writes the matching term, so a mismatch produces a
-  document that is structurally valid and semantically wrong.
+- **Participation roles are enforced.** Invalid type/role combinations and
+  unresolved participants fail with actionable HTTP 422 findings.
+- **Functional species need no operon.** DNA, RNA, proteins and chemicals can
+  participate in the functional system independently of the physical DNA assembly.
+  An empty definition URI creates a typed local feature; a valid URI creates an
+  externally defined feature.
+- **Order means relative position.** Order emits `precedes`; Regulate remains a
+  deprecated positional alias. Use typed interactions for functional regulation.
 - **Generated files are deleted after 24 hours**, so a structural path is only
   good for that long.
 
@@ -147,8 +154,7 @@ stdio case. `image_base64` when it does not.
 A diagram says what the parts are and what order they come in. It does not say
 which registry parts they are, so each part is named after its role, like
 `promoter_1`, and carries no sequence: the document records the role and the
-place in the order. The parent's sequence is the assembly scars between the
-parts.
+place in the order. No parent sequence or coordinates are invented until every part has bases.
 
 Pass `part_names`, one per part in 5' to 3' order, to bind them to parts the
 service knows, which fills in the sequences. Leave an entry empty to name that

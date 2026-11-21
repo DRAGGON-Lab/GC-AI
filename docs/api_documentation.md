@@ -73,8 +73,10 @@ It answers `500` whatever the state of the service, so it tells you nothing.
 
 To test whether the service is usable, call `GET /component/names?role=Promoter`.
 That succeeds only when the application is serving, the detection model has
-loaded (it loads at import, so the application does not serve without it), and
-the parts database answers queries.
+loaded, and the parts database answers queries. The first valid names lookup
+initializes the detector lazily before querying the database. Concurrent requests
+share one initialization per process; a failed load returns a sanitized 500 and
+a later request can retry.
 
 ### Inference
 
@@ -455,8 +457,7 @@ Species that take part in interactions but are not encoded on the DNA.
 
 `type` is `Simple Chemical`, `Protein` or `Restriction Enzyme`. `Protein` and
 `Restriction Enzyme` are both typed as protein in the generated document, and
-`Protein` additionally receives the DNA-binding transcription factor role
-GO:0003700.
+`Protein` denotes molecular type only; no transcription-factor activity is inferred.
 
 A resolvable identifier is the useful choice for `uri` — for example
 `https://identifiers.org/CHEBI:61448` for IPTG, or

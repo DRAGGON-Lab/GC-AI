@@ -3,7 +3,7 @@ import cv2
 import torch
 from app.utils.annotations import inference_annotations
 from torchvision import transforms as transforms
-from app.config import THRESHOLD, CLASSES, DEVICE
+from app.config import THRESHOLD, CLASSES
 
 #python3 inference.py --weights best_model.pth --input test_data --threshold 0.9
 
@@ -130,7 +130,7 @@ def process_image(image_input, model):
     image = torch.unsqueeze(image, 0)
 
     with torch.no_grad():
-        outputs = model(image.to(DEVICE))
+        outputs = model(image.to(next(model.parameters()).device))
 
     outputs = [{k: v.to('cpu') for k, v in t.items()} for t in outputs]
 

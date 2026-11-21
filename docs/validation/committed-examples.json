@@ -1,0 +1,755 @@
+{
+  "mode": "verify",
+  "gating": true,
+  "python": "3.12.13",
+  "versions": {
+    "sbol3": "1.2.0.post0",
+    "rdflib": "6.3.2",
+    "pyshacl": "0.28.1",
+    "sbol-db": "0.1.0"
+  },
+  "fixtures": [
+    {
+      "path": "docs/examples/Lux System (BBa_I13263)/BBa_I13263.xml",
+      "sha256": "3e0233be85d8c824c13ccc77f7f53b0861cc91c63ee9350f0042cbfc76ecadec",
+      "rdf_triples": 652,
+      "pysbol3": {
+        "status": "passed",
+        "count": 0,
+        "findings": []
+      },
+      "sbol_rs": {
+        "coverage": "RuleCoverage { fully_applied: [\"sbol3-10102\", \"sbol3-10103\", \"sbol3-10104\", \"sbol3-10105\", \"sbol3-10106\", \"sbol3-10107\", \"sbol3-10108\", \"sbol3-10109\", \"sbol3-10110\", \"sbol3-10111\", \"sbol3-10112\", \"sbol3-10201\", \"sbol3-10202\", \"sbol3-10203\", \"sbol3-10204\", \"sbol3-10205\", \"sbol3-10301\", \"sbol3-10501\", \"sbol3-10503\", \"sbol3-10505\", \"sbol3-10601\", \"sbol3-10604\", \"sbol3-10607\", \"sbol3-10608\", \"sbol3-10612\", \"sbol3-10613\", \"sbol3-10616\", \"sbol3-10617\", \"sbol3-10702\", \"sbol3-10801\", \"sbol3-10802\", \"sbol3-10803\", \"sbol3-10804\", \"sbol3-10805\", \"sbol3-10806\", \"sbol3-10807\", \"sbol3-10901\", \"sbol3-10902\", \"sbol3-10903\", \"sbol3-10904\", \"sbol3-11001\", \"sbol3-11004\", \"sbol3-11007\", \"sbol3-11008\", \"sbol3-11011\", \"sbol3-11012\", \"sbol3-11013\", \"sbol3-11101\", \"sbol3-11104\", \"sbol3-11107\", \"sbol3-11108\", \"sbol3-11201\", \"sbol3-11301\", \"sbol3-11302\", \"sbol3-11303\", \"sbol3-11401\", \"sbol3-11402\", \"sbol3-11403\", \"sbol3-11501\", \"sbol3-11701\", \"sbol3-11702\", \"sbol3-11703\", \"sbol3-11704\", \"sbol3-11705\", \"sbol3-11706\", \"sbol3-11803\", \"sbol3-11804\", \"sbol3-11901\", \"sbol3-11902\", \"sbol3-11903\", \"sbol3-11906\", \"sbol3-12001\", \"sbol3-12002\", \"sbol3-12003\", \"sbol3-12101\", \"sbol3-12102\", \"sbol3-12103\", \"sbol3-12104\", \"sbol3-12105\", \"sbol3-12106\", \"sbol3-12107\", \"sbol3-12108\", \"sbol3-12109\", \"sbol3-12110\", \"sbol3-12111\", \"sbol3-12112\", \"sbol3-12114\", \"sbol3-12115\", \"sbol3-12201\", \"sbol3-12202\", \"sbol3-12203\", \"sbol3-12204\", \"sbol3-12504\", \"sbol3-12507\", \"sbol3-12803\", \"sbol3-12807\", \"sbol3-12808\", \"sbol3-12901\", \"sbol3-12902\", \"sbol3-13001\", \"sbol3-13401\", \"sbol3-13501\", \"sbol3-13502\", \"sbol3-14201\", \"sbol3-14202\"], partially_applied: [PartialApplication { rule: \"sbol3-10101\", blocker: External, coverage_kind: LocalReferencesOnly }, PartialApplication { rule: \"sbol3-10113\", blocker: Resolver, coverage_kind: LocalReferencesOnly }, PartialApplication { rule: \"sbol3-10114\", blocker: Resolver, coverage_kind: LocalReferencesOnly }, PartialApplication { rule: \"sbol3-12113\", blocker: Resolver, coverage_kind: LocalReferencesOnly }], not_applied: [NotApplied { rule: \"sbol3-10502\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10504\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10602\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10603\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10605\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10606\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10609\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10610\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10611\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10614\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10615\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10701\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11002\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11003\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11005\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11006\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11009\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11010\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11102\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11103\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11105\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11106\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11109\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11801\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11802\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11904\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11905\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12301\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12302\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12303\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12501\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12502\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12503\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12505\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12506\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12801\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12802\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12804\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12805\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12806\", reason: MachineUncheckable }] }",
+        "findings": [
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent1/Range1` and `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent2/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I13263/Constraint1"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent2/Range1` and `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent3/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I13263/Constraint2"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent3/Range1` and `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent4/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I13263/Constraint3"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent4/Range1` and `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent5/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I13263/Constraint4"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent5/Range1` and `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent6/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I13263/Constraint5"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent6/Range1` and `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent7/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I13263/Constraint6"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent7/Range1` and `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent8/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I13263/Constraint7"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent8/Range1` and `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent9/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I13263/Constraint8"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent9/Range1` and `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent10/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I13263/Constraint9"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent4/Range1` and `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent5/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I13263_system/Constraint10"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent6/Range1` and `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent7/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I13263_system/Constraint16"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent7/Range1` and `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent8/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I13263_system/Constraint17"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent8/Range1` and `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent9/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I13263_system/Constraint18"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent9/Range1` and `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent10/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I13263_system/Constraint19"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent1/Range1` and `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent2/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I13263_system/Constraint7"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent2/Range1` and `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent3/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I13263_system/Constraint8"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent3/Range1` and `http://sbols.org/unspecified_namespace/BBa_I13263/SubComponent4/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I13263_system/Constraint9"
+          }
+        ],
+        "options": "AppliedOptions { topology_completeness: Conservative, external_mode: Off, document_resolvers: 0, content_resolvers: 0, overridden_rules: [], severity_floor: None, severity_ceiling: None }",
+        "validator": "sbol-rs",
+        "version": "0.2.2",
+        "status": "completed",
+        "count": 17
+      },
+      "registry": {
+        "status": "not_run",
+        "reason": "SBOL_DB_URL not configured; no live registry available"
+      },
+      "group": "historical"
+    },
+    {
+      "path": "docs/examples/Repressilator (BBa_I5200)/BBa_I5200.xml",
+      "sha256": "eb1b568916ec62769db48a3ed809e6b4428012996e2c543adf6bd1bddced5de6",
+      "rdf_triples": 1138,
+      "pysbol3": {
+        "status": "passed",
+        "count": 0,
+        "findings": []
+      },
+      "sbol_rs": {
+        "coverage": "RuleCoverage { fully_applied: [\"sbol3-10102\", \"sbol3-10103\", \"sbol3-10104\", \"sbol3-10105\", \"sbol3-10106\", \"sbol3-10107\", \"sbol3-10108\", \"sbol3-10109\", \"sbol3-10110\", \"sbol3-10111\", \"sbol3-10112\", \"sbol3-10201\", \"sbol3-10202\", \"sbol3-10203\", \"sbol3-10204\", \"sbol3-10205\", \"sbol3-10301\", \"sbol3-10501\", \"sbol3-10503\", \"sbol3-10505\", \"sbol3-10601\", \"sbol3-10604\", \"sbol3-10607\", \"sbol3-10608\", \"sbol3-10612\", \"sbol3-10613\", \"sbol3-10616\", \"sbol3-10617\", \"sbol3-10702\", \"sbol3-10801\", \"sbol3-10802\", \"sbol3-10803\", \"sbol3-10804\", \"sbol3-10805\", \"sbol3-10806\", \"sbol3-10807\", \"sbol3-10901\", \"sbol3-10902\", \"sbol3-10903\", \"sbol3-10904\", \"sbol3-11001\", \"sbol3-11004\", \"sbol3-11007\", \"sbol3-11008\", \"sbol3-11011\", \"sbol3-11012\", \"sbol3-11013\", \"sbol3-11101\", \"sbol3-11104\", \"sbol3-11107\", \"sbol3-11108\", \"sbol3-11201\", \"sbol3-11301\", \"sbol3-11302\", \"sbol3-11303\", \"sbol3-11401\", \"sbol3-11402\", \"sbol3-11403\", \"sbol3-11501\", \"sbol3-11701\", \"sbol3-11702\", \"sbol3-11703\", \"sbol3-11704\", \"sbol3-11705\", \"sbol3-11706\", \"sbol3-11803\", \"sbol3-11804\", \"sbol3-11901\", \"sbol3-11902\", \"sbol3-11903\", \"sbol3-11906\", \"sbol3-12001\", \"sbol3-12002\", \"sbol3-12003\", \"sbol3-12101\", \"sbol3-12102\", \"sbol3-12103\", \"sbol3-12104\", \"sbol3-12105\", \"sbol3-12106\", \"sbol3-12107\", \"sbol3-12108\", \"sbol3-12109\", \"sbol3-12110\", \"sbol3-12111\", \"sbol3-12112\", \"sbol3-12114\", \"sbol3-12115\", \"sbol3-12201\", \"sbol3-12202\", \"sbol3-12203\", \"sbol3-12204\", \"sbol3-12504\", \"sbol3-12507\", \"sbol3-12803\", \"sbol3-12807\", \"sbol3-12808\", \"sbol3-12901\", \"sbol3-12902\", \"sbol3-13001\", \"sbol3-13401\", \"sbol3-13501\", \"sbol3-13502\", \"sbol3-14201\", \"sbol3-14202\"], partially_applied: [PartialApplication { rule: \"sbol3-10101\", blocker: External, coverage_kind: LocalReferencesOnly }, PartialApplication { rule: \"sbol3-10113\", blocker: Resolver, coverage_kind: LocalReferencesOnly }, PartialApplication { rule: \"sbol3-10114\", blocker: Resolver, coverage_kind: LocalReferencesOnly }, PartialApplication { rule: \"sbol3-12113\", blocker: Resolver, coverage_kind: LocalReferencesOnly }], not_applied: [NotApplied { rule: \"sbol3-10502\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10504\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10602\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10603\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10605\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10606\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10609\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10610\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10611\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10614\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10615\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10701\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11002\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11003\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11005\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11006\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11009\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11010\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11102\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11103\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11105\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11106\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11109\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11801\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11802\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11904\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11905\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12301\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12302\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12303\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12501\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12502\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12503\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12505\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12506\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12801\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12802\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12804\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12805\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12806\", reason: MachineUncheckable }] }",
+        "findings": [
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent1/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent2/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint1"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent10/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent11/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint10"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent11/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent12/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint11"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent12/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent13/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint12"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent13/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent14/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint13"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent14/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent15/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint14"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent15/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent16/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint15"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent16/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent17/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint16"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent17/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent18/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint17"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent18/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent19/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint18"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent19/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent20/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint19"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent2/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent3/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint2"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent3/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent4/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint3"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent4/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent5/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint4"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent5/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent6/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint5"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent6/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent7/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint6"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent7/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent8/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint7"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent8/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent9/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint8"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent9/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent10/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200/Constraint9"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent6/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent7/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint15"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent7/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent8/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint16"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent8/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent9/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint17"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent9/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent10/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint18"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent11/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent12/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint24"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent12/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent13/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint25"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent13/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent14/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint26"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent14/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent15/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint27"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent16/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent17/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint33"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent17/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent18/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint34"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent18/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent19/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint35"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent19/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent20/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint36"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent1/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent2/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint6"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent2/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent3/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint7"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent3/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent4/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint8"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent4/Range1` and `http://sbols.org/unspecified_namespace/BBa_I5200/SubComponent5/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_I5200_system/Constraint9"
+          }
+        ],
+        "options": "AppliedOptions { topology_completeness: Conservative, external_mode: Off, document_resolvers: 0, content_resolvers: 0, overridden_rules: [], severity_floor: None, severity_ceiling: None }",
+        "validator": "sbol-rs",
+        "version": "0.2.2",
+        "status": "completed",
+        "count": 35
+      },
+      "registry": {
+        "status": "not_run",
+        "reason": "SBOL_DB_URL not configured; no live registry available"
+      },
+      "group": "historical"
+    },
+    {
+      "path": "docs/examples/YES GATE/YES-GATE.xml",
+      "sha256": "f5a106263f81a5ba7076d102db706cda140dcd6152ebbe9fd4ec0760d39d161d",
+      "rdf_triples": 546,
+      "pysbol3": {
+        "status": "passed",
+        "count": 0,
+        "findings": []
+      },
+      "sbol_rs": {
+        "coverage": "RuleCoverage { fully_applied: [\"sbol3-10102\", \"sbol3-10103\", \"sbol3-10104\", \"sbol3-10105\", \"sbol3-10106\", \"sbol3-10107\", \"sbol3-10108\", \"sbol3-10109\", \"sbol3-10110\", \"sbol3-10111\", \"sbol3-10112\", \"sbol3-10201\", \"sbol3-10202\", \"sbol3-10203\", \"sbol3-10204\", \"sbol3-10205\", \"sbol3-10301\", \"sbol3-10501\", \"sbol3-10503\", \"sbol3-10505\", \"sbol3-10601\", \"sbol3-10604\", \"sbol3-10607\", \"sbol3-10608\", \"sbol3-10612\", \"sbol3-10613\", \"sbol3-10616\", \"sbol3-10617\", \"sbol3-10702\", \"sbol3-10801\", \"sbol3-10802\", \"sbol3-10803\", \"sbol3-10804\", \"sbol3-10805\", \"sbol3-10806\", \"sbol3-10807\", \"sbol3-10901\", \"sbol3-10902\", \"sbol3-10903\", \"sbol3-10904\", \"sbol3-11001\", \"sbol3-11004\", \"sbol3-11007\", \"sbol3-11008\", \"sbol3-11011\", \"sbol3-11012\", \"sbol3-11013\", \"sbol3-11101\", \"sbol3-11104\", \"sbol3-11107\", \"sbol3-11108\", \"sbol3-11201\", \"sbol3-11301\", \"sbol3-11302\", \"sbol3-11303\", \"sbol3-11401\", \"sbol3-11402\", \"sbol3-11403\", \"sbol3-11501\", \"sbol3-11701\", \"sbol3-11702\", \"sbol3-11703\", \"sbol3-11704\", \"sbol3-11705\", \"sbol3-11706\", \"sbol3-11803\", \"sbol3-11804\", \"sbol3-11901\", \"sbol3-11902\", \"sbol3-11903\", \"sbol3-11906\", \"sbol3-12001\", \"sbol3-12002\", \"sbol3-12003\", \"sbol3-12101\", \"sbol3-12102\", \"sbol3-12103\", \"sbol3-12104\", \"sbol3-12105\", \"sbol3-12106\", \"sbol3-12107\", \"sbol3-12108\", \"sbol3-12109\", \"sbol3-12110\", \"sbol3-12111\", \"sbol3-12112\", \"sbol3-12114\", \"sbol3-12115\", \"sbol3-12201\", \"sbol3-12202\", \"sbol3-12203\", \"sbol3-12204\", \"sbol3-12504\", \"sbol3-12507\", \"sbol3-12803\", \"sbol3-12807\", \"sbol3-12808\", \"sbol3-12901\", \"sbol3-12902\", \"sbol3-13001\", \"sbol3-13401\", \"sbol3-13501\", \"sbol3-13502\", \"sbol3-14201\", \"sbol3-14202\"], partially_applied: [PartialApplication { rule: \"sbol3-10101\", blocker: External, coverage_kind: LocalReferencesOnly }, PartialApplication { rule: \"sbol3-10113\", blocker: Resolver, coverage_kind: LocalReferencesOnly }, PartialApplication { rule: \"sbol3-10114\", blocker: Resolver, coverage_kind: LocalReferencesOnly }, PartialApplication { rule: \"sbol3-12113\", blocker: Resolver, coverage_kind: LocalReferencesOnly }], not_applied: [NotApplied { rule: \"sbol3-10502\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10504\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10602\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10603\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10605\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10606\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10609\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10610\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10611\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10614\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10615\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10701\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11002\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11003\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11005\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11006\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11009\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11010\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11102\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11103\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11105\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11106\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11109\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11801\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11802\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11904\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11905\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12301\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12302\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12303\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12501\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12502\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12503\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12505\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12506\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12801\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12802\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12804\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12805\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12806\", reason: MachineUncheckable }] }",
+        "findings": [
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_0000/SubComponent1/Range1` and `http://sbols.org/unspecified_namespace/BBa_0000/SubComponent2/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_0000/Constraint1"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_0000/SubComponent2/Range1` and `http://sbols.org/unspecified_namespace/BBa_0000/SubComponent3/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_0000/Constraint2"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_0000/SubComponent3/Range1` and `http://sbols.org/unspecified_namespace/BBa_0000/SubComponent4/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_0000/Constraint3"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_0000/SubComponent4/Range1` and `http://sbols.org/unspecified_namespace/BBa_0000/SubComponent5/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_0000/Constraint4"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_0000/SubComponent5/Range1` and `http://sbols.org/unspecified_namespace/BBa_0000/SubComponent6/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_0000/Constraint5"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_0000/SubComponent6/Range1` and `http://sbols.org/unspecified_namespace/BBa_0000/SubComponent7/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_0000/Constraint6"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_0000/SubComponent7/Range1` and `http://sbols.org/unspecified_namespace/BBa_0000/SubComponent8/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_0000/Constraint7"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_0000/SubComponent5/Range1` and `http://sbols.org/unspecified_namespace/BBa_0000/SubComponent6/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_0000_system/Constraint13"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_0000/SubComponent6/Range1` and `http://sbols.org/unspecified_namespace/BBa_0000/SubComponent7/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_0000_system/Constraint14"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_0000/SubComponent7/Range1` and `http://sbols.org/unspecified_namespace/BBa_0000/SubComponent8/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_0000_system/Constraint15"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_0000/SubComponent1/Range1` and `http://sbols.org/unspecified_namespace/BBa_0000/SubComponent2/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_0000_system/Constraint6"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_0000/SubComponent2/Range1` and `http://sbols.org/unspecified_namespace/BBa_0000/SubComponent3/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_0000_system/Constraint7"
+          },
+          {
+            "hint": "None",
+            "message": "Constraint restriction `http://sbols.org/v3#meets` is contradicted by locations `http://sbols.org/unspecified_namespace/BBa_0000/SubComponent3/Range1` and `http://sbols.org/unspecified_namespace/BBa_0000/SubComponent4/Range1` on the same Sequence",
+            "property": "http://sbols.org/v3#restriction",
+            "rule_id": "sbol3-11706",
+            "severity": "error",
+            "subject": "http://sbols.org/unspecified_namespace/BBa_0000_system/Constraint8"
+          }
+        ],
+        "options": "AppliedOptions { topology_completeness: Conservative, external_mode: Off, document_resolvers: 0, content_resolvers: 0, overridden_rules: [], severity_floor: None, severity_ceiling: None }",
+        "validator": "sbol-rs",
+        "version": "0.2.2",
+        "status": "completed",
+        "count": 13
+      },
+      "registry": {
+        "status": "not_run",
+        "reason": "SBOL_DB_URL not configured; no live registry available"
+      },
+      "group": "historical"
+    },
+    {
+      "path": "docs/validation/regenerated/Lux System (BBa_I13263)/full.xml",
+      "sha256": "222b5bd9ba249769c33721deca424412ff79bde40af5ee4264ddef783e07f59e",
+      "rdf_triples": 649,
+      "pysbol3": {
+        "status": "passed",
+        "count": 0,
+        "findings": []
+      },
+      "sbol_rs": {
+        "coverage": "RuleCoverage { fully_applied: [\"sbol3-10102\", \"sbol3-10103\", \"sbol3-10104\", \"sbol3-10105\", \"sbol3-10106\", \"sbol3-10107\", \"sbol3-10108\", \"sbol3-10109\", \"sbol3-10110\", \"sbol3-10111\", \"sbol3-10112\", \"sbol3-10201\", \"sbol3-10202\", \"sbol3-10203\", \"sbol3-10204\", \"sbol3-10205\", \"sbol3-10301\", \"sbol3-10501\", \"sbol3-10503\", \"sbol3-10505\", \"sbol3-10601\", \"sbol3-10604\", \"sbol3-10607\", \"sbol3-10608\", \"sbol3-10612\", \"sbol3-10613\", \"sbol3-10616\", \"sbol3-10617\", \"sbol3-10702\", \"sbol3-10801\", \"sbol3-10802\", \"sbol3-10803\", \"sbol3-10804\", \"sbol3-10805\", \"sbol3-10806\", \"sbol3-10807\", \"sbol3-10901\", \"sbol3-10902\", \"sbol3-10903\", \"sbol3-10904\", \"sbol3-11001\", \"sbol3-11004\", \"sbol3-11007\", \"sbol3-11008\", \"sbol3-11011\", \"sbol3-11012\", \"sbol3-11013\", \"sbol3-11101\", \"sbol3-11104\", \"sbol3-11107\", \"sbol3-11108\", \"sbol3-11201\", \"sbol3-11301\", \"sbol3-11302\", \"sbol3-11303\", \"sbol3-11401\", \"sbol3-11402\", \"sbol3-11403\", \"sbol3-11501\", \"sbol3-11701\", \"sbol3-11702\", \"sbol3-11703\", \"sbol3-11704\", \"sbol3-11705\", \"sbol3-11706\", \"sbol3-11803\", \"sbol3-11804\", \"sbol3-11901\", \"sbol3-11902\", \"sbol3-11903\", \"sbol3-11906\", \"sbol3-12001\", \"sbol3-12002\", \"sbol3-12003\", \"sbol3-12101\", \"sbol3-12102\", \"sbol3-12103\", \"sbol3-12104\", \"sbol3-12105\", \"sbol3-12106\", \"sbol3-12107\", \"sbol3-12108\", \"sbol3-12109\", \"sbol3-12110\", \"sbol3-12111\", \"sbol3-12112\", \"sbol3-12114\", \"sbol3-12115\", \"sbol3-12201\", \"sbol3-12202\", \"sbol3-12203\", \"sbol3-12204\", \"sbol3-12504\", \"sbol3-12507\", \"sbol3-12803\", \"sbol3-12807\", \"sbol3-12808\", \"sbol3-12901\", \"sbol3-12902\", \"sbol3-13001\", \"sbol3-13401\", \"sbol3-13501\", \"sbol3-13502\", \"sbol3-14201\", \"sbol3-14202\"], partially_applied: [PartialApplication { rule: \"sbol3-10101\", blocker: External, coverage_kind: LocalReferencesOnly }, PartialApplication { rule: \"sbol3-10113\", blocker: Resolver, coverage_kind: LocalReferencesOnly }, PartialApplication { rule: \"sbol3-10114\", blocker: Resolver, coverage_kind: LocalReferencesOnly }, PartialApplication { rule: \"sbol3-12113\", blocker: Resolver, coverage_kind: LocalReferencesOnly }], not_applied: [NotApplied { rule: \"sbol3-10502\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10504\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10602\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10603\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10605\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10606\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10609\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10610\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10611\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10614\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10615\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10701\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11002\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11003\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11005\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11006\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11009\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11010\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11102\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11103\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11105\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11106\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11109\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11801\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11802\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11904\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11905\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12301\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12302\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12303\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12501\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12502\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12503\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12505\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12506\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12801\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12802\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12804\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12805\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12806\", reason: MachineUncheckable }] }",
+        "findings": [],
+        "options": "AppliedOptions { topology_completeness: Conservative, external_mode: Off, document_resolvers: 0, content_resolvers: 0, overridden_rules: [], severity_floor: None, severity_ceiling: None }",
+        "validator": "sbol-rs",
+        "version": "0.2.2",
+        "status": "completed",
+        "count": 0
+      },
+      "registry": {
+        "status": "not_run",
+        "reason": "SBOL_DB_URL not configured; no live registry available"
+      },
+      "group": "regenerated"
+    },
+    {
+      "path": "docs/validation/regenerated/Lux System (BBa_I13263)/structural.xml",
+      "sha256": "d6d4ad4b25ba94c6bf34fc9d7193efb97717aa517bec0a529f15377567c8aed5",
+      "rdf_triples": 366,
+      "pysbol3": {
+        "status": "passed",
+        "count": 0,
+        "findings": []
+      },
+      "sbol_rs": {
+        "coverage": "RuleCoverage { fully_applied: [\"sbol3-10102\", \"sbol3-10103\", \"sbol3-10104\", \"sbol3-10105\", \"sbol3-10106\", \"sbol3-10107\", \"sbol3-10108\", \"sbol3-10109\", \"sbol3-10110\", \"sbol3-10111\", \"sbol3-10112\", \"sbol3-10201\", \"sbol3-10202\", \"sbol3-10203\", \"sbol3-10204\", \"sbol3-10205\", \"sbol3-10301\", \"sbol3-10501\", \"sbol3-10503\", \"sbol3-10505\", \"sbol3-10601\", \"sbol3-10604\", \"sbol3-10607\", \"sbol3-10608\", \"sbol3-10612\", \"sbol3-10613\", \"sbol3-10616\", \"sbol3-10617\", \"sbol3-10702\", \"sbol3-10801\", \"sbol3-10802\", \"sbol3-10803\", \"sbol3-10804\", \"sbol3-10805\", \"sbol3-10806\", \"sbol3-10807\", \"sbol3-10901\", \"sbol3-10902\", \"sbol3-10903\", \"sbol3-10904\", \"sbol3-11001\", \"sbol3-11004\", \"sbol3-11007\", \"sbol3-11008\", \"sbol3-11011\", \"sbol3-11012\", \"sbol3-11013\", \"sbol3-11101\", \"sbol3-11104\", \"sbol3-11107\", \"sbol3-11108\", \"sbol3-11201\", \"sbol3-11301\", \"sbol3-11302\", \"sbol3-11303\", \"sbol3-11401\", \"sbol3-11402\", \"sbol3-11403\", \"sbol3-11501\", \"sbol3-11701\", \"sbol3-11702\", \"sbol3-11703\", \"sbol3-11704\", \"sbol3-11705\", \"sbol3-11706\", \"sbol3-11803\", \"sbol3-11804\", \"sbol3-11901\", \"sbol3-11902\", \"sbol3-11903\", \"sbol3-11906\", \"sbol3-12001\", \"sbol3-12002\", \"sbol3-12003\", \"sbol3-12101\", \"sbol3-12102\", \"sbol3-12103\", \"sbol3-12104\", \"sbol3-12105\", \"sbol3-12106\", \"sbol3-12107\", \"sbol3-12108\", \"sbol3-12109\", \"sbol3-12110\", \"sbol3-12111\", \"sbol3-12112\", \"sbol3-12114\", \"sbol3-12115\", \"sbol3-12201\", \"sbol3-12202\", \"sbol3-12203\", \"sbol3-12204\", \"sbol3-12504\", \"sbol3-12507\", \"sbol3-12803\", \"sbol3-12807\", \"sbol3-12808\", \"sbol3-12901\", \"sbol3-12902\", \"sbol3-13001\", \"sbol3-13401\", \"sbol3-13501\", \"sbol3-13502\", \"sbol3-14201\", \"sbol3-14202\"], partially_applied: [PartialApplication { rule: \"sbol3-10101\", blocker: External, coverage_kind: LocalReferencesOnly }, PartialApplication { rule: \"sbol3-10113\", blocker: Resolver, coverage_kind: LocalReferencesOnly }, PartialApplication { rule: \"sbol3-10114\", blocker: Resolver, coverage_kind: LocalReferencesOnly }, PartialApplication { rule: \"sbol3-12113\", blocker: Resolver, coverage_kind: LocalReferencesOnly }], not_applied: [NotApplied { rule: \"sbol3-10502\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10504\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10602\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10603\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10605\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10606\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10609\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10610\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10611\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10614\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10615\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10701\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11002\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11003\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11005\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11006\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11009\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11010\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11102\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11103\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11105\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11106\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11109\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11801\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11802\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11904\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11905\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12301\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12302\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12303\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12501\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12502\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12503\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12505\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12506\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12801\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12802\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12804\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12805\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12806\", reason: MachineUncheckable }] }",
+        "findings": [],
+        "options": "AppliedOptions { topology_completeness: Conservative, external_mode: Off, document_resolvers: 0, content_resolvers: 0, overridden_rules: [], severity_floor: None, severity_ceiling: None }",
+        "validator": "sbol-rs",
+        "version": "0.2.2",
+        "status": "completed",
+        "count": 0
+      },
+      "registry": {
+        "status": "not_run",
+        "reason": "SBOL_DB_URL not configured; no live registry available"
+      },
+      "group": "regenerated"
+    },
+    {
+      "path": "docs/validation/regenerated/Repressilator (BBa_I5200)/full.xml",
+      "sha256": "f3ed98363efc1a0ff244332a80de231db017ee92ced1bef1f99123d8d876ebc1",
+      "rdf_triples": 1134,
+      "pysbol3": {
+        "status": "passed",
+        "count": 0,
+        "findings": []
+      },
+      "sbol_rs": {
+        "coverage": "RuleCoverage { fully_applied: [\"sbol3-10102\", \"sbol3-10103\", \"sbol3-10104\", \"sbol3-10105\", \"sbol3-10106\", \"sbol3-10107\", \"sbol3-10108\", \"sbol3-10109\", \"sbol3-10110\", \"sbol3-10111\", \"sbol3-10112\", \"sbol3-10201\", \"sbol3-10202\", \"sbol3-10203\", \"sbol3-10204\", \"sbol3-10205\", \"sbol3-10301\", \"sbol3-10501\", \"sbol3-10503\", \"sbol3-10505\", \"sbol3-10601\", \"sbol3-10604\", \"sbol3-10607\", \"sbol3-10608\", \"sbol3-10612\", \"sbol3-10613\", \"sbol3-10616\", \"sbol3-10617\", \"sbol3-10702\", \"sbol3-10801\", \"sbol3-10802\", \"sbol3-10803\", \"sbol3-10804\", \"sbol3-10805\", \"sbol3-10806\", \"sbol3-10807\", \"sbol3-10901\", \"sbol3-10902\", \"sbol3-10903\", \"sbol3-10904\", \"sbol3-11001\", \"sbol3-11004\", \"sbol3-11007\", \"sbol3-11008\", \"sbol3-11011\", \"sbol3-11012\", \"sbol3-11013\", \"sbol3-11101\", \"sbol3-11104\", \"sbol3-11107\", \"sbol3-11108\", \"sbol3-11201\", \"sbol3-11301\", \"sbol3-11302\", \"sbol3-11303\", \"sbol3-11401\", \"sbol3-11402\", \"sbol3-11403\", \"sbol3-11501\", \"sbol3-11701\", \"sbol3-11702\", \"sbol3-11703\", \"sbol3-11704\", \"sbol3-11705\", \"sbol3-11706\", \"sbol3-11803\", \"sbol3-11804\", \"sbol3-11901\", \"sbol3-11902\", \"sbol3-11903\", \"sbol3-11906\", \"sbol3-12001\", \"sbol3-12002\", \"sbol3-12003\", \"sbol3-12101\", \"sbol3-12102\", \"sbol3-12103\", \"sbol3-12104\", \"sbol3-12105\", \"sbol3-12106\", \"sbol3-12107\", \"sbol3-12108\", \"sbol3-12109\", \"sbol3-12110\", \"sbol3-12111\", \"sbol3-12112\", \"sbol3-12114\", \"sbol3-12115\", \"sbol3-12201\", \"sbol3-12202\", \"sbol3-12203\", \"sbol3-12204\", \"sbol3-12504\", \"sbol3-12507\", \"sbol3-12803\", \"sbol3-12807\", \"sbol3-12808\", \"sbol3-12901\", \"sbol3-12902\", \"sbol3-13001\", \"sbol3-13401\", \"sbol3-13501\", \"sbol3-13502\", \"sbol3-14201\", \"sbol3-14202\"], partially_applied: [PartialApplication { rule: \"sbol3-10101\", blocker: External, coverage_kind: LocalReferencesOnly }, PartialApplication { rule: \"sbol3-10113\", blocker: Resolver, coverage_kind: LocalReferencesOnly }, PartialApplication { rule: \"sbol3-10114\", blocker: Resolver, coverage_kind: LocalReferencesOnly }, PartialApplication { rule: \"sbol3-12113\", blocker: Resolver, coverage_kind: LocalReferencesOnly }], not_applied: [NotApplied { rule: \"sbol3-10502\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10504\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10602\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10603\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10605\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10606\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10609\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10610\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10611\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10614\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10615\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10701\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11002\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11003\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11005\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11006\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11009\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11010\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11102\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11103\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11105\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11106\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11109\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11801\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11802\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11904\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11905\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12301\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12302\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12303\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12501\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12502\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12503\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12505\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12506\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12801\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12802\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12804\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12805\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12806\", reason: MachineUncheckable }] }",
+        "findings": [],
+        "options": "AppliedOptions { topology_completeness: Conservative, external_mode: Off, document_resolvers: 0, content_resolvers: 0, overridden_rules: [], severity_floor: None, severity_ceiling: None }",
+        "validator": "sbol-rs",
+        "version": "0.2.2",
+        "status": "completed",
+        "count": 0
+      },
+      "registry": {
+        "status": "not_run",
+        "reason": "SBOL_DB_URL not configured; no live registry available"
+      },
+      "group": "regenerated"
+    },
+    {
+      "path": "docs/validation/regenerated/Repressilator (BBa_I5200)/structural.xml",
+      "sha256": "ea757903c9e2e88b036e3376cc0ff8bd8fabffdfd844223caa8ee1412d60ad3f",
+      "rdf_triples": 644,
+      "pysbol3": {
+        "status": "passed",
+        "count": 0,
+        "findings": []
+      },
+      "sbol_rs": {
+        "coverage": "RuleCoverage { fully_applied: [\"sbol3-10102\", \"sbol3-10103\", \"sbol3-10104\", \"sbol3-10105\", \"sbol3-10106\", \"sbol3-10107\", \"sbol3-10108\", \"sbol3-10109\", \"sbol3-10110\", \"sbol3-10111\", \"sbol3-10112\", \"sbol3-10201\", \"sbol3-10202\", \"sbol3-10203\", \"sbol3-10204\", \"sbol3-10205\", \"sbol3-10301\", \"sbol3-10501\", \"sbol3-10503\", \"sbol3-10505\", \"sbol3-10601\", \"sbol3-10604\", \"sbol3-10607\", \"sbol3-10608\", \"sbol3-10612\", \"sbol3-10613\", \"sbol3-10616\", \"sbol3-10617\", \"sbol3-10702\", \"sbol3-10801\", \"sbol3-10802\", \"sbol3-10803\", \"sbol3-10804\", \"sbol3-10805\", \"sbol3-10806\", \"sbol3-10807\", \"sbol3-10901\", \"sbol3-10902\", \"sbol3-10903\", \"sbol3-10904\", \"sbol3-11001\", \"sbol3-11004\", \"sbol3-11007\", \"sbol3-11008\", \"sbol3-11011\", \"sbol3-11012\", \"sbol3-11013\", \"sbol3-11101\", \"sbol3-11104\", \"sbol3-11107\", \"sbol3-11108\", \"sbol3-11201\", \"sbol3-11301\", \"sbol3-11302\", \"sbol3-11303\", \"sbol3-11401\", \"sbol3-11402\", \"sbol3-11403\", \"sbol3-11501\", \"sbol3-11701\", \"sbol3-11702\", \"sbol3-11703\", \"sbol3-11704\", \"sbol3-11705\", \"sbol3-11706\", \"sbol3-11803\", \"sbol3-11804\", \"sbol3-11901\", \"sbol3-11902\", \"sbol3-11903\", \"sbol3-11906\", \"sbol3-12001\", \"sbol3-12002\", \"sbol3-12003\", \"sbol3-12101\", \"sbol3-12102\", \"sbol3-12103\", \"sbol3-12104\", \"sbol3-12105\", \"sbol3-12106\", \"sbol3-12107\", \"sbol3-12108\", \"sbol3-12109\", \"sbol3-12110\", \"sbol3-12111\", \"sbol3-12112\", \"sbol3-12114\", \"sbol3-12115\", \"sbol3-12201\", \"sbol3-12202\", \"sbol3-12203\", \"sbol3-12204\", \"sbol3-12504\", \"sbol3-12507\", \"sbol3-12803\", \"sbol3-12807\", \"sbol3-12808\", \"sbol3-12901\", \"sbol3-12902\", \"sbol3-13001\", \"sbol3-13401\", \"sbol3-13501\", \"sbol3-13502\", \"sbol3-14201\", \"sbol3-14202\"], partially_applied: [PartialApplication { rule: \"sbol3-10101\", blocker: External, coverage_kind: LocalReferencesOnly }, PartialApplication { rule: \"sbol3-10113\", blocker: Resolver, coverage_kind: LocalReferencesOnly }, PartialApplication { rule: \"sbol3-10114\", blocker: Resolver, coverage_kind: LocalReferencesOnly }, PartialApplication { rule: \"sbol3-12113\", blocker: Resolver, coverage_kind: LocalReferencesOnly }], not_applied: [NotApplied { rule: \"sbol3-10502\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10504\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10602\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10603\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10605\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10606\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10609\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10610\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10611\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10614\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10615\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10701\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11002\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11003\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11005\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11006\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11009\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11010\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11102\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11103\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11105\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11106\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11109\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11801\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11802\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11904\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11905\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12301\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12302\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12303\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12501\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12502\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12503\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12505\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12506\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12801\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12802\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12804\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12805\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12806\", reason: MachineUncheckable }] }",
+        "findings": [],
+        "options": "AppliedOptions { topology_completeness: Conservative, external_mode: Off, document_resolvers: 0, content_resolvers: 0, overridden_rules: [], severity_floor: None, severity_ceiling: None }",
+        "validator": "sbol-rs",
+        "version": "0.2.2",
+        "status": "completed",
+        "count": 0
+      },
+      "registry": {
+        "status": "not_run",
+        "reason": "SBOL_DB_URL not configured; no live registry available"
+      },
+      "group": "regenerated"
+    },
+    {
+      "path": "docs/validation/regenerated/YES GATE/full.xml",
+      "sha256": "e7f9f3c723259ecf470d601752ac27474ac3f7720d6d899bbcac1101bd44bbd2",
+      "rdf_triples": 544,
+      "pysbol3": {
+        "status": "passed",
+        "count": 0,
+        "findings": []
+      },
+      "sbol_rs": {
+        "coverage": "RuleCoverage { fully_applied: [\"sbol3-10102\", \"sbol3-10103\", \"sbol3-10104\", \"sbol3-10105\", \"sbol3-10106\", \"sbol3-10107\", \"sbol3-10108\", \"sbol3-10109\", \"sbol3-10110\", \"sbol3-10111\", \"sbol3-10112\", \"sbol3-10201\", \"sbol3-10202\", \"sbol3-10203\", \"sbol3-10204\", \"sbol3-10205\", \"sbol3-10301\", \"sbol3-10501\", \"sbol3-10503\", \"sbol3-10505\", \"sbol3-10601\", \"sbol3-10604\", \"sbol3-10607\", \"sbol3-10608\", \"sbol3-10612\", \"sbol3-10613\", \"sbol3-10616\", \"sbol3-10617\", \"sbol3-10702\", \"sbol3-10801\", \"sbol3-10802\", \"sbol3-10803\", \"sbol3-10804\", \"sbol3-10805\", \"sbol3-10806\", \"sbol3-10807\", \"sbol3-10901\", \"sbol3-10902\", \"sbol3-10903\", \"sbol3-10904\", \"sbol3-11001\", \"sbol3-11004\", \"sbol3-11007\", \"sbol3-11008\", \"sbol3-11011\", \"sbol3-11012\", \"sbol3-11013\", \"sbol3-11101\", \"sbol3-11104\", \"sbol3-11107\", \"sbol3-11108\", \"sbol3-11201\", \"sbol3-11301\", \"sbol3-11302\", \"sbol3-11303\", \"sbol3-11401\", \"sbol3-11402\", \"sbol3-11403\", \"sbol3-11501\", \"sbol3-11701\", \"sbol3-11702\", \"sbol3-11703\", \"sbol3-11704\", \"sbol3-11705\", \"sbol3-11706\", \"sbol3-11803\", \"sbol3-11804\", \"sbol3-11901\", \"sbol3-11902\", \"sbol3-11903\", \"sbol3-11906\", \"sbol3-12001\", \"sbol3-12002\", \"sbol3-12003\", \"sbol3-12101\", \"sbol3-12102\", \"sbol3-12103\", \"sbol3-12104\", \"sbol3-12105\", \"sbol3-12106\", \"sbol3-12107\", \"sbol3-12108\", \"sbol3-12109\", \"sbol3-12110\", \"sbol3-12111\", \"sbol3-12112\", \"sbol3-12114\", \"sbol3-12115\", \"sbol3-12201\", \"sbol3-12202\", \"sbol3-12203\", \"sbol3-12204\", \"sbol3-12504\", \"sbol3-12507\", \"sbol3-12803\", \"sbol3-12807\", \"sbol3-12808\", \"sbol3-12901\", \"sbol3-12902\", \"sbol3-13001\", \"sbol3-13401\", \"sbol3-13501\", \"sbol3-13502\", \"sbol3-14201\", \"sbol3-14202\"], partially_applied: [PartialApplication { rule: \"sbol3-10101\", blocker: External, coverage_kind: LocalReferencesOnly }, PartialApplication { rule: \"sbol3-10113\", blocker: Resolver, coverage_kind: LocalReferencesOnly }, PartialApplication { rule: \"sbol3-10114\", blocker: Resolver, coverage_kind: LocalReferencesOnly }, PartialApplication { rule: \"sbol3-12113\", blocker: Resolver, coverage_kind: LocalReferencesOnly }], not_applied: [NotApplied { rule: \"sbol3-10502\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10504\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10602\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10603\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10605\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10606\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10609\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10610\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10611\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10614\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10615\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10701\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11002\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11003\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11005\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11006\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11009\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11010\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11102\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11103\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11105\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11106\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11109\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11801\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11802\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11904\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11905\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12301\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12302\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12303\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12501\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12502\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12503\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12505\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12506\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12801\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12802\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12804\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12805\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12806\", reason: MachineUncheckable }] }",
+        "findings": [],
+        "options": "AppliedOptions { topology_completeness: Conservative, external_mode: Off, document_resolvers: 0, content_resolvers: 0, overridden_rules: [], severity_floor: None, severity_ceiling: None }",
+        "validator": "sbol-rs",
+        "version": "0.2.2",
+        "status": "completed",
+        "count": 0
+      },
+      "registry": {
+        "status": "not_run",
+        "reason": "SBOL_DB_URL not configured; no live registry available"
+      },
+      "group": "regenerated"
+    },
+    {
+      "path": "docs/validation/regenerated/YES GATE/structural.xml",
+      "sha256": "8203f0a16fd1afde105c6cffb4ba797118f3cc92c82b8aa7f48b42b090214e31",
+      "rdf_triples": 305,
+      "pysbol3": {
+        "status": "passed",
+        "count": 0,
+        "findings": []
+      },
+      "sbol_rs": {
+        "coverage": "RuleCoverage { fully_applied: [\"sbol3-10102\", \"sbol3-10103\", \"sbol3-10104\", \"sbol3-10105\", \"sbol3-10106\", \"sbol3-10107\", \"sbol3-10108\", \"sbol3-10109\", \"sbol3-10110\", \"sbol3-10111\", \"sbol3-10112\", \"sbol3-10201\", \"sbol3-10202\", \"sbol3-10203\", \"sbol3-10204\", \"sbol3-10205\", \"sbol3-10301\", \"sbol3-10501\", \"sbol3-10503\", \"sbol3-10505\", \"sbol3-10601\", \"sbol3-10604\", \"sbol3-10607\", \"sbol3-10608\", \"sbol3-10612\", \"sbol3-10613\", \"sbol3-10616\", \"sbol3-10617\", \"sbol3-10702\", \"sbol3-10801\", \"sbol3-10802\", \"sbol3-10803\", \"sbol3-10804\", \"sbol3-10805\", \"sbol3-10806\", \"sbol3-10807\", \"sbol3-10901\", \"sbol3-10902\", \"sbol3-10903\", \"sbol3-10904\", \"sbol3-11001\", \"sbol3-11004\", \"sbol3-11007\", \"sbol3-11008\", \"sbol3-11011\", \"sbol3-11012\", \"sbol3-11013\", \"sbol3-11101\", \"sbol3-11104\", \"sbol3-11107\", \"sbol3-11108\", \"sbol3-11201\", \"sbol3-11301\", \"sbol3-11302\", \"sbol3-11303\", \"sbol3-11401\", \"sbol3-11402\", \"sbol3-11403\", \"sbol3-11501\", \"sbol3-11701\", \"sbol3-11702\", \"sbol3-11703\", \"sbol3-11704\", \"sbol3-11705\", \"sbol3-11706\", \"sbol3-11803\", \"sbol3-11804\", \"sbol3-11901\", \"sbol3-11902\", \"sbol3-11903\", \"sbol3-11906\", \"sbol3-12001\", \"sbol3-12002\", \"sbol3-12003\", \"sbol3-12101\", \"sbol3-12102\", \"sbol3-12103\", \"sbol3-12104\", \"sbol3-12105\", \"sbol3-12106\", \"sbol3-12107\", \"sbol3-12108\", \"sbol3-12109\", \"sbol3-12110\", \"sbol3-12111\", \"sbol3-12112\", \"sbol3-12114\", \"sbol3-12115\", \"sbol3-12201\", \"sbol3-12202\", \"sbol3-12203\", \"sbol3-12204\", \"sbol3-12504\", \"sbol3-12507\", \"sbol3-12803\", \"sbol3-12807\", \"sbol3-12808\", \"sbol3-12901\", \"sbol3-12902\", \"sbol3-13001\", \"sbol3-13401\", \"sbol3-13501\", \"sbol3-13502\", \"sbol3-14201\", \"sbol3-14202\"], partially_applied: [PartialApplication { rule: \"sbol3-10101\", blocker: External, coverage_kind: LocalReferencesOnly }, PartialApplication { rule: \"sbol3-10113\", blocker: Resolver, coverage_kind: LocalReferencesOnly }, PartialApplication { rule: \"sbol3-10114\", blocker: Resolver, coverage_kind: LocalReferencesOnly }, PartialApplication { rule: \"sbol3-12113\", blocker: Resolver, coverage_kind: LocalReferencesOnly }], not_applied: [NotApplied { rule: \"sbol3-10502\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10504\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10602\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10603\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10605\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10606\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10609\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10610\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10611\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10614\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10615\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-10701\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11002\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11003\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11005\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11006\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11009\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11010\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11102\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11103\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11105\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11106\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11109\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11801\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11802\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11904\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-11905\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12301\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12302\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12303\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12501\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12502\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12503\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12505\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12506\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12801\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12802\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12804\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12805\", reason: MachineUncheckable }, NotApplied { rule: \"sbol3-12806\", reason: MachineUncheckable }] }",
+        "findings": [],
+        "options": "AppliedOptions { topology_completeness: Conservative, external_mode: Off, document_resolvers: 0, content_resolvers: 0, overridden_rules: [], severity_floor: None, severity_ceiling: None }",
+        "validator": "sbol-rs",
+        "version": "0.2.2",
+        "status": "completed",
+        "count": 0
+      },
+      "registry": {
+        "status": "not_run",
+        "reason": "SBOL_DB_URL not configured; no live registry available"
+      },
+      "group": "regenerated"
+    }
+  ],
+  "violations": [],
+  "execution_errors": [],
+  "result": "passed"
+}
