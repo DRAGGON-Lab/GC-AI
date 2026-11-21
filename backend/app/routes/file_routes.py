@@ -8,13 +8,13 @@ import zipfile
 
 from flask import Blueprint, current_app, request, send_file
 import sbol3
-from sbol_utilities.conversion import convert_to_fasta, convert_to_genbank
+from sbol_utilities.conversion import convert_to_fasta
 from app.utils.file import create_file_sol3, validate_sbol3_document
 from app.utils.validation import validate_create, reject
 from app.utils.custom_error import CustomError
 from app.utils.artifacts import ArtifactStore
-from app.config import get_db_connection, FILES_GENERATED_DIR, FILES_CONVERTED_DIR
-from app.utils.file import generate_related_filename
+from app.utils.conversion import preflight, convert_to_genbank, verify_artifact
+from app.config import get_db_connection, FILES_GENERATED_DIR
 
 file_blueprint = Blueprint("file", __name__)
 
@@ -84,51 +84,47 @@ def create_file():
 def convert_sbol3():
     data = json_object()
     if "file_path" in data:
-        reject("file_path", "Server paths are no longer accepted; use structural_handle from X-GCAI-Structural-Handle", 400)
+        reject(
+            "file_path",
+            "Server paths are no longer accepted; use structural_handle returned in X-GCAI-Structural-Handle by /file/create",
+            400,
+        )
     for flag in ("genbank", "fasta"):
         if not isinstance(data.get(flag), bool):
             reject(flag, "Expected a boolean", 400)
     if not data["genbank"] and not data["fasta"]:
         reject("", "Select at least one conversion format", 400)
     contents = artifact_store().read(data.get("structural_handle"))
-    file_path = "design.xml"
     try:
         doc = sbol3.Document()
         doc.read_string(contents.decode("utf-8"), "xml")
     except Exception:
         raise CustomError(
-            "Cannot parse the SBOL document", 422, code="invalid_sbol"
+            "Cannot parse the generated SBOL document", 422, code="invalid_sbol"
         ) from None
     require_valid(doc)
-    components = [o for o in doc.objects if isinstance(o, sbol3.Component)]
-    if not components or any(
-        not c.sequences or any(not q.lookup().elements for q in c.sequences)
-        for c in components
-    ):
-        reject(
-            "file_path", "Conversion requires a complete sequence for every component"
-        )
-    directory = current_app.config.get("FILES_CONVERTED_DIR", FILES_CONVERTED_DIR)
-    os.makedirs(directory, exist_ok=True)
-    with tempfile.TemporaryDirectory(dir=directory) as temporary:
-        output_files = []
-        if data["fasta"]:
-            path = os.path.join(
-                temporary, generate_related_filename(file_path, "fasta", "fasta")
-            )
-            convert_to_fasta(doc, path)
-            output_files.append(path)
-        if data["genbank"]:
-            path = os.path.join(
-                temporary, generate_related_filename(file_path, "genbank", "gb")
-            )
-            convert_to_genbank(doc, path, allow_genbank_online=True)
-            output_files.append(path)
-        buffer = io.BytesIO()
-        with zipfile.ZipFile(buffer, "w") as archive:
-            for path in output_files:
-                archive.write(path, os.path.basename(path))
-        buffer.seek(0)
+    components = preflight(doc)
+    buffer = io.BytesIO()
+    # No artifacts are returned until all requested formats have passed parsing and comparison.
+    with tempfile.TemporaryDirectory(prefix="gcai-conversion-") as temporary:
+        outputs = []
+        for selected, extension, parser, convert in (
+            ("fasta", "fasta", "fasta", convert_to_fasta),
+            ("genbank", "gb", "genbank", convert_to_genbank),
+        ):
+            if not data[selected]:
+                continue
+            filename = "design." + extension
+            path = os.path.join(temporary, filename)
+            convert(doc, path)
+            with open(path, "rb") as stream:
+                result = stream.read()
+            verify_artifact(result, parser, components)
+            outputs.append((filename, result))
+        with zipfile.ZipFile(buffer, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+            for name, result in outputs:
+                archive.writestr(name, result)
+    buffer.seek(0)
     return send_file(
         buffer,
         as_attachment=True,

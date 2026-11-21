@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import io
 import os
+import re
 import zipfile
 from pathlib import Path
 from typing import Any, Mapping
@@ -16,13 +17,16 @@ from gcai.errors import DesignValidationError, GCAIConnectionError, GCAIError, G
 from gcai.models import BuildResult, CreateResult, Detection, PartDetails
 
 DEFAULT_URL = "http://localhost:5001"
+HANDLE = re.compile(r"v1_[A-Za-z0-9_-]{43}\Z")
+
+
 USER_AGENT = "gcai-client/0.1.0"
 
 
 class GCAIClient:
     """Calls the GC-AI service.
 
-    The service has no authentication. Every method raises `GCAIResponseError`
+    Optional Basic authentication supports hosted TLS deployments. Every method raises `GCAIResponseError`
     when the service answers with a failure, and `GCAIConnectionError` when it
     cannot be reached.
     """
@@ -139,7 +143,7 @@ class GCAIClient:
         payload = _payload(design, validate=validate)
         response = self._request("POST", "/file/create", json=payload)
         structural = response.headers.get("X-GCAI-Structural-Handle")
-        if not structural:
+        if not structural or not HANDLE.fullmatch(structural):
             raise GCAIError(
                 "the service did not return a X-GCAI-Structural-Handle header, so the structural "
                 "document cannot be converted"
@@ -149,21 +153,41 @@ class GCAIClient:
     def convert(self, structural_handle: str, *, genbank: bool = True, fasta: bool = True) -> dict[str, bytes]:
         """Convert a generated document, keyed by format.
 
-        `structural_handle` is the `X-GCAI-Structural-Handle` header from `create`.
+        `structural_handle` is the opaque `X-GCAI-Structural-Handle` header from `create`.
         The service deletes the file 24 hours after writing it.
         """
+        if not isinstance(genbank, bool) or not isinstance(fasta, bool) or not (genbank or fasta):
+            raise GCAIError("select at least one format using boolean flags")
+        if not isinstance(structural_handle, str) or not HANDLE.fullmatch(structural_handle):
+            raise GCAIError("expected a v1 structural handle from create()")
         response = self._request(
             "POST",
             "/file/convert",
             json={"structural_handle": structural_handle, "genbank": genbank, "fasta": fasta},
         )
         out: dict[str, bytes] = {}
-        with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
-            for member in archive.namelist():
-                if member.endswith(".gb"):
-                    out["genbank"] = archive.read(member)
-                elif member.endswith(".fasta"):
-                    out["fasta"] = archive.read(member)
+        expected = {key for key, flag in (("genbank", genbank), ("fasta", fasta)) if flag}
+        try:
+            with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
+                for member in archive.infolist():
+                    key = (
+                        "genbank"
+                        if member.filename.endswith(".gb")
+                        else "fasta" if member.filename.endswith(".fasta") else None
+                    )
+                    if (
+                        key not in expected
+                        or key in out
+                        or member.file_size == 0
+                        or member.file_size > 64 * 1024 * 1024
+                    ):
+                        raise GCAIError("the conversion archive contains unexpected, empty or duplicate artifacts")
+                    assert key is not None
+                    out[key] = archive.read(member)
+        except (zipfile.BadZipFile, RuntimeError) as exc:
+            raise GCAIError("the service returned an invalid conversion archive") from exc
+        if set(out) != expected:
+            raise GCAIError("the conversion archive is incomplete; retry using the structural handle")
         return out
 
     def build(
