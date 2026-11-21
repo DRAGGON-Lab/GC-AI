@@ -24,7 +24,11 @@ def builds(handler: Recorder) -> None:
     handler.route(
         "POST",
         "/file/create",
-        lambda _r: httpx.Response(200, content=b"<rdf:RDF/>", headers={"file_path_structural": "/p"}),
+        lambda _r: httpx.Response(
+            200,
+            content=b"<rdf:RDF/>",
+            headers={"X-GCAI-Structural-Handle": "v1_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"},
+        ),
     )
 
     def convert(request: httpx.Request) -> httpx.Response:

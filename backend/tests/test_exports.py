@@ -63,7 +63,8 @@ def test_valid_export_and_correct_coordinates(client):
         (f.locations[0].start, f.locations[0].end) for f in parent.features
     ) == [(1, 4), (13, 16)]
     assert all(c.restriction == sbol3.SBOL_PRECEDES for c in parent.constraints)
-    assert Path(response.headers["file_path_structural"]).exists()
+    from app.utils.artifacts import ArtifactStore
+    assert ArtifactStore(client.application.config["FILES_GENERATED_DIR"]).read(response.headers["X-GCAI-Structural-Handle"])
     assert len(doc.validate()) == 0
 
 
@@ -78,7 +79,7 @@ def test_unknown_bases_have_no_parent_sequence_or_ranges(client, sequences):
     converted = client.post(
         "/file/convert",
         json={
-            "file_path": response.headers["file_path_structural"],
+            "structural_handle": response.headers["X-GCAI-Structural-Handle"],
             "fasta": True,
             "genbank": False,
         },
@@ -317,7 +318,7 @@ def test_bad_species_type_shape(client):
     assert client.post("/file/create", json=data).status_code == 400
 
 
-def test_expired_export_directories_removed_but_staging_preserved(tmp_path):
+def test_expired_export_and_abandoned_staging_directories_removed(tmp_path):
     import os, time, uuid
     from app.utils.cleanup import empty_folders
 
@@ -333,7 +334,7 @@ def test_expired_export_directories_removed_but_staging_preserved(tmp_path):
     os.utime(staging, (yesterday, yesterday))
     empty_folders([str(tmp_path)], 24)
     assert not old.exists()
-    assert current.exists() and staging.exists()
+    assert current.exists() and not staging.exists()
 
 
 def test_discovery_table_matches_client_and_openapi(client):

@@ -1,27 +1,21 @@
-"""Validated, transactional SBOL export and sequence conversion boundaries."""
+"""Validated transactional SBOL exports and capability-based local conversion."""
 
 from contextlib import nullcontext
 import io
-import logging
 import os
-import shutil
 import tempfile
-import uuid
 import zipfile
 
 from flask import Blueprint, current_app, request, send_file
 import sbol3
-from sbol_utilities.conversion import convert_to_genbank, convert_to_fasta
-from app.utils.file import (
-    create_file_sol3,
-    validate_sbol3_document,
-    generate_related_filename,
-)
+from sbol_utilities.conversion import convert_to_fasta, convert_to_genbank
+from app.utils.file import create_file_sol3, validate_sbol3_document
 from app.utils.validation import validate_create, reject
 from app.utils.custom_error import CustomError
+from app.utils.artifacts import ArtifactStore
 from app.config import get_db_connection, FILES_GENERATED_DIR, FILES_CONVERTED_DIR
+from app.utils.file import generate_related_filename
 
-logger = logging.getLogger(__name__)
 file_blueprint = Blueprint("file", __name__)
 
 
@@ -42,38 +36,46 @@ def require_valid(doc):
         )
 
 
+def artifact_store():
+    return ArtifactStore(
+        current_app.config.get("FILES_GENERATED_DIR", FILES_GENERATED_DIR)
+    )
+
+
 @file_blueprint.route("/create", methods=["POST"])
 def create_file():
     data = validate_create(json_object())
-    directory = current_app.config.get("FILES_GENERATED_DIR", FILES_GENERATED_DIR)
-    os.makedirs(directory, exist_ok=True)
-    staging = tempfile.mkdtemp(prefix=".staging-", dir=directory)
-    destination = os.path.join(directory, str(uuid.uuid4()))
+    store = artifact_store()
     connection = None
     try:
         if any(not c["new"] for c in data["components"]):
             connection = get_db_connection()
-        with connection.cursor() if connection else nullcontext(None) as cursor:
-            for name, functional in (("full", True), ("structural", False)):
-                doc = create_file_sol3(cursor, data, functional)
-                require_valid(doc)
-                path = os.path.join(staging, name + ".xml")
-                doc.write(path)
-                parsed = sbol3.Document()
-                parsed.read(path)
-                require_valid(parsed)
-        # Publish the directory once: neither file is reachable until both pass.
-        os.replace(staging, destination)
-        response = send_file(os.path.join(destination, "full.xml"), as_attachment=True)
-        response.headers["file_path_structural"] = os.path.join(
-            destination, "structural.xml"
+        documents = {}
+        with tempfile.TemporaryDirectory(prefix=".staging-", dir=store.root) as staging:
+            with connection.cursor() if connection else nullcontext(None) as cursor:
+                for name, functional in (("full", True), ("structural", False)):
+                    doc = create_file_sol3(cursor, data, functional)
+                    require_valid(doc)
+                    path = os.path.join(staging, name + ".xml")
+                    # Reserve a private file before the serializer opens it.
+                    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+                    os.close(fd)
+                    doc.write(path)
+                    parsed = sbol3.Document()
+                    parsed.read(path)
+                    require_valid(parsed)
+                    with open(path, "rb") as stream:
+                        documents[name] = stream.read()
+            handle = store.publish(documents["full"], documents["structural"])
+        response = send_file(
+            io.BytesIO(documents["full"]),
+            as_attachment=True,
+            mimetype="application/rdf+xml",
+            download_name="design.xml",
         )
+        response.headers["X-GCAI-Structural-Handle"] = handle
         return response
-    except Exception:
-        shutil.rmtree(destination, ignore_errors=True)
-        raise
     finally:
-        shutil.rmtree(staging, ignore_errors=True)
         if connection is not None:
             connection.close()
 
@@ -81,19 +83,18 @@ def create_file():
 @file_blueprint.route("/convert", methods=["POST"])
 def convert_sbol3():
     data = json_object()
-    file_path = data.get("file_path")
-    if not isinstance(file_path, str) or not file_path:
-        reject("file_path", "Expected a generated structural file reference", 400)
+    if "file_path" in data:
+        reject("file_path", "Server paths are no longer accepted; use structural_handle from X-GCAI-Structural-Handle", 400)
     for flag in ("genbank", "fasta"):
         if not isinstance(data.get(flag), bool):
             reject(flag, "Expected a boolean", 400)
     if not data["genbank"] and not data["fasta"]:
         reject("", "Select at least one conversion format", 400)
-    if not os.path.isfile(file_path):
-        raise CustomError("File not found", 404)
+    contents = artifact_store().read(data.get("structural_handle"))
+    file_path = "design.xml"
     try:
         doc = sbol3.Document()
-        doc.read(file_path)
+        doc.read_string(contents.decode("utf-8"), "xml")
     except Exception:
         raise CustomError(
             "Cannot parse the SBOL document", 422, code="invalid_sbol"

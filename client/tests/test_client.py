@@ -115,13 +115,13 @@ def test_fill_parts_reads_registry_parts_only(client: GCAIClient, handler: Recor
 
 def create_route(handler: Recorder, *, header: bool = True) -> None:
     def respond(_request: httpx.Request) -> httpx.Response:
-        headers = {"file_path_structural": "/app/files/structural.xml"} if header else {}
+        headers = {"X-GCAI-Structural-Handle": "v1_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"} if header else {}
         return httpx.Response(200, content=b"<rdf:RDF/>", headers=headers)
 
     handler.route("POST", "/file/create", respond)
 
 
-def test_create_returns_the_document_and_the_structural_path(client: GCAIClient, handler: Recorder) -> None:
+def test_create_returns_the_document_and_the_structural_handle(client: GCAIClient, handler: Recorder) -> None:
     create_route(handler)
     design = Design(name="CIRCUIT", namespace="https://example.org/")
     design.parts.append(Part(name="BBa_R0010", role=Role.PROMOTER))
@@ -129,7 +129,7 @@ def test_create_returns_the_document_and_the_structural_path(client: GCAIClient,
     result = client.create(design)
 
     assert result.sbol3 == b"<rdf:RDF/>"
-    assert result.structural_path == "/app/files/structural.xml"
+    assert result.structural_handle == "v1_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
     assert json.loads(handler.last.content)["components"][0]["name"] == "CIRCUIT"
 
 
@@ -137,7 +137,7 @@ def test_create_without_the_header_is_an_error(client: GCAIClient, handler: Reco
     create_route(handler, header=False)
     design = Design(name="CIRCUIT", namespace="https://example.org/")
     design.parts.append(Part(name="BBa_R0010", role=Role.PROMOTER))
-    with pytest.raises(GCAIError, match="file_path_structural"):
+    with pytest.raises(GCAIError, match="X-GCAI-Structural-Handle"):
         client.create(design)
 
 
@@ -169,11 +169,11 @@ def test_convert_unpacks_the_archive(client: GCAIClient, handler: Recorder) -> N
     archive = zip_bytes({"design_genbank.gb": b"LOCUS", "design_fasta.fasta": b">seq"})
     handler.route("POST", "/file/convert", lambda _r: httpx.Response(200, content=archive))
 
-    out = client.convert("/app/files/structural.xml")
+    out = client.convert("v1_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
 
     assert out == {"genbank": b"LOCUS", "fasta": b">seq"}
     assert json.loads(handler.last.content) == {
-        "file_path": "/app/files/structural.xml",
+        "structural_handle": "v1_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
         "genbank": True,
         "fasta": True,
     }
@@ -181,7 +181,7 @@ def test_convert_unpacks_the_archive(client: GCAIClient, handler: Recorder) -> N
 
 def test_convert_with_one_format(client: GCAIClient, handler: Recorder) -> None:
     handler.route("POST", "/file/convert", lambda _r: httpx.Response(200, content=zip_bytes({"d_fasta.fasta": b">s"})))
-    assert client.convert("/p", genbank=False) == {"fasta": b">s"}
+    assert client.convert("v1_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", genbank=False) == {"fasta": b">s"}
 
 
 def test_build_creates_then_converts(client: GCAIClient, handler: Recorder, tmp_path) -> None:

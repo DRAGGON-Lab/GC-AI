@@ -134,7 +134,11 @@ def test_build_writes_every_file(run, handler: Recorder, capsys, tmp_path) -> No
     handler.route(
         "POST",
         "/file/create",
-        lambda _r: httpx.Response(200, content=b"<rdf/>", headers={"file_path_structural": "/p"}),
+        lambda _r: httpx.Response(
+            200,
+            content=b"<rdf/>",
+            headers={"X-GCAI-Structural-Handle": "v1_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"},
+        ),
     )
     handler.route(
         "POST",
