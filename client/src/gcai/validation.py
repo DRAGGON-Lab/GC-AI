@@ -49,17 +49,31 @@ def validate_design(design: "Design") -> list[Issue]:
     return sorted(issues, key=lambda issue: 0 if issue.severity == "error" else 1)
 
 
+def normalize_namespace(value: str) -> str:
+    if (
+        not isinstance(value, str)
+        or not value
+        or any(c.isspace() or ord(c) < 32 or ord(c) == 127 for c in value)
+        or "\\" in value
+    ):
+        raise ValueError("namespace must be an absolute HTTP(S) URL without whitespace")
+    try:
+        url = urlparse(value)
+        valid = url.scheme in {"http", "https"} and bool(url.hostname) and url.username is None and url.password is None
+        valid = valid and not url.query and not url.fragment and "?" not in value and "#" not in value
+        url.port
+    except ValueError:
+        valid = False
+    if not valid:
+        raise ValueError("namespace must be an absolute HTTP(S) URL without credentials, query or fragment")
+    return value.rstrip("/")
+
+
 def _check_namespace(design: "Design") -> list[Issue]:
-    if not design.namespace:
-        return [
-            Issue(
-                "error",
-                "namespace",
-                "set an absolute namespace for reproducible design identities",
-            )
-        ]
-    if not _is_http_url(design.namespace):
-        return [Issue("error", "namespace", f"{design.namespace!r} is not an http or https URL")]
+    try:
+        normalize_namespace(design.namespace)
+    except ValueError as exc:
+        return [Issue("error", "namespace", str(exc))]
     return []
 
 

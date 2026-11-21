@@ -7,7 +7,7 @@ export default function NamespaceInput({ namespace, setNamespace, error, helperT
   };
   return (
     <Box sx={{ mb: 2 }}>
-      <Typography sx={{ fontWeight: 600, mb: 2 }}>Define the base namespace (Optional)</Typography>
+      <Typography sx={{ fontWeight: 600, mb: 2 }}>Define the base namespace</Typography>
       <Typography></Typography>
       <TextField
         size='small'
@@ -15,6 +15,7 @@ export default function NamespaceInput({ namespace, setNamespace, error, helperT
         placeholder="https://example.com/"
         label="Namespace"
         name="namespace"
+        required
         value={namespace}
         helperText={helperText}
         error={error}

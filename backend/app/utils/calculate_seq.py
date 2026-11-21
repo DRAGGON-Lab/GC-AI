@@ -28,6 +28,7 @@ def calculate_seq_with_scars(parent_component, components):
         return None
     sequence = sbol3.Sequence(
         parent_component.identity + "_sequence",
+        namespace=parent_component.namespace,
         elements="",
         encoding=sbol3.IUPAC_DNA_ENCODING,
     )

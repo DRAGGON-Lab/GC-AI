@@ -257,6 +257,7 @@ def create_component_general(
                 comp_sequence = doc.add(
                     sbol3.Sequence(
                         identity + "_seq",
+                        namespace=namespace,
                         elements=component_data.sequence.lower(),
                         encoding=component_encoding,
                     )
@@ -264,6 +265,7 @@ def create_component_general(
             component = doc.add(
                 sbol3.Component(
                     identity=identity,
+                    namespace=namespace,
                     types=[component_type],
                     roles=[component_role],
                     sequences=[comp_sequence] if comp_sequence else [],
@@ -277,6 +279,7 @@ def create_component_general(
             component = doc.add(
                 sbol3.Component(
                     identity=identity,
+                    namespace=namespace,
                     types=[component_type],
                     roles=[component_role],
                     name=identifier,
@@ -296,7 +299,9 @@ def create_component_general(
 
 
 def create_system(doc, parent_component, data_system, interactions, eds):
-    system = functional_component(parent_component.identity + "_system")
+    system = functional_component(
+        parent_component.identity + "_system", namespace=parent_component.namespace
+    )
     doc.add(system)
     parent_system = add_feature(system, parent_component)
     refs = {}
@@ -466,7 +471,7 @@ def create_file_sol3(cursor, data_front, include_functional):
       sbol3.Document: An SBOL3 document populated with the provided data.
 
     Workflow:
-      1. Sets the namespace for the document if provided.
+      1. Validates an explicit namespace for each generated top-level object.
       2. Creates the parent component and its associated data.
       3. Iterates through additional components and adds them as subcomponents or features.
       4. Establishes hierarchical relationships between components.
@@ -479,10 +484,8 @@ def create_file_sol3(cursor, data_front, include_functional):
 
     try:
 
-        validate_create(data_front)
-        namespace = (
-            data_front.get("namespace") or "http://sbols.org/unspecified_namespace"
-        )
+        data_front = validate_create(data_front)
+        namespace = data_front["namespace"]
         doc = sbol3.Document()
 
         components_data = data_front["components"]
@@ -492,7 +495,6 @@ def create_file_sol3(cursor, data_front, include_functional):
 
         logger.info("Creating parent component")
         parent_component_name = components_data[0]["name"]
-        parent_component_uri = components_data[0]["uri"]
         parent_component_type = components_data[0]["role"]
         instance = components_data[0].get("instance_id", 1)
 
@@ -512,14 +514,13 @@ def create_file_sol3(cursor, data_front, include_functional):
             component_data,
             instance,
             True,
-            parent_component_uri,
+            namespace,
         )
 
         components = []
 
         for data in components_data[1:]:
             instance = data.get("instance_id", 1)
-            component_uri = data.get("uri")
             component_name_with_instance = f"{data['name']}_{instance}"
             existing_subcomponent = None
             existing_subcomponent = next(
@@ -565,7 +566,7 @@ def create_file_sol3(cursor, data_front, include_functional):
                 component_data,
                 instance,
                 False,
-                component_uri,
+                namespace,
             )
             subcomponent = sbol3.SubComponent(component)
             subcomponent.name = component_name_with_instance

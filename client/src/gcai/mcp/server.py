@@ -30,6 +30,7 @@ from gcai.client import GCAIClient
 from gcai.design import Design, Operon, name_parts
 from gcai.errors import GCAIConnectionError, GCAIError, GCAIResponseError
 from gcai.mcp.schemas import Glyph, Result
+from gcai.validation import normalize_namespace
 
 logger = logging.getLogger("gcai.mcp")
 
@@ -155,6 +156,10 @@ def _register(mcp: MCPServer) -> None:
 
         Without output_dir the SBOL3 comes back in the result, which is large.
         """
+        try:
+            namespace = normalize_namespace(namespace)
+        except ValueError as exc:
+            raise ToolError(str(exc)) from exc
         app = ctx.request_context.lifespan_context
         data = _image_bytes(app, image_path, image_base64)
 

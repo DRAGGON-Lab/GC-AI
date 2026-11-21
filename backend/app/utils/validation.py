@@ -48,16 +48,46 @@ def http_uri(value):
         return False
 
 
+def validate_namespace(value):
+    """Require an explicit namespace, independent of pySBOL's process default."""
+    if not isinstance(value, str):
+        reject("namespace", "A namespace string is required", 400)
+    message = (
+        "Expected an absolute HTTP(S) namespace without credentials, whitespace, "
+        "query, or fragment"
+    )
+    if (
+        not value
+        or any(c.isspace() or ord(c) < 32 or ord(c) == 127 for c in value)
+        or any(c in value for c in "?#\\")
+    ):
+        reject("namespace", message)
+    try:
+        uri = urlsplit(value)
+        valid = (
+            uri.scheme in ("http", "https")
+            and bool(uri.hostname)
+            and uri.username is None
+            and uri.password is None
+        )
+        # Accessing port rejects malformed and out-of-range port numbers.
+        uri.port
+    except ValueError:
+        valid = False
+    if not valid:
+        reject("namespace", message)
+    return value.rstrip("/")
+
+
 def validate_create(data):
     if not isinstance(data, dict):
         reject("", "Expected a JSON object", 400)
+    data = {**data, "namespace": validate_namespace(data.get("namespace"))}
     for key in ("components", "expressions", "interactions", "eds"):
         if not isinstance(data.get(key), list):
             reject(key, "Expected an array", 400)
     if len(data["components"]) < 2:
         reject("components", "A DNA design needs a parent and at least one part")
-    if "namespace" in data and not http_uri(data["namespace"]):
-        reject("namespace", "Expected an absolute HTTP(S) namespace")
     names = set()
     physical_order = []
     definitions = {}
