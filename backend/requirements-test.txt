@@ -7,3 +7,5 @@ PyYAML==6.0.3
 sbol3==1.2.0.post0
 sbol-utilities==1.0a17
 pytest==9.2.0
+Pillow==13.0.0
+numpy==1.26.4
