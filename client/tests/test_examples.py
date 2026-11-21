@@ -26,7 +26,11 @@ def service(handler: Recorder) -> None:
     handler.route(
         "POST",
         "/file/create",
-        lambda _r: httpx.Response(200, content=b"<rdf:RDF/>", headers={"file_path_structural": "/p"}),
+        lambda _r: httpx.Response(
+            200,
+            content=b"<rdf:RDF/>",
+            headers={"X-GCAI-Structural-Handle": "v1_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"},
+        ),
     )
     handler.route("POST", "/file/convert", lambda _r: httpx.Response(200, content=zip_bytes({"d_fasta.fasta": b">s"})))
     handler.json(

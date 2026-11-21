@@ -115,11 +115,8 @@ class CreateResult:
     """What `POST /file/create` returned."""
 
     sbol3: bytes
-    structural_path: str
-    """Where the structural document sits on the server.
-
-    `POST /file/convert` takes this path. The service deletes it after 24 hours.
-    """
+    structural_handle: str
+    """Opaque conversion handle, valid for 24 hours."""
 
 
 @dataclass(frozen=True)
@@ -127,7 +124,7 @@ class BuildResult:
     """A design generated and converted in one step."""
 
     sbol3: bytes
-    structural_path: str
+    structural_handle: str
     genbank: bytes | None = None
     fasta: bytes | None = None
 

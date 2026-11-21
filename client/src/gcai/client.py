@@ -138,24 +138,24 @@ class GCAIClient:
         """
         payload = _payload(design, validate=validate)
         response = self._request("POST", "/file/create", json=payload)
-        structural = response.headers.get("file_path_structural")
+        structural = response.headers.get("X-GCAI-Structural-Handle")
         if not structural:
             raise GCAIError(
-                "the service did not return a file_path_structural header, so the structural "
+                "the service did not return a X-GCAI-Structural-Handle header, so the structural "
                 "document cannot be converted"
             )
-        return CreateResult(sbol3=response.content, structural_path=structural)
+        return CreateResult(sbol3=response.content, structural_handle=structural)
 
-    def convert(self, structural_path: str, *, genbank: bool = True, fasta: bool = True) -> dict[str, bytes]:
+    def convert(self, structural_handle: str, *, genbank: bool = True, fasta: bool = True) -> dict[str, bytes]:
         """Convert a generated document, keyed by format.
 
-        `structural_path` is the `file_path_structural` header from `create`.
+        `structural_handle` is the `X-GCAI-Structural-Handle` header from `create`.
         The service deletes the file 24 hours after writing it.
         """
         response = self._request(
             "POST",
             "/file/convert",
-            json={"file_path": structural_path, "genbank": genbank, "fasta": fasta},
+            json={"structural_handle": structural_handle, "genbank": genbank, "fasta": fasta},
         )
         out: dict[str, bytes] = {}
         with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
@@ -182,10 +182,10 @@ class GCAIClient:
         created = self.create(design, validate=validate)
         converted: dict[str, bytes] = {}
         if genbank or fasta:
-            converted = self.convert(created.structural_path, genbank=genbank, fasta=fasta)
+            converted = self.convert(created.structural_handle, genbank=genbank, fasta=fasta)
         return BuildResult(
             sbol3=created.sbol3,
-            structural_path=created.structural_path,
+            structural_handle=created.structural_handle,
             genbank=converted.get("genbank"),
             fasta=converted.get("fasta"),
         )

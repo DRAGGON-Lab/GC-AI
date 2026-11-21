@@ -14,14 +14,14 @@ import { getImageForRole } from '../../utils/ImageUtils.jsx';
 import ConfirmationDialog from '../../components/ConfirmationDialog/ConfirmationDialog';
 import ConversionDialog from '../../components/ConversionDialog/ConversionDialog';
 import { validateForm } from '../../utils/ValidationUtils.jsx';
-import JSZip from 'jszip';
+import { conversionArtifacts } from '../../utils/Conversion.js';
 import { functionalPayload, responseError, ParticipantSelectionError } from '../../utils/FunctionalPayload.js';
 import ErrorAlertDialog from '../../components/ErrorAlertDialog/ErrorAlertDialog.jsx';
 import Welcome from '../../components/Welcome/Welcome.jsx';
 import LoadingScreen from '../../components/LoadingScreen/LoadingScreen.jsx';
 import GenericModal from '../../components/GenericModal/GenericModal.jsx';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
 export default function Home() {
   const [prediction, setPrediction] = useState(null);
@@ -41,7 +41,7 @@ export default function Home() {
   const containerRef = useRef(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [openConversionDialog, setOpenConversionDialog] = useState(false);
-  const [pathDownloadedFile, setPathDownloadedFile] = useState(null);
+  const [structuralHandle, setStructuralHandle] = useState(null);
   const [openDialogAlert, setOpenDialogAlert] = useState(false);
   const isButtonVisible = true;
 
@@ -119,7 +119,7 @@ export default function Home() {
 
     try {
       const dataToSend = {
-        ...(namespace.trim() ? { namespace } : {}),
+        namespace: namespace.replace(/\/+$/, ""),
         components: processedComponents,
         ...functionalPayload(expressions, interactions, eds, processedComponents),
       };
@@ -142,15 +142,11 @@ export default function Home() {
         link.click();
         document.body.removeChild(link);
 
+        const createdHandle = response.headers.get('X-GCAI-Structural-Handle');
+        if (!/^v1_[A-Za-z0-9_-]{43}$/.test(createdHandle || '')) throw new Error('Missing conversion handle');
         setOpenConversionDialog(true);
-        const filePathStructural = response.headers.get('file_path_structural');
-        setPathDownloadedFile(filePathStructural);
+        setStructuralHandle(createdHandle);
         setPredictionName(prediction[0].name);
-        setPrediction(null);
-        setNamespace("");
-        setExpressions([]);
-        setInteractions([]);
-        setEds([]);
         setLoading(null);
       } else {
         showModal("Error", await responseError(response), "error");
@@ -164,91 +160,30 @@ export default function Home() {
     }
   };
 
-  const handleConvert = async (formats, pathFile) => {
+  const handleConvert = async (formats, handle) => {
     setLoading('conversion');
-    setOpenConversionDialog(false);
-
     try {
-      const data = {
-        file_path: pathFile,
-        ...formats,
-      };
-
-      const jsonData = JSON.stringify(data);
-
       const response = await fetch(`${API_BASE_URL}/file/convert`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonData,
-        timeout: 10000
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ structural_handle: handle, ...formats }),
       });
-
-      if (response.ok) {
-        const blob = await response.blob();
-
-        if (blob.size === 0) {
-          setLoading(null);
-          showModal("Error", "An error occurred while converting the files. Please try again.", "error");
-          return;
-        }
-
-        if (blob.type !== "application/zip") {
-          setLoading(null);
-          showModal("Error", "An error occurred while converting the files. Please try again.", "error");
-
-          return;
-        }
-
-        try {
-          const zip = await JSZip.loadAsync(blob);
-          const files = Object.keys(zip.files);
-
-          const newFastaName = `${predictionName}.fasta`;
-          const newGbName = `${predictionName}.gb`;
-
-          for (const filename of files) {
-            const fileData = await zip.files[filename].async('blob');
-            const url = window.URL.createObjectURL(fileData);
-            const link = document.createElement('a');
-            link.href = url;
-
-            if (filename.endsWith('.fasta')) {
-              link.setAttribute('download', newFastaName);
-            } else if (filename.endsWith('.gb')) {
-              link.setAttribute('download', newGbName);
-            } else {
-              link.setAttribute('download', filename);
-            }
-
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-            setLoading(null);
-            showModal("Success", "File converted successfully!", "success");
-          }
-        } catch (error) {
-          setLoading(null);
-          showModal("Error", "An error occurred while converting the files. Please try again.", "error");
-        }
-      } else {
-        setLoading(null);
-        showModal("Error", "An error occurred while converting the files. Please try again.", "error");
+      if (!response.ok) throw new Error(await responseError(response));
+      const downloads = await conversionArtifacts(await response.blob(), formats);
+      for (const file of downloads) {
+        const url = window.URL.createObjectURL(new Blob([file.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${predictionName}${file.name.endsWith('.fasta') ? '.fasta' : '.gb'}`;
+        link.click();
+        window.URL.revokeObjectURL(url);
       }
+      setOpenConversionDialog(false);
+      showModal('Success', 'Files converted successfully!', 'success');
     } catch (error) {
-      setLoading(null);
-      showModal("Error", "Database connection error. Please try again later.", "error");
+      setOpenConversionDialog(true);
+      showModal('Error', error.message || 'Conversion failed. Your handle and design have been kept; please retry.', 'error');
     } finally {
-      setPredictionName(null);
-      setPrediction(null);
-      setNamespace("");
-      setExpressions([]);
-      setInteractions([]);
-      setEds([]);
       setLoading(null);
-
     }
   };
 
@@ -361,7 +296,7 @@ export default function Home() {
 
         <ConversionDialog
           open={openConversionDialog}
-          handleClose={() => setOpenConversionDialog(false)} handleConvert={(format) => handleConvert(format, pathDownloadedFile)}
+          handleClose={() => setOpenConversionDialog(false)} handleConvert={(format) => handleConvert(format, structuralHandle)}
         />
 
         <ErrorAlertDialog

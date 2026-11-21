@@ -1,79 +1,82 @@
-import os
-import time
+"""Production janitor: python -m app.utils.cleanup [--root PRIVATE_DIRECTORY]."""
+
+import argparse
 import logging
-from datetime import datetime, timedelta
+import os
 import shutil
+import time
 import uuid
 from threading import Thread
-from app.config import FILES_GENERATED_DIR, FILES_CONVERTED_DIR
+from app.config import FILES_GENERATED_DIR
+from app.utils.artifacts import ArtifactStore
 
 logger = logging.getLogger(__name__)
-logger.propagate = True
 
 
 def empty_folders(folder_paths, max_age_in_hours):
-    """
-    Removes all files older than the specified age from the provided folders.
+    """Remove legacy completed UUID exports during transition, never active staging.
 
-    Args:
-            folder_paths (list): List of folder paths to clean.
-            max_age_in_hours (int): Maximum retention time in hours.
+    Capabilities use immutable metadata, rather than directory modification time.
+    This compatibility helper is restricted to legacy UUID directories.
     """
-    now = datetime.now()
+    cutoff = time.time() - max_age_in_hours * 3600
     for folder_path in folder_paths:
-        try:
-            if not os.path.exists(folder_path):
-                logger.warning(f"Folder does not exist: {folder_path}")
+        if not os.path.isdir(folder_path):
+            continue
+        ArtifactStore(folder_path).cleanup()
+        for name in os.listdir(folder_path):
+            try:
+                uuid.UUID(name)
+            except ValueError:
                 continue
-
-            for filename in os.listdir(folder_path):
-                file_path = os.path.join(folder_path, filename)
-                if os.path.isdir(file_path) and not os.path.islink(file_path):
-                    # Only completed UUID export directories belong to this cleanup.
-                    try:
-                        uuid.UUID(filename)
-                    except ValueError:
-                        continue
-                    if now - datetime.fromtimestamp(
-                        os.path.getmtime(file_path)
-                    ) > timedelta(hours=max_age_in_hours):
-                        shutil.rmtree(file_path)
-                elif os.path.isfile(file_path):
-                    file_age = now - datetime.fromtimestamp(os.path.getmtime(file_path))
-
-                    if file_age > timedelta(hours=max_age_in_hours):
-                        os.remove(file_path)
-                        logger.info(f"Deleted file: {file_path}")
-        except Exception as e:
-            logger.error(f"Error while emptying folder {folder_path}: {e}")
+            path = os.path.join(folder_path, name)
+            try:
+                if (
+                    not os.path.islink(path)
+                    and os.path.isdir(path)
+                    and os.stat(path).st_mtime < cutoff
+                ):
+                    shutil.rmtree(path)
+            except FileNotFoundError:
+                pass
 
 
-def cleanup_files():
-    """
-    Cleans up files in specified folders while keeping the folders intact.
-    """
-
-    folder_paths = [FILES_GENERATED_DIR, FILES_CONVERTED_DIR]
-
-    max_age_in_hours = 24
-    logger.info(f"Starting cleanup for folders: {folder_paths}")
-    empty_folders(folder_paths, max_age_in_hours)
-    logger.info("Cleanup completed for all folders.")
+def cleanup_files(root=None):
+    return ArtifactStore(root or FILES_GENERATED_DIR).cleanup()
 
 
 def start_cleanup_schedule():
-    """
-    Schedules the automatic folder cleanup every hour.
-    """
-    import schedule
-
-    schedule.every().hour.do(cleanup_files)
+    """Development helper; hosted deployments run the separate hourly janitor."""
 
     def run_schedule():
         while True:
-            schedule.run_pending()
-            time.sleep(60)
+            try:
+                cleanup_files()
+            except Exception:
+                logger.exception("Artifact cleanup failed")
+            time.sleep(3600)
 
-    cleanup_thread = Thread(target=run_schedule, daemon=True)
-    cleanup_thread.start()
-    logger.info("Scheduled cleanup task started.")
+    thread = Thread(target=run_schedule, daemon=True)
+    thread.start()
+    return thread
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Remove expired private GC-AI document handles"
+    )
+    parser.add_argument("--root", default=FILES_GENERATED_DIR)
+    parser.add_argument(
+        "--hourly", action="store_true", help="Run on startup and once per hour"
+    )
+    args = parser.parse_args()
+    while True:
+        removed = cleanup_files(args.root)
+        logger.info("Removed %d expired artifacts", removed)
+        if not args.hourly:
+            return
+        time.sleep(3600)
+
+
+if __name__ == "__main__":
+    main()
