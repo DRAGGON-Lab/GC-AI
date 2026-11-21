@@ -113,7 +113,7 @@ def process_image(image_input, model):
     Processes an input image to perform inference and returns filtered results.
 
     Args:
-        image_input: The raw binary data of the input image.
+        image_input: A validated, decoded three-channel BGR ndarray.
         model: The pre-trained machine learning model used for inference.
 
     Returns:
@@ -122,9 +122,7 @@ def process_image(image_input, model):
             - A list of bounding box coordinates (if any).
             - A list of predicted class names corresponding to the bounding boxes.
     """
-    nparr = np.frombuffer(image_input, np.uint8)
-    image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-    orig_image = image.copy()
+    orig_image = image_input.copy()
     image = cv2.cvtColor(orig_image, cv2.COLOR_BGR2RGB)
     image = infer_transforms(image)
     image = torch.unsqueeze(image, 0)

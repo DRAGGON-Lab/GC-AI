@@ -17,7 +17,16 @@ from gcai.errors import DesignValidationError, GCAIConnectionError, GCAIError, G
 from gcai.models import BuildResult, CreateResult, Detection, PartDetails
 
 DEFAULT_URL = "http://localhost:5001"
+MAX_IMAGE_BYTES = 10 * 1024 * 1024
 HANDLE = re.compile(r"v1_[A-Za-z0-9_-]{43}\Z")
+
+
+def read_image(path: Path) -> bytes:
+    with path.open("rb") as stream:
+        data = stream.read(MAX_IMAGE_BYTES + 1)
+    if len(data) > MAX_IMAGE_BYTES:
+        raise GCAIError("image exceeds the 10 MiB limit")
+    return data
 
 
 USER_AGENT = "gcai-client/0.1.0"
@@ -89,9 +98,11 @@ class GCAIClient:
         """Detect glyphs in an image."""
         if isinstance(image, (str, os.PathLike)):
             path = Path(image)
-            data, filename = path.read_bytes(), path.name
+            data, filename = read_image(path), path.name
         else:
             data = image
+        if len(data) > MAX_IMAGE_BYTES:
+            raise GCAIError("image exceeds the 10 MiB limit")
         response = self._request("POST", "/inference/", files={"image": (filename, data, "image/png")})
         return Detection.from_response(response.json())
 

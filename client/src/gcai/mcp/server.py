@@ -26,7 +26,7 @@ from mcp.server.mcpserver.exceptions import ToolError
 from mcp.types import CallToolResult, TextContent, ToolAnnotations
 from pydantic import Field
 
-from gcai.client import GCAIClient
+from gcai.client import MAX_IMAGE_BYTES, GCAIClient, read_image
 from gcai.design import Design, Operon, name_parts
 from gcai.errors import GCAIConnectionError, GCAIError, GCAIResponseError
 from gcai.mcp.schemas import Glyph, Result
@@ -34,7 +34,7 @@ from gcai.validation import normalize_namespace
 
 logger = logging.getLogger("gcai.mcp")
 
-MAX_BASE64 = 24 * 1024 * 1024
+MAX_BASE64 = ((MAX_IMAGE_BYTES + 2) // 3) * 4
 
 INSTRUCTIONS = """\
 GC-AI reads a picture of an SBOL Visual diagram and writes the SBOL3 for it.
@@ -92,11 +92,17 @@ def _image_bytes(app: App, image_path: str | None, image_base64: str | None) -> 
     if bool(image_path) == bool(image_base64):
         raise ToolError("give exactly one of image_path or image_base64")
     if image_path:
-        return _in_roots(image_path, app, must_be_file=True).read_bytes()
+        try:
+            return read_image(_in_roots(image_path, app, must_be_file=True))
+        except GCAIError as exc:
+            raise ToolError(str(exc)) from exc
     if len(image_base64 or "") > MAX_BASE64:
         raise ToolError("that image is too large to send inline; write it to disk and pass image_path")
     try:
-        return base64.b64decode(image_base64 or "", validate=True)
+        data = base64.b64decode(image_base64 or "", validate=True)
+        if len(data) > MAX_IMAGE_BYTES:
+            raise ToolError("image exceeds the 10 MiB limit")
+        return data
     except Exception as exc:
         raise ToolError(f"image_base64 is not valid base64: {exc}") from exc
 
