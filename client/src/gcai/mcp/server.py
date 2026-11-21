@@ -73,7 +73,7 @@ def build_server(
         finally:
             service.close()
 
-    mcp = MCPServer("gc-ai", instructions=INSTRUCTIONS, lifespan=lifespan, version="0.1.0")
+    mcp = MCPServer("gc-ai", instructions=INSTRUCTIONS, lifespan=lifespan, version="0.2.0")
     _register(mcp)
     return mcp
 

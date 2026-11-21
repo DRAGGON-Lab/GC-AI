@@ -25,7 +25,7 @@ from gcai.errors import (
 from gcai.models import Box, BuildResult, CreateResult, Detection, Glyph, PartDetails
 from gcai.validation import Issue, validate_design
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 __all__ = [
     "DEFAULT_URL",

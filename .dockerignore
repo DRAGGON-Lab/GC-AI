@@ -1,0 +1,11 @@
+.git
+**/node_modules
+**/.venv
+**/dist
+**/__pycache__
+**/*.env
+**/.env
+**/*.log
+**/files_generated
+**/files_converted
+**/*.pth

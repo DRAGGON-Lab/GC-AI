@@ -1,3 +1,5 @@
+> These files are immutable legacy evidence. Their historical XML/GenBank/FASTA outputs are not a promise of current validator acceptance or byte-equivalent conversion. The current server validates species URIs and all generated SBOL before publication. Use the strict reconciliation report in `docs/validation` and regenerated structural artifacts for corrected sequence/coordinate evidence; current local GenBank exports also retain assembly features.
+
 # Examples
 
 Each folder holds one circuit end to end:
@@ -56,14 +58,4 @@ trimmed URIs and the two documents are regenerated from them, which changes
 nothing else: both still hold the same number of triples, and their GenBank
 and FASTA files are byte for byte what they were.
 
-All three documents now canonicalise, and validate with no errors and no
-warnings.
-
-One species in the Lux system, `LuxR-AHL Complex`, has no URI at all. That is
-kept as it is, because it is what the design says. Be aware that an empty
-`rdf:resource` is resolved against the document's own location when the file
-is parsed, so that species appears to be defined by whatever path the file
-happens to sit at.
-
-The service does not check the `uri` field of an entry in `eds`, so whatever
-is typed into the web interface reaches the generated document unchanged.
+Strict reconciliation in `docs/validation` records historical validation defects and verifies corrected regenerated outputs. An empty Lux complex URI is represented by a typed LocalSubComponent in current generation. The current server validates species URIs and rejects whitespace rather than writing it through. Historical outputs remain immutable evidence.

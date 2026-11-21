@@ -6,7 +6,7 @@ import Navbar from '../components/Navbar/Navbar';
 import LoadingScreen from '../components/LoadingScreen/LoadingScreen';
 import Footer from '../components/Footer/Footer';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
 const NameProvider = ({ children }) => {
   const [namesCache, setNamesCache] = useState(null);

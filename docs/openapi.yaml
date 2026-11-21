@@ -12,9 +12,9 @@ info:
     1. `POST /inference/` with an image returns the glyphs it found, each with a
        bounding box and a class name.
     2. `POST /file/create` with a design built from those glyphs returns an SBOL3
-       document, and the path of a second, structural-only document in the
-       `file_path_structural` response header.
-    3. `POST /file/convert` with that path returns a ZIP of GenBank and/or FASTA.
+       document, and the handle of a second, structural-only document in the
+       `X-GCAI-Structural-Handle` response header.
+    3. `POST /file/convert` with that handle returns a ZIP of GenBank and/or FASTA.
 
     Parts come from a bundled snapshot of the iGEM parts registry held in the
     application's MySQL database. A design may also carry parts that are not in
@@ -44,10 +44,9 @@ servers:
   - url: http://localhost:5001
     description: Local Docker environment
 
-# The service has no authentication and no authorization: every endpoint is open
-# to anyone who can reach the port. It is built to run on a developer's machine
-# behind the local Docker network.
-security: []
+# Hosted deployments protect frontend and /api with TLS Basic authentication.
+security:
+  - basicAuth: []
 
 tags:
   - name: health
@@ -60,32 +59,35 @@ tags:
     description: SBOL3 generation and format conversion.
 
 paths:
+  /livez:
+    get:
+      tags: [health]
+      summary: Dependency-independent liveness
+      operationId: liveness
+      responses:
+        "200":
+          description: Application is alive.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [alive]
   /healthcheck/:
     get:
       tags: [health]
       summary: Report service health
       description: |
-        Intended to report whether the detection model is loaded and the parts
-        database answers.
-
-        **This endpoint always fails.** It runs its test query and closes the
-        database cursor without reading the result, which makes the MySQL
-        connector raise `InternalError: Unread result found`, so it answers 500
-        with `Healthcheck failed: Unread result found` whatever the state of the
-        service. The 200 below is the response it is built to return and is not
-        reachable.
-
-        To test whether the service is usable, call
-        `GET /component/names?role=Promoter` instead. That succeeds only when the
-        application is serving, the detection model has loaded, and the parts
-        database answers queries. The first valid names lookup initializes the
-        detector lazily. Concurrent requests share one initialization per process;
-        a failed load returns a sanitized 500 and a later request can retry.
+        Readiness verifies the detector and consumes SELECT 1 from the registry.
+        Returns 200 when ready; dependency failures return sanitized 503.
+        The names endpoint retains its detector guard for older clients.
       operationId: healthcheck
       responses:
         "200":
           description: |
-            Not reachable in this build; see the description above.
+            Detector and registry are ready.
           content:
             application/json:
               schema:
@@ -98,7 +100,7 @@ paths:
                   message:
                     type: string
                     example: Application is running correctly
-        "500":
+        "503":
           description: |
             Returned on every call. `error` is
             `Healthcheck failed: Unread result found`.
@@ -123,6 +125,10 @@ paths:
         `draw_boxes` and `pred_classes` are parallel arrays in the model's own
         order, which is not left-to-right. To recover the order the parts appear
         in along the backbone, sort by the first element of each box (`x_min`).
+        Limits default to 12 MiB total request, 10 MiB image bytes, 16 million
+        pixels, and 8192 pixels per dimension. Actual PNG/JPEG data only; corrupt,
+        truncated and multiframe files return 422. An occupied detector returns
+        503 inference_busy with Retry-After; admission never queues.
       operationId: detectGlyphs
       requestBody:
         required: true
@@ -150,6 +156,19 @@ paths:
                 $ref: "#/components/schemas/InferenceResponse"
         "400":
           description: No `image` field, or an empty filename.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "413":
+          $ref: "#/components/responses/Error"
+        "422":
+          $ref: "#/components/responses/Error"
+        "503":
+          description: Inference is busy; retry after the indicated delay.
+          headers:
+            Retry-After:
+              schema: {type: integer, minimum: 1}
           content:
             application/json:
               schema:
@@ -300,12 +319,12 @@ paths:
           design supplies any functional data, a functional system with the operons,
           interactions and external species. This is the response body.
         - the **structural** document, containing only the parts and their order.
-          This one is not returned; its path on the server is in the
-          `file_path_structural` response header, and that path is what
+          This one is not returned; its opaque handle is in the
+          `X-GCAI-Structural-Handle` response header, and that handle is what
           `POST /file/convert` takes.
 
         Both documents are written into the server's own storage and deleted
-        after 24 hours, so a structural path is only usable within that window.
+        after 24 hours, so a structural handle is only usable within that window.
 
         ### How a design maps onto SBOL3
 
@@ -343,15 +362,16 @@ paths:
         "200":
           description: The full SBOL3 document, as an attachment.
           headers:
-            file_path_structural:
+            X-GCAI-Structural-Handle:
               description: |
-                Absolute path, on the server, of the structural-only document.
-                Pass it unchanged as `file_path` to `POST /file/convert`. The
+                Opaque capability for the structural-only document.
+                Pass it unchanged as `structural_handle` to `POST /file/convert`. The
                 file is deleted 24 hours after it is written.
               required: true
               schema:
                 type: string
-                example: /app/app/files_generated/structural_sbol3_1a2b3c4d.xml
+                pattern: "^v1_[A-Za-z0-9_-]{43}$"
+                example: v1_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
           content:
             application/rdf+xml:
               schema:
@@ -382,17 +402,16 @@ paths:
         Converts a document the service generated earlier into GenBank and/or
         FASTA, and returns them together in a ZIP.
 
-        The document is identified by its path on the server, as returned in the
-        `file_path_structural` header of `POST /file/create`. This endpoint reads
+        The document is identified by its opaque handle, as returned in the
+        `X-GCAI-Structural-Handle` header of `POST /file/create`. This endpoint securely resolves
         the file from the server's filesystem; it does not accept an uploaded
         document.
 
-        Members of the ZIP are named after the source file with the format
-        appended, for example `structural_sbol3_1a2b3c4d_genbank.gb` and
-        `structural_sbol3_1a2b3c4d_fasta.fasta`.
-
-        GenBank conversion uses the online SBOL validator, so the service needs
-        outbound internet access for it. FASTA conversion is local.
+        ZIP members are design.gb and/or design.fasta. Each requested artifact
+        must be nonempty, parseable, and retain complete sequences and feature
+        coordinates. Unsupported representations return 422; no partial ZIP is
+        published. The pinned local converter never uploads designs or changes
+        global online validation settings.
       operationId: convertSbol3
       requestBody:
         required: true
@@ -418,7 +437,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
         "404":
-          description: No file exists at the supplied path.
+          description: Handle is unknown, expired or deleted.
           content:
             application/json:
               schema:
@@ -427,6 +446,10 @@ paths:
           $ref: "#/components/responses/Error"
 
 components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
   responses:
     Error:
       description: The request failed.
@@ -851,7 +874,7 @@ components:
 
     CreateRequest:
       type: object
-      required: [components, expressions, interactions, eds]
+      required: [namespace, components, expressions, interactions, eds]
       properties:
         namespace:
           type: string
@@ -859,8 +882,8 @@ components:
           description: |
             The SBOL namespace for the generated document.
 
-            If omitted, the deterministic default is
-            http://sbols.org/unspecified_namespace/.
+            Required absolute HTTP(S) URL without credentials, whitespace, controls,
+            query or fragment. Trailing slashes are removed before joining identities.
           example: https://example.org/designs/
         components:
           type: array
@@ -887,18 +910,19 @@ components:
 
     ConvertRequest:
       type: object
-      required: [file_path, genbank, fasta]
+      required: [structural_handle, genbank, fasta]
       properties:
-        file_path:
+        structural_handle:
           type: string
           description: |
-            The value of the `file_path_structural` header from an earlier
+            The opaque value of the `X-GCAI-Structural-Handle` header from an earlier
             `POST /file/create`, unchanged.
-          example: /app/app/files_generated/structural_sbol3_1a2b3c4d.xml
+          pattern: "^v1_[A-Za-z0-9_-]{43}$"
+          example: v1_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         genbank:
           type: boolean
           default: false
-          description: Include GenBank in the ZIP. Requires outbound internet access.
+          description: Include GenBank in the ZIP. Uses the pinned local converter; no design uploads.
         fasta:
           type: boolean
           default: false

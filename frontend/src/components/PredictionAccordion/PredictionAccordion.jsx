@@ -15,17 +15,18 @@ const PredictionAccordion = ({ item, index, setPrediction, prediction, helperTex
   useEffect(() => {
     if (!item.role) return;
 
-    const newData = [...prediction];
-    newData[index] = {
-      ...newData[index],
-      availableNames: namesCache[item.role] || []
-    };
-
-    setPrediction(newData);
+    setPrediction(current => {
+      if (!current?.[index]) return current;
+      const availableNames = namesCache[item.role] || [];
+      if (JSON.stringify(current[index].availableNames) === JSON.stringify(availableNames)) return current;
+      const newData = [...current];
+      newData[index] = { ...newData[index], availableNames };
+      return newData;
+    });
 
     prevNamesCache.current = { ...namesCache };
     prevItemRole.current = item.role;
-  }, [namesCache, item.role]);
+  }, [namesCache, item.role, index, setPrediction]);
 
   if (item.availableNames.length === 0) {
     const newAvailableNames = namesCache[item.role] || [];

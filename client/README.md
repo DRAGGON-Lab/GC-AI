@@ -56,10 +56,8 @@ so `build()` does both calls and hands back the bytes.
 
 ## Service behaviour that will catch you out
 
-- **`/healthcheck/` always answers 500.** It closes its database cursor without
-  reading the result of its test query. `client.health()` calls
-  `GET /component/names` instead, which proves the application is serving, the
-  model has loaded and the database answers.
+- **Readiness:** `health()` calls `/healthcheck/`, which returns 200 when the detector and database are usable and sanitized 503 otherwise. `/livez` checks only application liveness.
+
 - **Send a namespace for reproducible identities.** Local validation requires an
   absolute namespace.
 - **A registry part ignores what you send.** With `new=False` the description
@@ -186,3 +184,13 @@ uv run --extra dev pytest        # unit tests, no services needed
 GCAI_URL=http://localhost:5001 SBOL_DB_URL=http://localhost:8888 \
   uv run --extra dev --extra db pytest -m integration
 ```
+
+Hosted access uses TLS Basic authentication:
+
+```python
+with GCAIClient("https://gcai.example/api", auth=(username, password)) as client:
+    created = client.create(design)
+    converted = client.convert(created.structural_handle)
+```
+
+CLI and MCP read `GCAI_USERNAME` and `GCAI_PASSWORD_FILE` (a private file containing the password). Do not put credentials in URLs, arguments or build variables. Generated results carry `structural_handle`; server filesystem paths are no longer accepted. Handles expire after 24 hours. Incomplete conversion archives raise `GCAIError`. SDK and MCP limit image reads to 10 MiB; hosted operators must coordinate any changed limits across clients and server.
