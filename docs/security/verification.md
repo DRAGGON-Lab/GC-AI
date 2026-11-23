@@ -18,7 +18,7 @@ Executed integrated commands (exit 0):
 /private/tmp/gcai-venv/bin/python -m pytest backend/tests -q --disable-warnings
 # 176 passed (checkpoint/GPU mocked; real Pillow and local converters)
 /private/tmp/gcai-venv/bin/python -m pytest client/tests -q --disable-warnings
-# 143 passed, 22 integration tests deselected
+# 146 passed, 22 integration tests deselected
 npm --prefix frontend test
 # 12 passed
 npm --prefix frontend run lint
@@ -44,4 +44,6 @@ Post-review integration: PRs #31–#36 merged in dependency order. Main `afcb525
 
 [Application Docker CI](https://github.com/DRAGGON-Lab/GC-AI/actions/runs/44932338230) passed source image builds, 54 real-decoder/artifact/conversion tests inside the production runtime, and Gunicorn liveness200/degraded-readiness503. The detector runner remains mocked; no checkpoint/GPU result is implied. The first environment Docker run found a root-over-TCP health-probe mismatch; the corrected read-only application-account probe passed [dedicated MySQL Docker CI](https://github.com/Gonza10V/GC-AI-environment/actions/runs/45162255399). Full authenticated hosted smoke is the remaining CI check. Final runtime results belong in the coordinated PR's execution receipt. No operator migration/rotation is claimed.
 
-Implementation fingerprint over sorted paths/content in `backend/app`, `client/src` and `frontend/src` (excluding bytecode/logs): SHA256 `8f9c6ab1ef015a01256194f1bf4f99ed931641972c8ce1e76b32753f8c2fd9d7`. The final refinement removes raw dependency exceptions from export/cleanup logs. Its actual-route regression reproduced a password leak before the fix; the final 176-test backend suite and strict dual-validator reconciliation both passed. Independent boundary/export review reran 62 regressions successfully. Final source revisions are recorded by the PR and linked CI runs.
+Implementation fingerprint over sorted paths/content in `backend/app`, `client/src` and `frontend/src` (excluding bytecode/logs): SHA256 `afd7cf51b6e0f40b961c8b01bb198a6b5859ab8ad1d6605261fb48caf575a34e`. The final refinement removes raw dependency exceptions from export/cleanup logs. Its actual-route regression reproduced a password leak before the fix; the final 176-test backend suite and strict dual-validator reconciliation both passed. Independent boundary/export review reran 62 regressions successfully. Final source revisions are recorded by the PR and linked CI runs.
+
+MCP credential logging refinement: a regression reproduced raw dependency credentials in unexpected-tool logs. The handler now records only the exception class. All 146 client tests passed, including actual MCP inference/create error paths proving neither protocol responses nor logs contain the synthetic credential. The real pinned synthetic import and fresh MySQL/grant jobs also passed [Docker CI](https://github.com/Gonza10V/GC-AI-environment/actions/runs/45163757429); these fixtures are not real legacy assets or production receipts. Hosted ingress verification remains pending the proxy-only edge-network correction.
