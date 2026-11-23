@@ -103,9 +103,9 @@ def get_component_data(cursor, component_name):
     except CustomError:
         raise
     except Exception as e:
-        error_message = f"Error fetching data for component {component_name}: {e}"
-        logger.error(error_message)
-        raise CustomError(error_message, status_code=500)
+        error_message = "Registry component lookup failed"
+        logger.error("%s (%s)", error_message, type(e).__name__)
+        raise CustomError(error_message, status_code=500) from None
 
 
 def add_annotations(component, component_data, component_namespace):
@@ -148,11 +148,9 @@ def add_annotations(component, component_data, component_namespace):
     except CustomError:
         raise
     except Exception as e:
-        error_message = (
-            f"Error adding annotations for component {component.identity}: {e}"
-        )
-        logger.error(error_message)
-        raise CustomError(error_message, status_code=500)
+        error_message = "Component annotations could not be created"
+        logger.error("%s (%s)", error_message, type(e).__name__)
+        raise CustomError(error_message, status_code=500) from None
 
 
 def create_component_general(
@@ -293,9 +291,9 @@ def create_component_general(
     except CustomError:
         raise
     except Exception as e:
-        error_message = f"Error creating component {component_name}: {e}"
-        logger.error(error_message)
-        raise CustomError(error_message, status_code=500)
+        error_message = "Component could not be created"
+        logger.error("%s (%s)", error_message, type(e).__name__)
+        raise CustomError(error_message, status_code=500) from None
 
 
 def create_system(doc, parent_component, data_system, interactions, eds):
@@ -389,9 +387,9 @@ def hierarchy(parent_component, child_components):
     except CustomError:
         raise
     except Exception as e:
-        error_message = f"Error creating circuit sequence for parent component {parent_component.identity}: {e}"
-        logger.error(error_message)
-        raise CustomError(error_message, status_code=500)
+        error_message = "Circuit sequence could not be created"
+        logger.error("%s (%s)", error_message, type(e).__name__)
+        raise CustomError(error_message, status_code=500) from None
 
 
 def create_interactions(data_interactions, system, parent_component):
@@ -591,9 +589,9 @@ def create_file_sol3(cursor, data_front, include_functional):
     except CustomError:
         raise
     except Exception as e:
-        error_message = f"Error creating SBOL3 document: {e}"
-        logger.error(error_message)
-        raise CustomError(error_message, status_code=500)
+        error_message = "SBOL document could not be created"
+        logger.error("%s (%s)", error_message, type(e).__name__)
+        raise CustomError(error_message, status_code=500) from None
 
 
 def validate_sbol3_document(doc):
@@ -663,9 +661,9 @@ def generate_sbol3_file(data_front, cursor, id_path, include_functional):
         return file_path, None
 
     except CustomError as ce:
-        logger.error(f"Custom error during SBOL3 file generation: {ce.message}")
+        logger.error("SBOL generation rejected (%s)", ce.code)
         raise ce
     except Exception as e:
-        error_message = f"Error generating SBOL3 file: {e}"
-        logger.error(error_message)
-        raise CustomError(error_message, status_code=500)
+        error_message = "SBOL document could not be generated"
+        logger.error("%s (%s)", error_message, type(e).__name__)
+        raise CustomError(error_message, status_code=500) from None

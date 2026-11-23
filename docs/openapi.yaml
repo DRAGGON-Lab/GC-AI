@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: GC-AI API
-  version: "1.0.0"
+  version: "2.0.0"
   description: |
     GC-AI detects SBOL Visual glyphs in an image and builds SBOL3 documents from
     the detected parts, with optional conversion to GenBank and FASTA.
@@ -22,8 +22,9 @@ info:
 
     ## Conventions
 
-    - Every error, at every status code, has the body described by `Error`.
-    - All paths carry the prefix of the blueprint that serves them:
+    - Application errors use the body described by `Error`; proxy Basic-auth
+      challenges can return HTML while retaining WWW-Authenticate.
+    - Except for root liveness `/livez`, paths carry their blueprint prefix:
       `/healthcheck`, `/inference`, `/component`, `/file`. The trailing slash on
       `/healthcheck/` and `/inference/` is required.
     - Responses are not paginated. `GET /component/names` returns every matching
@@ -31,18 +32,20 @@ info:
 
     ## Validation
 
-    The service builds an SBOL3 document and reports whether it could be written,
-    not whether it is semantically valid: generated documents are not rejected on
-    validation grounds. Clients that need a validated document should validate the
-    returned file themselves, for example with `sbol3.Document.validate()`.
+    Requests are validated before registry access or artifact creation. Both full
+    and structural documents must pass SBOL validation before and after serialization
+    before their private handle is published. Unsupported semantics return actionable
+    422 findings; unexpected failures return sanitized 500 responses.
 
   license:
     name: MIT
     url: https://github.com/DRAGGON-Lab/GC-AI/blob/main/LICENSE
 
 servers:
+  - url: /api
+    description: Hosted same-origin TLS proxy with Basic authentication
   - url: http://localhost:5001
-    description: Local Docker environment
+    description: Loopback development API (authentication optional locally)
 
 # Hosted deployments protect frontend and /api with TLS Basic authentication.
 security:
@@ -102,8 +105,8 @@ paths:
                     example: Application is running correctly
         "503":
           description: |
-            Returned on every call. `error` is
-            `Healthcheck failed: Unread result found`.
+            Detector or database is unavailable. Diagnostic details are sanitized;
+            code is not_ready.
           content:
             application/json:
               schema:
@@ -323,8 +326,8 @@ paths:
           `X-GCAI-Structural-Handle` response header, and that handle is what
           `POST /file/convert` takes.
 
-        Both documents are written into the server's own storage and deleted
-        after 24 hours, so a structural handle is only usable within that window.
+        Both documents are written into private server storage. Handles expire after
+        24 hours; the hourly janitor removes expired files.
 
         ### How a design maps onto SBOL3
 
@@ -366,7 +369,7 @@ paths:
               description: |
                 Opaque capability for the structural-only document.
                 Pass it unchanged as `structural_handle` to `POST /file/convert`. The
-                file is deleted 24 hours after it is written.
+                handle expires after 24 hours; an hourly janitor removes expired files.
               required: true
               schema:
                 type: string
@@ -461,7 +464,7 @@ components:
   schemas:
     Error:
       type: object
-      description: The body of every failed request, at every status code.
+      description: The body of application errors. Proxy authentication challenges may be HTML.
       required: [status_code, error, code]
       properties:
         status_code:

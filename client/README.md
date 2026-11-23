@@ -50,8 +50,8 @@ A participation role that does not belong to its interaction type. A species
 URI with whitespace in it. Errors stop `build` unless you pass
 `validate=False`; server validation always applies.
 
-`build()` hides the file handoff. `POST /file/create` returns the path of a
-second document in a response header and `POST /file/convert` wants that path,
+`build()` hides the file handoff. `POST /file/create` returns an opaque handle for a
+second document in a response header and `POST /file/convert` wants that handle,
 so `build()` does both calls and hands back the bytes.
 
 ## Service behaviour that will catch you out
@@ -71,8 +71,7 @@ so `build()` does both calls and hands back the bytes.
   externally defined feature.
 - **Order means relative position.** Order emits `precedes`; Regulate remains a
   deprecated positional alias. Use typed interactions for functional regulation.
-- **Generated files are deleted after 24 hours**, so a structural path is only
-  good for that long.
+- **Handles expire after 24 hours.** Hourly cleanup removes the expired files.
 
 ## Storing designs in SBOL DB
 
