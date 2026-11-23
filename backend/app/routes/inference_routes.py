@@ -16,7 +16,7 @@ _admission = Lock()
 def decode_image(content):
     """Inspect before allocation and decode one PNG/JPEG into three BGR channels."""
     import numpy as np
-    from PIL import Image, UnidentifiedImageError
+    from PIL import Image, ImageOps, UnidentifiedImageError
 
     try:
         with warnings.catch_warnings():
@@ -60,6 +60,9 @@ def decode_image(content):
                 image.verify()
             with Image.open(io.BytesIO(content)) as image:
                 image.load()
+                # Camera JPEGs carry display orientation in EXIF. Transform the
+                # already-decoded pixels after the symmetric size/pixel limits.
+                ImageOps.exif_transpose(image, in_place=True)
                 return np.array(image.convert("RGB"), dtype=np.uint8)[:, :, ::-1].copy()
     except CustomError:
         raise

@@ -171,3 +171,28 @@ def test_dimensions_checked_before_pixel_decode(inference_app, monkeypatch):
     )
     assert upload(app, content).status_code == 413
     runner.assert_not_called()
+
+
+def test_camera_jpeg_exif_orientation_reaches_detector_upright(inference_app):
+    """EXIF 6 rotates stored landscape pixels clockwise into displayed portrait."""
+    import base64
+
+    app, runner = inference_app
+    source = Image.new("RGB", (24, 12), (255, 0, 0))
+    source.paste((0, 255, 0), (12, 0, 24, 12))
+    exif = Image.Exif()
+    exif[274] = 6
+    stream = io.BytesIO()
+    source.save(stream, format="JPEG", quality=100, subsampling=0, exif=exif)
+
+    response = upload(app, stream.getvalue(), "camera.jpg")
+    assert response.status_code == 200, response.json
+    decoded = runner.call_args.args[0]
+    assert decoded.shape == (24, 12, 3)
+    # After clockwise rotation the red half is above the green half. Check
+    # interior pixels with room for JPEG rounding and the detector's BGR order.
+    assert decoded[3, 6, 2] > 240 and decoded[3, 6, :2].max() < 15
+    assert decoded[20, 6, 1] > 240 and decoded[20, 6, [0, 2]].max() < 15
+    annotated = Image.open(io.BytesIO(base64.b64decode(response.json["result_image"])))
+    assert annotated.size == (12, 24)
+    np.testing.assert_array_equal(np.array(annotated), decoded[:, :, ::-1])

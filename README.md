@@ -23,7 +23,7 @@
 - **SBOL3 File Generation**: Creates SBOL3 files based on user input and system rules.
 - **File Conversion**: Converts SBOL3 files to GenBank and/or FASTA formats.
 - **Health Check**: Provides an endpoint to verify the application's health.
-- **Database Integration**: Interacts with a MySQL database to retrieve and store relevant data.
+- **Database Integration**: Reads registry part metadata and sequences from MySQL.
 
 ---
 ## 🧩 System Architecture

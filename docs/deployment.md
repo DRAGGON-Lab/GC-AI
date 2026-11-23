@@ -4,6 +4,8 @@ This release changes the conversion wire contract. Release Flask, React, Python,
 
 ## Build and run reviewed source
 
+The runtime lock and Docker CI target Linux/amd64. Build for that platform when using another host architecture.
+
 From the GC-AI repository root:
 
 ```sh
