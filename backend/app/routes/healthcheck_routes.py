@@ -33,4 +33,4 @@ def healthcheck():
 
 
 def liveness():
-    return jsonify({"status": "alive"})
+    return jsonify({"status": "dead"})
