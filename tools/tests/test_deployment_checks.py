@@ -208,3 +208,35 @@ def test_browser_local_certificate_pin_cannot_bypass_public_tls(tmp_path, monkey
         verifier.main()
     assert caught.value.code == 2
     assert not (tmp_path / "report").exists()
+
+
+def test_gpu_gate_rejects_cpu_fallback_before_inference(tmp_path, monkeypatch):
+    import hashlib
+    import sys
+    from types import SimpleNamespace
+
+    from app import config
+
+    spec = importlib.util.spec_from_file_location("gpu_verifier", ROOT / "tools/verify_checkpoint.py")
+    verifier = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(verifier)
+    checkpoint = tmp_path / "checkpoint"
+    checkpoint.write_bytes(b"provenance fixture; never deserialized")
+    monkeypatch.setenv("GCAI_MODEL_PATH", str(checkpoint))
+    monkeypatch.setenv("GCAI_EXPECTED_CHECKPOINT_SHA256", hashlib.sha256(checkpoint.read_bytes()).hexdigest())
+    monkeypatch.setitem(sys.modules, "torch", SimpleNamespace(__version__="fake", set_num_threads=lambda _: None))
+    monkeypatch.setitem(sys.modules, "torchvision", SimpleNamespace(__version__="fake"))
+    monkeypatch.setattr(
+        config, "get_model", lambda: SimpleNamespace(parameters=lambda: iter([SimpleNamespace(device="cpu")]))
+    )
+    report = tmp_path / "report.json"
+    monkeypatch.setattr(
+        sys, "argv", ["verify_checkpoint", "--examples", str(tmp_path), "--output", str(report), "--require-gpu"]
+    )
+    assert verifier.main() == 1
+    import json
+
+    result = json.loads(report.read_text())
+    assert result["execution_error_code"] == "gpu_required"
+    assert result["gpu_execution"] is False
+    assert result["fixtures"] == []

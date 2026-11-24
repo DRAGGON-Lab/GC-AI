@@ -143,3 +143,8 @@ upgrade. The production image contains Nginx and built assets, with no developme
 server or node_modules. See [dependency-audit.json](dependency-audit.json). The CI
 runtime audit fails on new production dependency findings; this is not a claim
 that every development tool is advisory-free.
+
+A production GPU host can add `compose.gpu.yml` from the environment repository.
+Run checkpoint acceptance with `--require-gpu`; CPU fallback then fails before
+inference instead of being counted as GPU verification. Local CPU replay remains
+valid CPU evidence; GPU execution still requires actual equipped-host acceptance.

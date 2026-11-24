@@ -19,6 +19,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--examples", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--require-gpu", action="store_true", help="Fail instead of accepting CPU fallback")
     args = parser.parse_args()
     expected = os.environ.get("GCAI_EXPECTED_CHECKPOINT_SHA256", "")
     if len(expected) != 64:
@@ -46,11 +47,15 @@ def main():
         "torch": torch.__version__,
         "torchvision": torchvision.__version__,
         "fixtures": [],
+        "gpu_required": args.require_gpu,
     }
     try:
         model = get_model()
         report["device"] = str(next(model.parameters()).device)
         report["gpu_execution"] = report["device"].startswith("cuda")
+        if args.require_gpu and not report["gpu_execution"]:
+            report["execution_error_code"] = "gpu_required"
+            raise RuntimeError("GPU-required verification reached a CPU model")
         client = create_app({"TESTING": True, "FILES_GENERATED_DIR": "/tmp/gcai-checkpoint-artifacts"}).test_client()
         directories = sorted(p for p in args.examples.iterdir() if (p / "detections.json").exists())
         assert len(directories) == 3

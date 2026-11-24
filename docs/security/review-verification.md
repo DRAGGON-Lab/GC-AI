@@ -10,12 +10,12 @@ image identities and sanitized operational receipts are in the environment's
 | --- | --- |
 | Backend regression suite, Python 3.12.13 | 177 passed |
 | Client default unit suite | 146 passed;22 live cases deselected |
-| Actual HTTP Python/CLI/MCP/React-conversion, private reports, notebook and TLS-pin policy regressions | 9 passed; detector/database replaced by explicit fakes in this suite |
+| Actual HTTP Python/CLI/MCP/React-conversion, private reports, notebook and TLS-pin policy regressions | 10 passed; detector/database replaced by explicit fakes in this suite |
 | Full live client suite over verified localhost TLS with real checkpoint, MySQL 8.4 and disposable SBOL DB | 22 passed;146 unit cases deselected; no live tests skipped |
 | Complete quickstart notebook | Executed with real detection, named registry parts, conversion, temporary registry publication/readback and cleanup |
 | Real checkpoint inference route replay | All3 image records matched exact boxes/classes on CPU; [receipt](checkpoint-replay.json) |
 | Strict pinned pySBOL3+sbol-rs verification | Passed; all 6 regenerated outputs have zero findings; immutable historical diagnostics retained |
-| Environment configuration/bootstrap/import regressions | 13 passed |
+| Environment configuration/bootstrap/import regressions | 14 passed |
 | Fresh real registry import | 84285 rows; SELECT-only application grants; localhost-only root |
 | Credential rotation in the new review project | New root/application credentials accepted; old root/application/workspace credentials rejected |
 | Private backup/isolated fresh restore | 84285 rows; source/restored table checksum2942824569; accounts not restored |
