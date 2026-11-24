@@ -1,0 +1,10 @@
+# Detector-free application dependencies; shared by installed packages and tests.
+Flask==2.0.1
+Werkzeug==2.0.3
+flask-cors==6.0.5
+python-dotenv==1.2.4
+PyYAML==6.0.3
+sbol3==1.2.0.post0
+sbol-utilities==1.0a17
+Pillow==13.0.0
+numpy==1.26.4

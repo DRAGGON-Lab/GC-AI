@@ -54,18 +54,24 @@ def load_model():
     Loads and initializes the ML model using the checkpoint from the specified MODEL_PATH.
     """
     try:
-        import torch
-        from app.models.create_fasterrcnn_model import create_model
+        from app.checkpoint import verified_checkpoint
 
-        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        checkpoint = torch.load(MODEL_PATH, map_location=device, weights_only=False)
-        build_model = create_model[checkpoint["model_name"]]
-        model = build_model(num_classes=NUM_CLASSES, pretrained=False, coco_model=False)
-        model.load_state_dict(checkpoint["model_state_dict"])
-        return model.to(device).eval()
+        with verified_checkpoint(MODEL_PATH, os.getenv("GCAI_EXPECTED_CHECKPOINT_SHA256")) as stream:
+            return _load_verified_model(stream)
     except Exception as e:
-        raise CustomError(f"Error loading the model: {e}", 500)
+        raise CustomError(f"Error loading the model: {e}", 500) from None
 
+
+def _load_verified_model(stream):
+    import torch
+    from app.models.create_fasterrcnn_model import create_model
+
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    checkpoint = torch.load(stream, map_location=device, weights_only=False)
+    build_model = create_model[checkpoint["model_name"]]
+    model = build_model(num_classes=NUM_CLASSES, pretrained=False, coco_model=False)
+    model.load_state_dict(checkpoint["model_state_dict"])
+    return model.to(device).eval()
 
 def get_db_connection():
     """Establece una conexión a la base de datos y la devuelve."""

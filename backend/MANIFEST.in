@@ -1,0 +1,2 @@
+include README.md requirements-api.txt requirements-runtime.txt
+recursive-include app/data_configs *.yaml
