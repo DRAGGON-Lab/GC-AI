@@ -150,6 +150,7 @@ const PredictionAccordion = ({ item, index, setPrediction, helperText, setErrors
             }}
           />
 
+          {item.modelScore !== undefined && <Typography>Model score: {item.modelScore.toFixed(3)} (uncalibrated)</Typography>}
           {lookupError && <Alert severity="error" action={
             <Button onClick={() => loadDetails(item.name)}>Retry details</Button>
           }>Part details could not be loaded. Retry or choose Add Custom Component.</Alert>}

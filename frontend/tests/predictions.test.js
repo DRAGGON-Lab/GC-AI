@@ -20,3 +20,12 @@ for (const glyph of ['constructor', '__proto__', null, 42]) {
     assert.throws(() => updatePredictions({ pred_classes: [glyph], draw_boxes: [[0, 0, 1, 1]] }, {}), /draft was kept/);
   });
 }
+
+test('model scores are optional, validated, aligned and retained through reading-order sort', () => {
+  const payload = { pred_classes: ['cds', 'promoter'], draw_boxes: [[10, 0, 20, 10], [0, 0, 10, 10]] };
+  assert.equal(updatePredictions(payload, {})[1].modelScore, undefined);
+  assert.deepEqual(updatePredictions({ ...payload, pred_scores: [.9, .7] }, {}).slice(1).map(row => row.modelScore), [.7, .9]);
+  for (const scores of [null, [], [.7], [NaN, .9], [Infinity, .9], [-.1, .8], [1.1, .8], [true, .8]]) {
+    assert.throws(() => updatePredictions({ ...payload, pred_scores: scores }, {}), /Model scores/);
+  }
+});

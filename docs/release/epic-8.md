@@ -53,3 +53,39 @@ confirmed reset and a late details response after a newer selection.
 Failure trace/screenshot retained locally in
 `/private/tmp/gcai-epic8/editor-regression-before`; CI retains equivalent failure
 artifacts. Mocked browser evidence does not qualify real model or SBOL accuracy.
+
+## #26–#28 runtime and scientific checks
+
+The all-class contract spans YAML, Python, JavaScript and backend role sets;
+background is excluded and inherited object names cannot become glyph roles.
+RNA assembly restrictions remain unchanged. Independent engineering review
+reproduced and verified corrections for second-image discard confirmation,
+late camera permission cleanup and stable operon identities. Thirteen built-app
+Chromium workflows now pass, including explicit human review before generation.
+
+The expanded backend suite passed 191 tests before score additions. The real
+loader's seven new integrity cases failed before correction, then all 29
+checkpoint/readiness tests passed. Wheel and source distributions built and
+installed outside the checkout; installed WSGI imports, CLI/WSGI liveness,
+janitor, generation and conversion passed. This detector-free installed smoke
+is distinct from real inference. The CPU image built from its hashed Linux lock
+and immutable Python base. Safe `weights_only=True` execution against the
+verified legacy checkpoint failed on its NumPy scalar global; trusted pickle
+loading remains explicit behind mandatory integrity verification.
+
+Scientific review verified the official pinned COCO evaluator on an independent
+synthetic TP/FP fixture. Eleven evaluator/provenance tests pass, including the
+float32 deployed-threshold boundary. These establish evaluator behavior, not
+model accuracy. Twenty distinct source designs and the 80-image inventory are
+in [the draft corpus](../benchmark/corpus-draft/inventory.json). Real physical
+captures, approved ground truth and scientific acceptance remain outstanding.
+No benchmark accuracy measurements or candidate qualification are claimed.
+
+## Docker interruption
+
+The CPU image build completed. The subsequent real CPU replay produced no
+receipt while Docker Desktop's VM was unavailable. Desktop logged a disk-full
+shutdown at 17:34 UTC on 24 November 2026 (`init.log: no space left on device`).
+Workspace sandbox socket denial is a separate restriction. The host later had
+approximately 16 GiB free; recovery and fresh CPU replay are required before
+counting this channel as passed. Existing review/database volumes are preserved.

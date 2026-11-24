@@ -108,7 +108,7 @@ def filter_predictions_with_highest_score(outputs, detection_threshold, iou_thre
     return boxes, scores, labels
 
 
-def process_image(image_input, model):
+def process_image(image_input, model, *, score_threshold=THRESHOLD):
     """
     Processes an input image to perform inference and returns filtered results.
 
@@ -135,8 +135,8 @@ def process_image(image_input, model):
     COLORS = [COLOR_MAP[label] for label in CLASSES]
 
     if len(outputs[0]['boxes']) != 0:
-        boxes, scores, labels = filter_predictions_with_highest_score(outputs, THRESHOLD)
+        boxes, scores, labels = filter_predictions_with_highest_score(outputs, score_threshold)
         orig_image, draw_boxes, pred_classes = inference_annotations({'boxes': boxes, 'scores': scores, 'labels': labels}, CLASSES, COLORS, orig_image)
-        return orig_image, draw_boxes, pred_classes
+        return orig_image, draw_boxes, pred_classes, [float(score) for score in scores]
 
-    return orig_image, [], []
+    return orig_image, [], [], []

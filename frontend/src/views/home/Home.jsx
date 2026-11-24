@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useState, useContext, useRef, useEffect, useCallback } from 'react';
-import { Container, Paper, Box, Button, Typography, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { Container, Paper, Box, Button, Typography, Checkbox, FormControlLabel, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import NameContext from '../../context/NameContext';
 import CameraCapture from '../../components/CameraCapture/CameraCapture';
@@ -45,6 +45,8 @@ export default function Home() {
     setResetOpen(false);
   };
   const [prediction, setPrediction] = useState(null);
+  const [reviewed, setReviewed] = useState(false);
+  useEffect(() => setReviewed(false), [prediction]);
   const [namespace, setNamespace] = useState("");
   const [expressions, setExpressions] = useState([]);
   const [interactions, setInteractions] = useState([]);
@@ -119,6 +121,7 @@ export default function Home() {
 
   const handleSubmit = async () => {
 
+    if (!reviewed) return;
     const validationErrors = validateForm({ namespace, prediction, expressions, interactions, eds }, participantRoles);
 
     if (validationErrors) {
@@ -134,7 +137,7 @@ export default function Home() {
       setErrors({});
     }
 
-    const processedComponents = prediction.map(({ availableNames, ...rest }) => rest);
+    const processedComponents = prediction.map(({ availableNames, modelScore, uiIdentity, ...rest }) => rest);
 
     try {
       const dataToSend = {
@@ -298,9 +301,11 @@ export default function Home() {
                   showModal={showModal}
                   API_BASE_URL={API_BASE_URL}
                 />
+                <FormControlLabel control={<Checkbox checked={reviewed} onChange={event => setReviewed(event.target.checked)} />}
+                  label="I have reviewed the predicted parts, their order, roles and sequences. Detection can miss or misclassify glyphs." />
                 <Box>
                   {isButtonVisible && (
-                    <Button variant="contained" color="primary" onClick={handleOpenDialog} startIcon={<NoteAddIcon />} sx={{ mt: 2.5, p: 1 }} fullWidth>
+                    <Button disabled={!reviewed} variant="contained" color="primary" onClick={handleOpenDialog} startIcon={<NoteAddIcon />} sx={{ mt: 2.5, p: 1 }} fullWidth>
                       Create SBOL 3 File
                     </Button>
                   )}

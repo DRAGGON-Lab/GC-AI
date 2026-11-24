@@ -19,6 +19,11 @@ export const updatePredictions = (predictionData, namesCache) => {
       predictionData.pred_classes.length !== predictionData.draw_boxes.length) {
     throw new Error('Detector classes and boxes must have matching lengths. Your draft was kept.');
   }
+  if (Object.hasOwn(predictionData, 'pred_scores') &&
+      (!Array.isArray(predictionData.pred_scores) || predictionData.pred_scores.length !== predictionData.pred_classes.length ||
+       predictionData.pred_scores.some(score => !Number.isFinite(score) || score < 0 || score > 1))) {
+    throw new Error('Model scores must match detections and be finite values within [0,1]. Your draft was kept.');
+  }
   let newPredictions = predictionData.pred_classes.flatMap((role, index) => {
     if (typeof role !== 'string') throw new Error('Detector classes must be strings. Your draft was kept.');
     const box = predictionData.draw_boxes[index];
@@ -37,6 +42,7 @@ export const updatePredictions = (predictionData, namesCache) => {
       name: '',
       description: '',
       role: standardizedRole,
+      modelScore: predictionData.pred_scores?.[index],
       sequence: '',
       sequence_length: '',
       availableNames: namesCache[standardizedRole] || [],
