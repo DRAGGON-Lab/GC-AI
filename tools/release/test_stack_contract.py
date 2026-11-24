@@ -7,6 +7,18 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent))
 from qualify_stack import exact_checkout, no_skips
+from stack_operations import verify_application_grants
+
+
+def test_grants_accept_deployed_table_scope_and_reject_wider_access():
+    usage = "GRANT USAGE ON *.* TO `gcai`@`%`"
+    select = "GRANT SELECT ON `iGEM2024`.`parts` TO `gcai`@`%`"
+    verify_application_grants([usage, select])
+    for grants in [[], [usage], [usage, select.replace("`parts`", "*")],
+                   [usage, select, "GRANT UPDATE ON `iGEM2024`.`parts` TO `gcai`@`%`"],
+                   [usage, select + " WITH GRANT OPTION"]]:
+        with pytest.raises(ValueError):
+            verify_application_grants(grants)
 
 
 def test_live_junit_rejects_missing_tests_and_skips(tmp_path):

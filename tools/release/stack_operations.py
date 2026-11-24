@@ -10,6 +10,15 @@ import subprocess
 import time
 
 
+def verify_application_grants(grants):
+    expected = {
+        "GRANT USAGE ON *.* TO `gcai`@`%`",
+        "GRANT SELECT ON `iGEM2024`.`parts` TO `gcai`@`%`",
+    }
+    if set(grants) != expected:
+        raise ValueError("Application grants must be exactly SELECT on the parts table plus USAGE")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--compose", type=Path, required=True)
@@ -55,10 +64,7 @@ mysql --defaults-extra-file="$config" --batch --skip-column-names iGEM2024"""
         )
 
     grants = sql(source_db, "SHOW GRANTS;", user="gcai").stdout.decode().splitlines()
-    if not grants or any(
-        "GRANT SELECT ON `iGEM2024`.* TO" not in line and "GRANT USAGE ON *.* TO" not in line for line in grants
-    ):
-        raise ValueError("Application grants exceed the required SELECT-only database access")
+    verify_application_grants(grants)
     original = sql(source_db, "SELECT COUNT(*) FROM parts; CHECKSUM TABLE parts;").stdout.decode()
     if int(original.splitlines()[0]) <= 0:
         raise ValueError("Registry import is empty")
