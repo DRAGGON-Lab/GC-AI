@@ -1,11 +1,9 @@
 name: frontend
-on:
-  push:
-    paths: ['frontend/**', '.github/workflows/frontend.yml']
-  pull_request:
-    paths: ['frontend/**', '.github/workflows/frontend.yml']
+on: [push, pull_request]
+
 jobs:
   test:
+    name: Frontend lint and build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
