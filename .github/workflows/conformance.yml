@@ -1,11 +1,9 @@
 name: SBOL conformance
-on:
-  push:
-    paths: ['backend/**', 'tools/**', 'docs/examples/**', 'docs/validation/**', '.github/workflows/conformance.yml']
-  pull_request:
-    paths: ['backend/**', 'tools/**', 'docs/examples/**', 'docs/validation/**', '.github/workflows/conformance.yml']
+on: [push, pull_request]
+
 jobs:
   verify:
+    name: SBOL dual-validator conformance
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
