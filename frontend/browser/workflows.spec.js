@@ -179,3 +179,21 @@ test('late registry details cannot overwrite a newer selection', async ({ page }
   await page.getByRole('button', { name: 'Discard and start new' }).click();
   await expect(page.getByLabel('Namespace', { exact: false })).toHaveCount(0);
 });
+
+test('cds-arrow maps to an editable CDS and unknown predictions keep the draft', async ({ page }) => {
+  let unknown = false;
+  await page.route('**/api/inference/', route => route.fulfill({ json: {
+    pred_classes: [unknown ? 'future-glyph' : 'cds-arrow'], draw_boxes: [[0, 0, 10, 10]], has_predictions: true, result_image: pixel,
+  } }));
+  await upload(page);
+  const part = page.locator('.MuiAccordion-root').nth(1);
+  await part.locator('.MuiAccordionSummary-root').click();
+  await expect(part.getByRole('combobox', { name: 'Role', exact: true })).toHaveValue('CDS');
+  await page.getByLabel('Namespace', { exact: false }).fill('https://example.org/keep');
+  unknown = true;
+  await page.locator('#file-input').setInputFiles({ name: 'unknown.png', mimeType: 'image/png', buffer: Buffer.from(pixel, 'base64') });
+  await expect(page.getByText(/Unknown detector class/)).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.getByLabel('Namespace', { exact: false })).toHaveValue('https://example.org/keep');
+  await expect(part.getByRole('combobox', { name: 'Role', exact: true })).toHaveValue('CDS');
+});
