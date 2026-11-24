@@ -17,10 +17,9 @@ The checkpoint path is `/app/app/models/model_files/160_model.pth`; its SHA256 i
 `06ac3f64292ed93f49e296b60e32dab0b5b0182e86141b52ff43a253dba51749`.
 The real isolated registry export contains 84285 parts and has SHA256
 `e869efcaa5bc37bc68065bb90eb48136d7319c1d52aec5a20dcdf4f045aa1766`.
-Private review assets are at `/private/tmp/gcai-real-assets` and linked into the
-environment review checkout's ignored `assets` directory. Fresh review credential
-files are under `/private/tmp/gcai-environment-review/secrets`; the proposed local
-review URL is `https://localhost:8443` (the local CPU review service).
+The permanent environment checkout is adjacent to GC-AI, with private inputs in
+its ignored `assets` and `secrets` directories. The local CPU review service runs
+at `https://localhost:8443`; it uses a short-lived localhost test certificate.
 
 These are migration inputs. Build the hardened runtime images from reviewed GC-AI
 source; do not deploy the old backend. The old environment includes a legacy
