@@ -10,8 +10,11 @@ export default function FileUpload({ setLoading, setHasPredictions, setImageElem
   const { namesCache } = useContext(NameContext);
 
   const handleFileUpload = async (event) => {
-    setLoading('prediction');
     const file = event.target.files[0];
+    if (!file) return;
+    event.target.value = '';
+    if (prediction && !window.confirm('Replace this design? All current edits will be discarded after successful detection.')) return;
+    setLoading('prediction');
     let url = `${API_BASE_URL}/inference/`;
     let formData = new FormData();
     formData.append('image', file);
