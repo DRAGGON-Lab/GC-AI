@@ -186,3 +186,21 @@ def test_oci_manifest_digest_is_distinct_from_config_and_verified_from_archive(b
     assert identities["config_digest"] != identities["manifest_digest"]
     with pytest.raises(ValueError, match="manifest differs"):
         verify_archive(root / "backend.oci.tar", identities["config_digest"], manifest["sources"]["application"])
+
+
+def test_published_evidence_is_self_contained_and_excludes_private_files(bundle, tmp_path):
+    import tarfile
+    from publish import evidence_archive
+
+    manifest, root = bundle
+    (root / "release-manifest.json").write_text(json.dumps(manifest))
+    (root / "private-execution.log").write_text("private credential")
+    path = tmp_path / "evidence.tar.gz"
+    evidence_archive(manifest, root, path)
+    extracted = tmp_path / "downloaded"
+    with tarfile.open(path) as archive:
+        assert "private-execution.log" not in archive.getnames()
+        archive.extractall(extracted, filter="data")
+    downloaded = json.loads((extracted / "release-manifest.json").read_text())
+    assert validate(downloaded, extracted, publish=True)["publication_ready"] is True
+

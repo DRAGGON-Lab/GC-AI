@@ -39,11 +39,17 @@ def deployment(tmp_path, monkeypatch):
 
     monkeypatch.setattr(healthcheck_routes, "get_model", lambda: object())
     monkeypatch.setattr(healthcheck_routes, "get_db_connection", Connection)
+    def runner(image):
+        import time
+
+        time.sleep(0.15)  # Hold admission while concurrent HTTP requests arrive.
+        return image, [[1, 1, 8, 8]], ["promoter"]
+
     app = create_app(
         {
             "TESTING": True,
             "FILES_GENERATED_DIR": str(tmp_path / "artifacts"),
-            "INFERENCE_RUNNER": lambda image: (image, [[1, 1, 8, 8]], ["promoter"]),
+            "INFERENCE_RUNNER": runner,
         }
     )
 

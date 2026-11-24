@@ -6,8 +6,28 @@ import json
 from pathlib import Path
 import subprocess
 import tempfile
+import tarfile
 
-from manifest import validate
+from manifest import validate, safe_file
+
+
+def evidence_archive(manifest, bundle, destination):
+    """Package only manifest-bound public inputs, never private execution logs."""
+    names = {"release-manifest.json"}
+    names.update(item["name"] for item in manifest["artifacts"])
+    names.update(item["name"] for item in manifest["image_archives"].values())
+    names.update(item["report"] for item in manifest["qualification"].values())
+    benchmark = json.loads(safe_file(bundle, manifest["qualification"]["benchmark"]["report"]).read_text())
+    names.update([benchmark["annotation_file_name"], benchmark["prediction_file_name"]])
+    coco = json.loads(safe_file(bundle, benchmark["annotation_file_name"]).read_text())
+    names.update(source["source"] for source in coco.get("sources", []))
+    names.update(str(Path(benchmark["images_directory"]) / item["file_name"]) for item in coco["images"])
+    with tarfile.open(destination, "w:gz") as archive:
+        for name in sorted(names):
+            if Path(name).is_absolute() or ".." in Path(name).parts:
+                raise ValueError("Unsafe evidence archive member")
+            archive.add(safe_file(bundle, name), arcname=name, recursive=False)
+
 
 
 def image_tags(manifest):
@@ -108,6 +128,8 @@ def main():
     with tempfile.TemporaryDirectory(prefix="gcai-release-notes-") as temporary:
         notes_file = Path(temporary) / "notes.md"
         notes_file.write_text(notes)
+        evidence = Path(temporary) / "candidate-evidence.tar.gz"
+        evidence_archive(manifest, args.bundle, evidence)
         subprocess.run(
             [
                 "gh",
@@ -124,6 +146,7 @@ def main():
                 "--notes-file",
                 str(notes_file),
                 *files,
+                str(evidence),
             ],
             check=True,
         )
