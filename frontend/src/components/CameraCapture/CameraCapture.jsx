@@ -4,7 +4,7 @@ import { Button, Box, IconButton } from '@mui/material';
 import CenterFocusStrongIcon from '@mui/icons-material/CenterFocusStrong';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import CancelIcon from '@mui/icons-material/Cancel';
-import { useContext, useRef, useState } from 'react';
+import { useContext, useRef, useState, useEffect } from 'react';
 import NameContext from '../../context/NameContext';
 
 export default function CameraCapture({ API_BASE_URL, setLoading, setImageElement, stream, setStream, setHasPredictions, prediction, setPrediction, setNamespace, setExpressions, setEds, setInteractions, setErrors, updatePredictions, showModal }) {
@@ -12,8 +12,15 @@ export default function CameraCapture({ API_BASE_URL, setLoading, setImageElemen
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
+  const cameraGeneration = useRef(0);
+  const acquiredStream = useRef(null);
+  useEffect(() => () => {
+    cameraGeneration.current += 1;
+    acquiredStream.current?.getTracks().forEach(track => track.stop());
+  }, []);
 
   const handleCapturePhoto = async () => {
+    if (prediction && !window.confirm('Replace this design? All current edits will be discarded after successful detection.')) return;
     setLoading('prediction');
     const canvas = canvasRef.current;
     const video = videoRef.current;
@@ -25,11 +32,6 @@ export default function CameraCapture({ API_BASE_URL, setLoading, setImageElemen
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
     const imageUrl = canvas.toDataURL('image/png');
 
-    const img = new Image();
-    img.onload = () => {
-      setImageElement(img);
-    };
-    img.src = imageUrl;
 
     if (stream) {
       stream.getTracks().forEach(track => track.stop());
@@ -88,6 +90,7 @@ export default function CameraCapture({ API_BASE_URL, setLoading, setImageElemen
   };
 
   const handleCameraToggle = async () => {
+    const generation = ++cameraGeneration.current;
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
     if (isMobile) {
@@ -103,9 +106,15 @@ export default function CameraCapture({ API_BASE_URL, setLoading, setImageElemen
               facingMode: 'environment',
             },
           });
+          if (generation !== cameraGeneration.current || !videoRef.current) {
+            userMediaStream.getTracks().forEach(track => track.stop());
+            return;
+          }
+          acquiredStream.current = userMediaStream;
           videoRef.current.srcObject = userMediaStream;
           setStream(userMediaStream);
         } catch (error) {
+          if (generation !== cameraGeneration.current) return;
           showModal("Error", "Error accessing the camera.", "error");
           setIsCameraOpen(false);
         }

@@ -8,6 +8,19 @@ export const test = base.extend({
   page: async ({ page }, use) => {
     const unexpected = [];
     const errors = [];
+    page.on('request', request => {
+      const url = new URL(request.url());
+      if (!url.pathname.startsWith('/api/')) return;
+      const methods = { '/api/component/names': 'GET', '/api/component/details': 'GET',
+        '/api/component/interactions': 'GET', '/api/inference/': 'POST',
+        '/api/file/create': 'POST', '/api/file/convert': 'POST' };
+      if (url.origin !== 'http://127.0.0.1:4173' || request.method() !== methods[url.pathname]) {
+        unexpected.push(request.method() + ' ' + url.href);
+      }
+      if (url.pathname === '/api/inference/' && !request.headers()['content-type']?.startsWith('multipart/form-data;')) {
+        unexpected.push('Inference must upload multipart image data');
+      }
+    });
     page.on('pageerror', error => errors.push(error.message));
     await page.route('**/*', async route => {
       const url = new URL(route.request().url());
@@ -191,9 +204,52 @@ test('cds-arrow maps to an editable CDS and unknown predictions keep the draft',
   await expect(part.getByRole('combobox', { name: 'Role', exact: true })).toHaveValue('CDS');
   await page.getByLabel('Namespace', { exact: false }).fill('https://example.org/keep');
   unknown = true;
+  page.once('dialog', dialog => dialog.accept());
   await page.locator('#file-input').setInputFiles({ name: 'unknown.png', mimeType: 'image/png', buffer: Buffer.from(pixel, 'base64') });
   await expect(page.getByText(/Unknown detector class/)).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(page.getByLabel('Namespace', { exact: false })).toHaveValue('https://example.org/keep');
   await expect(part.getByRole('combobox', { name: 'Role', exact: true })).toHaveValue('CDS');
+});
+
+test('replacement import needs explicit discard confirmation', async ({ page }) => {
+  await edit(page);
+  page.once('dialog', dialog => dialog.dismiss());
+  await page.locator('#file-input').setInputFiles({ name: 'replacement.png', mimeType: 'image/png', buffer: Buffer.from(pixel, 'base64') });
+  await expect(page.locator('input[name=name]').first()).toHaveValue('Circuit');
+  await expect(page.getByLabel('Namespace', { exact: false })).toHaveValue('https://example.org/research');
+});
+
+test('late camera permission after confirmed reset stops acquired tracks', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.stoppedTracks = 0;
+    navigator.mediaDevices.getUserMedia = () => new Promise(resolve => {
+      window.resolveCamera = () => resolve({ getTracks: () => [{ stop: () => { window.stoppedTracks += 1; } }] });
+    });
+  });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Capture Image', exact: true }).click();
+  await page.getByRole('button', { name: 'New design', exact: true }).click();
+  await page.getByRole('button', { name: 'Discard and start new' }).click();
+  await page.evaluate(() => window.resolveCamera());
+  await expect.poll(() => page.evaluate(() => window.stoppedTracks)).toBe(1);
+  await expect(page.getByText('Error accessing the camera.', { exact: true })).toHaveCount(0);
+});
+
+
+test('deleting an earlier operon cannot transfer union mode or erase manual edits', async ({ page }) => {
+  await upload(page);
+  const add = page.getByText('Operons', { exact: true }).locator('..').getByRole('button');
+  await add.click();
+  await add.click();
+  const operon = name => page.getByText(name, { exact: true }).locator('xpath=ancestor::*[contains(@class,"MuiAccordion-root")][1]');
+  const first = operon('Operon 1');
+  const second = operon('Operon 2');
+  await first.locator('.MuiAccordionSummary-root').click();
+  await first.getByRole('checkbox', { name: 'Generate unions automatically by component order' }).check();
+  await second.locator('.MuiAccordionSummary-root').click();
+  await second.getByText('Unions', { exact: true }).locator('..').getByRole('button').click();
+  await first.locator('[data-testid=DeleteIcon]').last().locator('..').click();
+  await expect(operon('Operon 2').getByRole('checkbox', { name: 'Generate unions automatically by component order' })).not.toBeChecked();
+  await expect(operon('Operon 2').getByRole('combobox', { name: 'From', exact: true })).toHaveCount(1);
 });
