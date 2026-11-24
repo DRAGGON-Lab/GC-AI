@@ -129,7 +129,7 @@ PARTICIPATIONS: dict[InteractionType, tuple[ParticipationRole, ...]] = {
 The backend enforces the same compatibility table before generation.
 """
 
-# frontend/src/utils/PredictionUtils.jsx, with cds-arrow added.
+# frontend/src/utils/PredictionUtils.js (checked by the cross-language contract).
 GLYPH_TO_ROLE: dict[GlyphClass, Role] = {
     GlyphClass.PROMOTER: Role.PROMOTER,
     GlyphClass.RIBOSOME_ENTRY_SITE: Role.RBS,
@@ -148,8 +148,8 @@ GLYPH_TO_ROLE: dict[GlyphClass, Role] = {
 }
 """Which role each detected glyph class becomes.
 
-`cds-arrow` maps to CDS here. The web interface leaves it unmapped, which
-produces a component whose role the service rejects.
+All 14 foreground classes map explicitly in both maintained clients. RNA roles
+remain RNA and cannot be used as physical DNA assembly members.
 """
 
 ROLE_TO_GLYPHS: dict[Role, frozenset[GlyphClass]] = {}

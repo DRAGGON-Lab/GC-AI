@@ -52,3 +52,30 @@ def test_part_details_reads_an_empty_length() -> None:
     )
     assert details.sequence_length is None
     assert details.name == "BBa_R0010"
+
+
+def test_optional_model_scores_are_preserved_and_older_responses_work() -> None:
+    payload = detection_payload()
+    assert all(glyph.model_score is None for glyph in Detection.from_response(payload).glyphs)
+    payload["pred_scores"] = [0.7, 0.999]
+    detection = Detection.from_response(payload)
+    assert [glyph.model_score for glyph in detection.glyphs] == [0.7, 0.999]
+    assert detection.to_json()["glyphs"][0]["model_score"] == 0.7
+
+
+def test_invalid_model_score_arrays_are_rejected() -> None:
+    import pytest
+
+    for scores in [
+        None,
+        [],
+        [0.8],
+        [0.8, float("nan")],
+        [0.8, float("inf")],
+        [-0.1, 0.8],
+        [True, 0.8],
+        [".8", 0.8],
+        [1.1, 0.8],
+    ]:
+        with pytest.raises(ValueError, match="pred_scores"):
+            Detection.from_response({**detection_payload(), "pred_scores": scores})

@@ -46,6 +46,7 @@ def exercise_conversion(page, image, output, report):
         if index:
             accordion.locator("textarea[name=sequence], input[name=sequence]").fill("ATGC" if index == 1 else "NNAA")
     report["conversion_stage"] = "create"
+    page.get_by_role("checkbox", name=re.compile("I have reviewed")).check()
     page.get_by_role("button", name=re.compile("Create SBOL")).click()
     with page.expect_download(timeout=180000) as created:
         page.get_by_role("button", name="Confirm", exact=True).click()

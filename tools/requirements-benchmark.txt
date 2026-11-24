@@ -1,0 +1,2 @@
+# Official COCO evaluator implementation; CPU runtime installed separately.
+pycocotools==2.0.11

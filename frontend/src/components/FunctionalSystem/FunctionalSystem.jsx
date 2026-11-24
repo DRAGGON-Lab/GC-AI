@@ -62,7 +62,7 @@ export default function FunctionalSystem({ expressions, setExpressions, interact
       <Box display="flex" flexDirection="column" gap={2} sx={{ mb: 2 }}>
         {expressions && expressions.map((expression, expressionIndex) => (
           <ExpressionComponent
-            key={expressionIndex}
+            key={expression.id}
             expression={expression}
             expressionIndex={expressionIndex}
             expressions={expressions}
@@ -90,7 +90,7 @@ export default function FunctionalSystem({ expressions, setExpressions, interact
 
           <Box display="flex" flexDirection="column" sx={{ gap: 2, pt: eds.length > 0 ? 2 : 0, pb: eds.length > 0 ? 2 : 1 }}>
             {eds && eds.map((ed, edIndex) => (
-              <Accordion key={edIndex} sx={{ display: 'flex', flexDirection: 'column', boxShadow: helperText.eds?.[ed.id] ? '1px 1px 3px 3px rgba(169, 39, 39, 1)' : '1px 1px 3px 3px #1b4a3b', borderRadius: 1.5 }}>
+              <Accordion key={ed.id} sx={{ display: 'flex', flexDirection: 'column', boxShadow: helperText.eds?.[ed.id] ? '1px 1px 3px 3px rgba(169, 39, 39, 1)' : '1px 1px 3px 3px #1b4a3b', borderRadius: 1.5 }}>
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls={`panel${edIndex}-content`}
@@ -100,7 +100,7 @@ export default function FunctionalSystem({ expressions, setExpressions, interact
                 </AccordionSummary>
                 <AccordionDetails>
                   <ExternallyDefined
-                    key={edIndex}
+                    key={ed.id}
                     ed={ed}
                     edIndex={edIndex}
                     eds={eds}
@@ -128,7 +128,7 @@ export default function FunctionalSystem({ expressions, setExpressions, interact
           <Typography sx={{ fontSize: '13px', color: 'primary.main', ml: .5, mb: 2 }}>Defines the interactions between the components present in the system.</Typography>
           <Box display="flex" flexDirection="column" sx={{ gap: 2, mb: interactions.length > 0 ? 2 : 0 }}>
             {interactions && interactions.map((interaction, interactionIndex) => (
-              <Accordion key={interactionIndex} sx={{ display: 'flex', flexDirection: 'column', boxShadow: helperText.interactions?.[interaction.id] ? '1px 1px 3px 3px rgba(169, 39, 39, 1)' : '1px 1px 3px 3px #1b4a3b', borderRadius: 1.5 }}>
+              <Accordion key={interaction.id} sx={{ display: 'flex', flexDirection: 'column', boxShadow: helperText.interactions?.[interaction.id] ? '1px 1px 3px 3px rgba(169, 39, 39, 1)' : '1px 1px 3px 3px #1b4a3b', borderRadius: 1.5 }}>
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls={`panel${interactionIndex}-content`}
@@ -138,7 +138,7 @@ export default function FunctionalSystem({ expressions, setExpressions, interact
                 </AccordionSummary>
                 <AccordionDetails>
                   <Interaction
-                    key={interactionIndex}
+                    key={interaction.id}
                     interaction={interaction}
                     interactionIndex={interactionIndex}
                     interactions={interactions}

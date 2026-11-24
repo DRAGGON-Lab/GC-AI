@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useState, useContext, useRef, useEffect, useCallback } from 'react';
-import { Container, Paper, Box, Button, Typography } from '@mui/material';
+import { Container, Paper, Box, Button, Typography, Checkbox, FormControlLabel, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import NameContext from '../../context/NameContext';
 import CameraCapture from '../../components/CameraCapture/CameraCapture';
@@ -24,7 +24,29 @@ import GenericModal from '../../components/GenericModal/GenericModal.jsx';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
 export default function Home() {
+  const [resetOpen, setResetOpen] = useState(false);
+  const [designEpoch, setDesignEpoch] = useState(0);
+  const resetDesign = () => {
+    stream?.getTracks().forEach(track => track.stop());
+    setStream(null);
+    setPrediction(null);
+    setNamespace('');
+    setExpressions([]);
+    setInteractions([]);
+    setEds([]);
+    setErrors({});
+    setParticipantRoles({});
+    setImageElement(null);
+    setHasPredictions(false);
+    setStructuralHandle(null);
+    setPredictionName(null);
+    setOpenConversionDialog(false);
+    setDesignEpoch(value => value + 1);
+    setResetOpen(false);
+  };
   const [prediction, setPrediction] = useState(null);
+  const [reviewed, setReviewed] = useState(false);
+  useEffect(() => setReviewed(false), [prediction]);
   const [namespace, setNamespace] = useState("");
   const [expressions, setExpressions] = useState([]);
   const [interactions, setInteractions] = useState([]);
@@ -68,7 +90,6 @@ export default function Home() {
     return () => {
       if (stream) {
         stream.getTracks().forEach(track => track.stop());
-        setStream(null);
       }
     };
   }, [stream]);
@@ -100,6 +121,7 @@ export default function Home() {
 
   const handleSubmit = async () => {
 
+    if (!reviewed) return;
     const validationErrors = validateForm({ namespace, prediction, expressions, interactions, eds }, participantRoles);
 
     if (validationErrors) {
@@ -115,7 +137,7 @@ export default function Home() {
       setErrors({});
     }
 
-    const processedComponents = prediction.map(({ availableNames, ...rest }) => rest);
+    const processedComponents = prediction.map(({ availableNames, modelScore, uiIdentity, ...rest }) => rest);
 
     try {
       const dataToSend = {
@@ -141,6 +163,7 @@ export default function Home() {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
 
         const createdHandle = response.headers.get('X-GCAI-Structural-Handle');
         if (!/^v1_[A-Za-z0-9_-]{43}$/.test(createdHandle || '')) throw new Error('Missing conversion handle');
@@ -193,10 +216,13 @@ export default function Home() {
         <Paper elevation={3} sx={{ p: 5, mt: 2, width: '100%', border: '3px solid #1b4a3b', borderRadius: 2, boxShadow: '1px 1px 15px 5px #1b4a3b', mb: 2, height: '100%' }}>
           <Box sx={{ display: 'flex', flexDirection: 'column' }}>
             {loading && <LoadingScreen message={loading} />}
+            <Button disabled={Boolean(loading)} onClick={() => setResetOpen(true)}>New design</Button>
+            <Box component="fieldset" disabled={Boolean(loading)} sx={{ border: 0, p: 0, m: 0 }}>
+
             {!loading && !prediction && !stream && <Welcome />}
-            {!loading && (
+            {(
               <>
-                <CameraCapture
+                <CameraCapture key={designEpoch}
                   setLoading={setLoading}
                   setImageElement={setImageElement}
                   stream={stream}
@@ -232,7 +258,7 @@ export default function Home() {
               </>
             )}
 
-            {!loading && prediction && imageElement && Object.keys(namesCache).length > 0 && (
+            {prediction && imageElement && (
               <>
                 <ImageDisplay
                   imageElement={imageElement}
@@ -275,19 +301,30 @@ export default function Home() {
                   showModal={showModal}
                   API_BASE_URL={API_BASE_URL}
                 />
+                <FormControlLabel control={<Checkbox checked={reviewed} onChange={event => setReviewed(event.target.checked)} />}
+                  label="I have reviewed the predicted parts, their order, roles and sequences. Detection can miss or misclassify glyphs." />
                 <Box>
                   {isButtonVisible && (
-                    <Button variant="contained" color="primary" onClick={handleOpenDialog} startIcon={<NoteAddIcon />} sx={{ mt: 2.5, p: 1 }} fullWidth>
+                    <Button disabled={!reviewed} variant="contained" color="primary" onClick={handleOpenDialog} startIcon={<NoteAddIcon />} sx={{ mt: 2.5, p: 1 }} fullWidth>
                       Create SBOL 3 File
                     </Button>
                   )}
                 </Box>
               </>
             )}
+            </Box>
           </Box>
 
         </Paper>
 
+        <Dialog open={resetOpen} onClose={() => setResetOpen(false)}>
+          <DialogTitle>Discard this design?</DialogTitle>
+          <DialogContent>New design clears all edits and conversion settings.</DialogContent>
+          <DialogActions>
+            <Button onClick={() => setResetOpen(false)}>Keep editing</Button>
+            <Button onClick={resetDesign}>Discard and start new</Button>
+          </DialogActions>
+        </Dialog>
         <ConfirmationDialog
           open={openDialog}
           handleClose={handleCloseDialog}
@@ -295,6 +332,7 @@ export default function Home() {
         />
 
         <ConversionDialog
+          key={designEpoch}
           open={openConversionDialog}
           handleClose={() => setOpenConversionDialog(false)} handleConvert={(format) => handleConvert(format, structuralHandle)}
         />

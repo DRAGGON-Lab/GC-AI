@@ -99,3 +99,6 @@ For a detailed API reference, user guide, and additional resources, visit the `d
 This project is licensed under the MIT License. See the `LICENSE` file for details.
 
 Hosted TLS/authentication, resource limits, and migration instructions: [deployment](docs/deployment.md). `/livez` provides dependency-independent liveness.
+
+CPU research release work and remaining gates: [qualification](docs/release/qualification.md)
+and [epic #8 evidence](docs/release/epic-8.md).

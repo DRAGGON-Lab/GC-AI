@@ -120,7 +120,7 @@ paths:
         Runs the detection model over an uploaded image and returns the glyphs it
         found, together with a copy of the image annotated with labelled boxes.
 
-        Detections are filtered at a fixed confidence threshold of 0.7, and
+        Detections are filtered at a fixed model-score threshold of 0.7, and
         overlapping detections above an IoU of 0.3 are reduced to the
         highest-scoring one. Neither threshold is configurable per request, and
         confidence scores are not included in the response.
@@ -674,6 +674,13 @@ components:
             items:
               type: integer
           example: [[112, 240, 198, 300], [205, 232, 286, 300]]
+        pred_scores:
+          type: array
+          description: Optional uncalibrated model scores, aligned with pred_classes and draw_boxes. Older servers may omit this array.
+          items:
+            type: number
+            minimum: 0
+            maximum: 1
         pred_classes:
           type: array
           description: The class of each detection, in the same order as `draw_boxes`.

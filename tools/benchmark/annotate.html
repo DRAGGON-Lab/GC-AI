@@ -1,0 +1,30 @@
+<!doctype html><meta charset="utf-8"><title>GC-AI independent annotation review</title>
+<style>body{font:16px system-ui;max-width:1200px;margin:2em auto}label{display:block;margin:.7em 0}canvas{max-width:100%;border:1px solid #555;cursor:crosshair}button{margin:.3em}input[type=text]{width:70%}</style>
+<h1>Independent glyph annotation and review</h1>
+<p>Load the capture inventory and one original image. Draw each glyph rectangle and choose its detector class. List order is the intended reading order. Use source diagrams and the image; do not import model predictions.</p>
+<label>Inventory JSON <input id="inventory" type="file" accept="application/json"></label>
+<label>Original image <input id="image" type="file" accept="image/png,image/jpeg"></label>
+<label>Class <select id="category"></select></label>
+<canvas id="canvas"></canvas><ol id="boxes"></ol>
+<label>Annotator <input id="annotator" type="text"></label>
+<label>Capture provenance (author, camera, conditions) <input id="provenance" type="text"></label>
+<label>Reuse rights and permission <input id="rights" type="text"></label>
+<label>Reviewer <input id="reviewer" type="text"></label>
+<label><input id="independent" type="checkbox">Labels established independently of detector predictions</label>
+<label><input id="approved" type="checkbox">I reviewed and approve the image, labels, boxes and reading order</label>
+<button id="export">Export reviewed annotation</button><p id="status" role="status"></p>
+<script>
+const el=id=>document.getElementById(id);let inventory,image,file,record,rectangles=[],start;
+const context=el('canvas').getContext('2d');
+function draw(){if(!image)return;context.clearRect(0,0,el('canvas').width,el('canvas').height);context.drawImage(image,0,0);context.strokeStyle='red';context.lineWidth=3;rectangles.forEach(r=>context.strokeRect(...r.bbox));
+ el('boxes').replaceChildren();rectangles.forEach((r,i)=>{const row=document.createElement('li');row.textContent=inventory.categories.find(c=>c.id===r.category_id).name+' '+r.bbox.map(Math.round).join(', ');
+ for(const [label,action] of [['Remove',()=>rectangles.splice(i,1)],['Earlier',()=>{if(i>0)[rectangles[i-1],rectangles[i]]=[rectangles[i],rectangles[i-1]]}],['Later',()=>{if(i+1<rectangles.length)[rectangles[i+1],rectangles[i]]=[rectangles[i],rectangles[i+1]]}]]){const button=document.createElement('button');button.textContent=label;button.onclick=()=>{action();el('approved').checked=false;draw()};row.append(button)}el('boxes').append(row)})}
+el('inventory').onchange=async event=>{inventory=JSON.parse(await event.target.files[0].text());el('category').replaceChildren();for(const c of inventory.categories){const o=document.createElement('option');o.value=c.id;o.textContent=c.name;el('category').append(o)}};
+el('image').onchange=async event=>{file=event.target.files[0];record=inventory?.images.find(r=>r.file_name===file.name);if(!record){el('status').textContent='Load inventory first and use an exact inventory filename.';return}image=new Image();image.onload=()=>{el('canvas').width=image.naturalWidth;el('canvas').height=image.naturalHeight;rectangles=[];el('approved').checked=false;draw();URL.revokeObjectURL(image.src)};image.src=URL.createObjectURL(file)};
+function point(event){const bounds=el('canvas').getBoundingClientRect();return [(event.clientX-bounds.left)*el('canvas').width/bounds.width,(event.clientY-bounds.top)*el('canvas').height/bounds.height]}
+el('canvas').onpointerdown=event=>{if(record&&image){start=point(event);el('canvas').setPointerCapture(event.pointerId)}};
+el('canvas').onpointerup=event=>{if(!start)return;const end=point(event),bbox=[Math.min(start[0],end[0]),Math.min(start[1],end[1]),Math.abs(end[0]-start[0]),Math.abs(end[1]-start[1])];start=null;if(bbox[2]>0&&bbox[3]>0)rectangles.push({category_id:Number(el('category').value),bbox});el('approved').checked=false;draw()};
+el('export').onclick=async()=>{try{if(!record||!image||!el('independent').checked||!el('approved').checked)throw Error('Load and independently annotate an image, then approve it.');for(const field of ['annotator','provenance','rights','reviewer'])if(!el(field).value.trim())throw Error('Complete '+field);
+const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',await file.arrayBuffer())),x=>x.toString(16).padStart(2,'0')).join('');
+const output={...record,width:image.naturalWidth,height:image.naturalHeight,sha256:hash,annotator:el('annotator').value.trim(),provenance:el('provenance').value.trim(),reuse_rights:el('rights').value.trim(),approved_by:el('reviewer').value.trim(),approved:true,independently_labeled:true,approved_at:new Date().toISOString(),annotations:rectangles.map((r,i)=>({...r,reading_order:i}))};const link=document.createElement('a');link.href=URL.createObjectURL(new Blob([JSON.stringify(output,null,2)],{type:'application/json'}));link.download=record.id+'.json';link.click();URL.revokeObjectURL(link.href);el('status').textContent='Review exported; keep the original image unchanged.'}catch(error){el('status').textContent=error.message}};
+</script>

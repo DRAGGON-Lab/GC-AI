@@ -10,8 +10,11 @@ export default function FileUpload({ setLoading, setHasPredictions, setImageElem
   const { namesCache } = useContext(NameContext);
 
   const handleFileUpload = async (event) => {
-    setLoading('prediction');
     const file = event.target.files[0];
+    if (!file) return;
+    event.target.value = '';
+    if (prediction && !window.confirm('Replace this design? All current edits will be discarded after successful detection.')) return;
+    setLoading('prediction');
     let url = `${API_BASE_URL}/inference/`;
     let formData = new FormData();
     formData.append('image', file);
@@ -24,9 +27,11 @@ export default function FileUpload({ setLoading, setHasPredictions, setImageElem
 
       if (response.ok) {
         let res = await response.json();
-        setHasPredictions(res.has_predictions);
+
 
         if (res.pred_classes && Array.isArray(res.pred_classes)) {
+          const nextPrediction = updatePredictions(res, namesCache);
+          setHasPredictions(res.has_predictions);
           const base64Image = `data:image/png;base64, ${res.result_image}`;
 
           const img = new Image();
@@ -35,7 +40,7 @@ export default function FileUpload({ setLoading, setHasPredictions, setImageElem
           };
           img.src = base64Image;
 
-          setPrediction(updatePredictions(res, namesCache));
+          setPrediction(nextPrediction);
 
           setNamespace("");
           setExpressions([]);
@@ -52,7 +57,7 @@ export default function FileUpload({ setLoading, setHasPredictions, setImageElem
       }
     } catch (error) {
       setLoading(null);
-      showModal("Error", "Database connection error. Please try again later.", "error");
+      showModal("Error", error.message || "The request failed. Your design has been kept; please retry.", "error");
     } finally {
       setLoading(null);
     }

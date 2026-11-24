@@ -25,6 +25,11 @@ export default function PredictionSection({ prediction, setPrediction, error, he
       return newPrediction;
     });
   };
+  const movePart = (index, delta) => setPrediction(current => {
+    const next = [...current];
+    [next[index], next[index + delta]] = [next[index + delta], next[index]];
+    return next;
+  });
   return (
     <>
       <Typography sx={{ fontWeight: 600, textAlign: 'justify' }}>Principal Component and Subcomponents</Typography>
@@ -34,7 +39,7 @@ export default function PredictionSection({ prediction, setPrediction, error, he
         * The default parts are extracted from the iGEM repository.
       </Typography>
       {prediction.map((item, index) => (
-        <div key={item.id}>
+        <div key={item.uiIdentity || item.id}>
           <PredictionAccordion
             item={item}
             index={index}
@@ -47,6 +52,10 @@ export default function PredictionSection({ prediction, setPrediction, error, he
             API_BASE_URL={API_BASE_URL}
           />
 
+          {index > 0 && <Box>
+            <Button disabled={index === 1} onClick={() => movePart(index, -1)}>Move part left</Button>
+            <Button disabled={index === prediction.length - 1} onClick={() => movePart(index, 1)}>Move part right</Button>
+          </Box>}
           <Box sx={{ display: 'flex', justifyContent: 'right' }}>
             <Button
               variant="text"

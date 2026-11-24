@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import base64
+import math
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Mapping
@@ -37,6 +38,8 @@ class Glyph:
 
     glyph_class: GlyphClass
     box: Box
+    model_score: float | None = None
+    """Uncalibrated model score, when supplied by the service."""
 
     @property
     def role(self) -> Role | None:
@@ -55,8 +58,28 @@ class Detection:
     def from_response(cls, payload: Mapping[str, Any]) -> "Detection":
         boxes = payload.get("draw_boxes") or []
         classes = payload.get("pred_classes") or []
+        if len(boxes) != len(classes):
+            raise ValueError("Detector classes and boxes must have matching lengths")
+        scores = payload.get("pred_scores")
+        if "pred_scores" in payload and (
+            not isinstance(scores, list)
+            or len(scores) != len(classes)
+            or any(
+                isinstance(score, bool)
+                or not isinstance(score, (int, float))
+                or not math.isfinite(score)
+                or not 0 <= score <= 1
+                for score in scores
+            )
+        ):
+            raise ValueError("pred_scores must align with detections and contain finite model scores within [0,1]")
         glyphs = tuple(
-            Glyph(glyph_class=GlyphClass(name), box=Box(*(int(v) for v in box))) for name, box in zip(classes, boxes)
+            Glyph(
+                glyph_class=GlyphClass(name),
+                box=Box(*(int(v) for v in box)),
+                model_score=float(scores[index]) if scores is not None else None,
+            )
+            for index, (name, box) in enumerate(zip(classes, boxes))
         )
         image = payload.get("result_image") or ""
         return cls(glyphs=glyphs, annotated_png=base64.b64decode(image) if image else b"")
@@ -80,7 +103,12 @@ class Detection:
             "has_predictions": self.has_predictions,
             "count": len(self.glyphs),
             "glyphs": [
-                {"glyph_class": glyph.glyph_class.value, "box": glyph.box.as_list()} for glyph in self.ordered()
+                {
+                    "glyph_class": glyph.glyph_class.value,
+                    "box": glyph.box.as_list(),
+                    **({"model_score": glyph.model_score} if glyph.model_score is not None else {}),
+                }
+                for glyph in self.ordered()
             ],
         }
 

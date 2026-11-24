@@ -105,6 +105,7 @@ def run_checks(url, image, output, *, old_password_file=None):
             assert detection.has_predictions and detection.glyphs and detection.annotated_png
 
         check("inference", infer)
+        check("inference_limits_and_admission", lambda: verify_inference_limits(client, image))
 
         def denied_origin():
             response = client._http.post("/file/create", json=design(), headers={"Origin": "https://untrusted.invalid"})
@@ -155,6 +156,50 @@ def run_checks(url, image, output, *, old_password_file=None):
     check("cli_readiness", cli)
     check("mcp_image_to_sbol", lambda: asyncio.run(verify_mcp(url, image.resolve(), output.resolve())))
     return checks
+
+
+def verify_inference_limits(client, image):
+    """Exercise real rejection paths and concurrent admission without a stub runner."""
+    from concurrent.futures import ThreadPoolExecutor
+    from threading import Barrier
+
+    assert client._http.post("/inference/").status_code == 400
+    invalid = client._http.post("/inference/", files={"image": ("bad.png", b"invalid", "image/png")})
+    assert invalid.status_code == 422 and invalid.json()["code"] == "invalid_image"
+    oversized = client._http.post(
+        "/inference/",
+        files={"image": ("large.png", b"x" * (10 * 1024 * 1024 + 1), "image/png")},
+    )
+    assert oversized.status_code == 413
+    content = image.read_bytes()
+    barrier = Barrier(4)
+
+    def request():
+        barrier.wait(timeout=30)
+        return client._http.post(
+            "/inference/",
+            files={"image": (image.name, content, "image/png")},
+            timeout=180,
+        )
+
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        responses = list(executor.map(lambda _: request(), range(4)))
+    assert any(response.status_code == 200 for response in responses)
+    busy = [response for response in responses if response.status_code == 503]
+    assert busy, "Concurrent real inference did not demonstrate busy rejection"
+    assert all(response.status_code in {200, 503} for response in responses)
+    assert all(
+        response.json()["code"] == "inference_busy" and int(response.headers["Retry-After"]) > 0 for response in busy
+    )
+    assert (
+        client._http.post(
+            "/inference/",
+            files={"image": (image.name, content, "image/png")},
+            timeout=180,
+        ).status_code
+        == 200
+    )
+
 
 
 def main(argv=None):

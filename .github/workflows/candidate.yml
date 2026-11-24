@@ -1,0 +1,119 @@
+name: CPU candidate artifacts
+on:
+  workflow_dispatch:
+    inputs:
+      source_revision:
+        description: Reviewed full application commit SHA
+        required: true
+        type: string
+      environment_revision:
+        description: Reviewed full canonical environment commit SHA
+        required: true
+        type: string
+      evidence_run_id:
+        description: Run containing the reviewed candidate-evidence artifact (required for publication)
+        required: false
+        type: string
+      publish:
+        description: Publish the reviewed candidate after every manifest gate passes
+        required: true
+        default: false
+        type: boolean
+concurrency:
+  group: cpu-candidate-${{ inputs.source_revision }}-${{ inputs.environment_revision }}
+  cancel-in-progress: false
+permissions:
+  contents: read
+jobs:
+  build:
+    name: Build immutable CPU candidate artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_revision }}
+      - name: Verify immutable source inputs
+        env:
+          SOURCE_REVISION: ${{ inputs.source_revision }}
+          ENVIRONMENT_REVISION: ${{ inputs.environment_revision }}
+        run: |
+          [[ "$SOURCE_REVISION" =~ ^[a-f0-9]{40}$ ]]
+          [[ "$ENVIRONMENT_REVISION" =~ ^[a-f0-9]{40}$ ]]
+          test "$(git rev-parse HEAD)" = "$SOURCE_REVISION"
+          echo "CANDIDATE=rc-cpu-${SOURCE_REVISION:0:12}-${ENVIRONMENT_REVISION:0:12}" >> "$GITHUB_ENV"
+      - uses: actions/checkout@v4
+        with:
+          repository: DRAGGON-Lab/GC-AI-environment
+          ref: ${{ inputs.environment_revision }}
+          path: canonical-environment
+      - run: cmp docs/release/release-manifest.schema.json canonical-environment/docs/release/release-manifest.schema.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install build==1.2.2.post1
+      - run: |
+          export SOURCE_DATE_EPOCH=$(git show -s --format=%ct HEAD)
+          python -m build backend --outdir candidate
+          python -m build client --outdir candidate
+          sha256sum candidate/* > candidate/SHA256SUMS
+      - uses: docker/setup-buildx-action@v3
+      - name: Build CPU images
+        env:
+          SOURCE_REVISION: ${{ inputs.source_revision }}
+        run: |
+          docker buildx build --platform linux/amd64 --provenance=false --label "org.opencontainers.image.revision=$SOURCE_REVISION" --output type=oci,dest=candidate/backend.oci.tar -f backend/Dockerfile -t "ghcr.io/draggon-lab/gc-ai-backend:$CANDIDATE" .
+          docker buildx build --platform linux/amd64 --provenance=false --label "org.opencontainers.image.revision=$SOURCE_REVISION" --output type=oci,dest=candidate/frontend.oci.tar -f frontend/Dockerfile -t "ghcr.io/draggon-lab/gc-ai-frontend:$CANDIDATE" .
+          python tools/release/describe_images.py --bundle candidate --source-revision "$SOURCE_REVISION" --environment-revision "${{ inputs.environment_revision }}" --mysql-image mysql:8.4@sha256:8c233bad33d520a7aae1c1e619c3a9775f4a1ba2d463d692fada04ec7f40be00 --registry-image ghcr.io/marpaia/sbol-db@sha256:ec35a160248e1db1b50e2a55c251e140c6f2f6c0d5781822b5140aa475af759b
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cpu-candidate-build
+          path: candidate/
+  publish:
+    name: Publish reviewed CPU prerelease
+    if: inputs.publish
+    needs: build
+    environment: cpu-candidate-publication
+    permissions:
+      contents: write
+      packages: write
+      actions: read
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_revision }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: |
+          pip install --require-hashes -r backend/requirements-test.lock
+          pip install jsonschema==4.26.0 -r tools/requirements-benchmark.txt
+          sudo apt-get update && sudo apt-get install -y skopeo
+      - name: Fetch exact reviewed evidence bundle
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVIDENCE_RUN: ${{ inputs.evidence_run_id }}
+        run: |
+          [[ "$EVIDENCE_RUN" =~ ^[0-9]+$ ]]
+          gh run download "$EVIDENCE_RUN" --name candidate-evidence --dir reviewed
+      - name: Validate every publication gate
+        env:
+          SOURCE_REVISION: ${{ inputs.source_revision }}
+          ENVIRONMENT_REVISION: ${{ inputs.environment_revision }}
+        run: |
+          python tools/release/manifest.py reviewed/release-manifest.json --bundle reviewed --publish
+          python - <<'PY'
+          import json,os
+          manifest=json.load(open('reviewed/release-manifest.json'))
+          assert manifest['sources']=={'application':os.environ['SOURCE_REVISION'],'environment':os.environ['ENVIRONMENT_REVISION']}
+          PY
+      - name: Verify reviewed OCI manifests, configs and layers
+        run: python tools/release/publish.py --bundle reviewed --verify-images
+      - name: Publish GHCR images and GitHub prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          export REGISTRY_AUTH_FILE="$RUNNER_TEMP/registry-auth.json"
+          printf '%s' "$GITHUB_TOKEN" | skopeo login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+          python tools/release/publish.py --bundle reviewed --publish

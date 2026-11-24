@@ -109,6 +109,20 @@ async def test_glyphs_come_back_left_to_right(client, handler: Recorder, image: 
     assert data["parts"] == ["promoter_1", "terminator_1"]
 
 
+@pytest.mark.parametrize("scores", [None, [0.91, 0.82]])
+async def test_optional_model_scores_follow_their_glyphs(client, handler: Recorder, image: Path, scores) -> None:
+    payload = detection_payload(["terminator", "promoter"], [[300, 0, 350, 50], [10, 0, 60, 50]])
+    if scores is not None:
+        payload["pred_scores"] = scores
+    handler.json("POST", "/inference/", payload)
+    builds(handler)
+    data = (await call(client, image_path=str(image))).structured_content
+    assert data["built"] is True
+    assert [glyph.get("model_score") for glyph in data["detected"]] == (
+        [None, None] if scores is None else list(reversed(scores))
+    )
+
+
 async def test_an_image_can_arrive_as_base64(client, handler: Recorder) -> None:
     detects(handler)
     builds(handler)

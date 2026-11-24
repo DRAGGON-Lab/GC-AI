@@ -1,13 +1,15 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
-import { Box, Autocomplete, TextField, IconButton, Typography, Divider } from '@mui/material';
+import { Box, Autocomplete, TextField, IconButton, Typography, Divider, Alert, Button } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { participantOptions, sameParticipantSource, selectParticipant } from '../../utils/FunctionalPayload.js';
 
 const interactionTypeOptions = ['Inhibition', 'Stimulation', 'Biochemical Reaction', 'Non-Covalent Binding', 'Degradation', 'Control', 'Genetic Production'];
 
-const Interaction = ({ interactions, setInteractions, interactionIndex, interaction = {}, eds, prediction, helperText, setErrors, participantRoles, setParticipantRoles, API_BASE_URL, showModal }) => {
+const Interaction = ({ interactions, setInteractions, interactionIndex, interaction = {}, eds, prediction, helperText, setErrors, participantRoles, setParticipantRoles, API_BASE_URL }) => {
+  const [lookupFailed, setLookupFailed] = useState(false);
+  const [lookupAttempt, setLookupAttempt] = useState(0);
   const [componentOptions, setComponentOptions] = useState([]);
 
   useEffect(() => {
@@ -17,6 +19,7 @@ const Interaction = ({ interactions, setInteractions, interactionIndex, interact
   useEffect(() => {
     if (!interaction?.type) return;
     const controller = new AbortController();
+    setLookupFailed(false);
     const fetchParticipantRoles = async () => {
       try {
         const response = await fetch(
@@ -28,7 +31,7 @@ const Interaction = ({ interactions, setInteractions, interactionIndex, interact
         if (!Array.isArray(roles)) throw new Error('Invalid participation roles');
         if (controller.signal.aborted) return;
         setParticipantRoles(previous => ({ ...previous, [interaction.id]: roles }));
-        setInteractions(previous => previous.map(item => item.id === interaction.id ? {
+        setInteractions(previous => previous.map(item => item.id === interaction.id && item.type === interaction.type ? {
           ...item,
           participants: Object.fromEntries(roles.map(role => [role,
             item.participants?.[role] || [{ id: crypto.randomUUID(), name: '', instance_id: '' }],
@@ -36,13 +39,13 @@ const Interaction = ({ interactions, setInteractions, interactionIndex, interact
         } : item));
       } catch {
         if (!controller.signal.aborted) {
-          showModal("Error", "Cannot load participation roles. Your interaction has been kept; please retry.", "error");
+          setLookupFailed(true);
         }
       }
     };
     fetchParticipantRoles();
     return () => controller.abort();
-  }, [API_BASE_URL, interaction.id, interaction.type, setInteractions, setParticipantRoles, showModal]);
+  }, [API_BASE_URL, interaction.id, interaction.type, setInteractions, setParticipantRoles, lookupAttempt]);
 
   const handleInteractionChange = (interactionIndex, field, value) => {
     const updatedInteractions = [...interactions];
@@ -65,25 +68,11 @@ const Interaction = ({ interactions, setInteractions, interactionIndex, interact
   };
 
   const handleAddParticipant = (interactionIndex, role) => {
-    const updatedInteractions = [...interactions];
-    const interaction = updatedInteractions[interactionIndex];
-
-    if (!interaction.participants[role]) {
-      interaction.participants[role] = [];
-    }
-
-    const newParticipant = { id: crypto.randomUUID(), name: "", instance_id: "" };
-    interaction.participants[role].push(newParticipant);
-
-    setInteractions(updatedInteractions);
-
-    setErrors((prevErrors) => {
-      const updatedErrors = { ...prevErrors };
-      if (updatedErrors[interaction.id]?.participants?.[role]) {
-        updatedErrors[interaction.id].participants[role][newParticipant.id] = null;
-      }
-      return updatedErrors;
-    });
+    const newParticipant = { id: crypto.randomUUID(), name: '', instance_id: '' };
+    setInteractions(previous => previous.map(row => row.id === interaction.id ? {
+      ...row, participants: { ...row.participants,
+        [role]: [...(row.participants[role] || []), newParticipant] },
+    } : row));
   };
 
   const handleRemoveInteraction = (interactionIndex) => {
@@ -111,28 +100,22 @@ const Interaction = ({ interactions, setInteractions, interactionIndex, interact
   };
 
   const handleRemoveParticipant = (interactionIndex, role, participantId) => {
-    const updatedInteractions = [...interactions];
-    const interaction = updatedInteractions[interactionIndex];
-
-    if (interaction.participants[role]) {
-      interaction.participants[role] = interaction.participants[role].filter(
-        (participant) => participant.id !== participantId
-      );
-
-      setInteractions(updatedInteractions);
-
-      setErrors((prevErrors) => {
-        const updatedErrors = { ...prevErrors };
-        if (updatedErrors[interaction.id]?.participants?.[role]) {
-          delete updatedErrors[interaction.id].participants[role][participantId];
-        }
-        return updatedErrors;
-      });
-    }
+    setInteractions(previous => previous.map(row => row.id === interaction.id ? {
+      ...row, participants: { ...row.participants,
+        [role]: (row.participants[role] || []).filter(participant => participant.id !== participantId) },
+    } : row));
+    setErrors(previous => {
+      const next = structuredClone(previous);
+      if (next[interaction.id]?.participants?.[role]) delete next[interaction.id].participants[role][participantId];
+      return next;
+    });
   };
 
   return (
     <Box>
+      {lookupFailed && <Alert severity="error" action={
+        <Button onClick={() => setLookupAttempt(value => value + 1)}>Retry interaction roles</Button>
+      }>Participation roles could not be loaded. Your edits have been kept.</Alert>}
       <Box
         key={interactionIndex}
       >

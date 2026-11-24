@@ -1,0 +1,46 @@
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:ns0="http://www.w3.org/2000/svg" xmlns:ns1="http://www.inkscape.org/namespaces/inkscape" xmlns:ns2="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:ns4="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" width="1200" height="260" viewBox="0 0 1200 260"><rect width="1200" height="260" fill="white" /><path d="M 35 145 H 1165" stroke="black" stroke-width="3" /><ns0:svg viewBox="0 0 44.999998 44.999998" version="1.1" xml:space="preserve" x="25.0" y="60" width="150" height="140" id="svg2" ns1:version="0.91 r13725" ns2:docname="cds.svg" ns1:export-filename="/Users/jakebeal/projects/SBOL/SBOLv-realizations/Glyphs/cds/cds-specification.png" ns1:export-xdpi="300" ns1:export-ydpi="300"><ns0:metadata id="metadata12"><rdf:RDF><ns4:Work rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title /></ns4:Work></rdf:RDF></ns0:metadata><ns2:namedview pagecolor="#ffffff" bordercolor="#666666" borderopacity="1" objecttolerance="10" gridtolerance="10" guidetolerance="10" ns1:pageopacity="0" ns1:pageshadow="2" ns1:window-width="942" ns1:window-height="693" id="namedview10" showgrid="false" units="in" ns1:zoom="9.44" ns1:cx="25" ns1:cy="24.576271" ns1:window-x="0" ns1:window-y="0" ns1:window-maximized="0" ns1:current-layer="svg2" /><ns0:defs id="defs4"><ns0:style type="text/css" id="style6">
+      path,circle {
+        stroke:#000000;
+        stroke-width: 3;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        fill: none
+      }</ns0:style></ns0:defs><ns0:path d="m 5.2562231,33.900582 23.6111729,0 10.876433,-11.400584 -10.876433,-11.400585 -23.6111729,0 z" id="path8" ns1:connector-curvature="0" style="fill:none;stroke:#000000;stroke-width:2.99544764;stroke-linecap:round;stroke-linejoin:round" ns2:nodetypes="cccccc" /></ns0:svg><path d="M 275.0 110 h 115 l 35 35 l -35 35 h -115 z" fill="white" stroke="black" stroke-width="4" /><ns0:svg viewBox="0 0 44.999998 44.999998" version="1.1" xml:space="preserve" x="525.0" y="60" width="150" height="140" id="svg2" ns1:version="0.91 r13725" ns2:docname="user-defined.svg"><ns0:metadata id="metadata12"><rdf:RDF><ns4:Work rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title /></ns4:Work></rdf:RDF></ns0:metadata><ns2:namedview pagecolor="#ffffff" bordercolor="#666666" borderopacity="1" objecttolerance="10" gridtolerance="10" guidetolerance="10" ns1:pageopacity="0" ns1:pageshadow="2" ns1:window-width="640" ns1:window-height="480" id="namedview10" showgrid="false" units="in" ns1:zoom="2.36" ns1:cx="25" ns1:cy="50" ns1:window-x="0" ns1:window-y="0" ns1:window-maximized="0" ns1:current-layer="svg2" /><ns0:defs id="defs4"><ns0:style type="text/css" id="style6">
+      path,circle,polygon {
+        stroke:#000000;
+        stroke-width: 3;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        fill: none
+      }</ns0:style></ns0:defs><ns0:path d="m 2.4999973,12.499997 0,20 39.9999997,0 0,-20 z" id="path8" ns1:connector-curvature="0" style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:round;stroke-linejoin:round" /></ns0:svg><ns0:svg viewBox="0 0 44.999998 44.999998" version="1.1" x="775.0" y="60" width="150" height="140" id="svg2">
+  <ns0:defs id="defs4">
+    <ns0:style type="text/css" id="style6">
+      path,circle {
+        stroke:#000000;
+        stroke-width: 3;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        fill: none
+      }</ns0:style>
+  </ns0:defs>
+  <ns0:circle cx="22.499998" cy="22.499998" r="12" id="circle8" style="stroke: rgb(0, 0, 0); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round;" />
+  <ns0:line style="stroke: rgb(0, 0, 0); stroke-width: 3px;" x1="14.045" y1="14.045" x2="30.955" y2="30.955" />
+  <ns0:line style="stroke: rgb(0, 0, 0); stroke-width: 3px;" x1="13.896" y1="31.104" x2="31.104" y2="13.896" />
+</ns0:svg><ns0:svg width="150" height="140" id="svg2" version="1.1" ns1:version="0.91 r13725" ns2:docname="ncrna.svg" ns1:export-filename="/Users/jakebeal/projects/SBOL/SBOLv-realizations/Glyphs/non-coding-rna/ncrna-boxC-specification.png" ns1:export-xdpi="300" ns1:export-ydpi="300" x="1025.0" y="60">
+  <ns0:metadata id="metadata21">
+    <rdf:RDF>
+      <ns4:Work rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </ns4:Work>
+    </rdf:RDF>
+  </ns0:metadata>
+  <ns0:defs id="defs19" />
+  <ns2:namedview pagecolor="#ffffff" bordercolor="#666666" borderopacity="1" objecttolerance="10" gridtolerance="10" guidetolerance="10" ns1:pageopacity="0" ns1:pageshadow="2" ns1:window-width="1056" ns1:window-height="818" id="namedview17" showgrid="false" units="in" ns1:zoom="12.836708" ns1:cx="21.816898" ns1:cy="25.418947" ns1:window-x="0" ns1:window-y="0" ns1:window-maximized="0" ns1:current-layer="svg2" />
+  
+  <ns0:g id="g12" transform="matrix(0.47148661,0,0,0.47148661,-1.6350431,-1.6880776)" style="fill:none">
+    <ns0:title id="title14">Layer 1</ns0:title>
+    <ns0:path id="svg_6" d="m 82.316714,53.499993 c -8.999994,-15.999994 -10,-12.500001 -15,-5.500001 -5,7 -6.25,7.249998 -11.000001,1e-6 -4.75,-7.249997 -7.249998,-6.749999 -11.749999,0 -4.500001,6.749999 -5.749999,8.250003 -11.500001,0.500001 -5.750002,-7.750002 -8.750005,-8.249989 -12.75,-0.25 l -0.125382,12.9365 62.010474,-0.165225 0,-7.930822" ns1:connector-curvature="0" style="fill:none;stroke:#000000;stroke-width:3" ns2:nodetypes="csssscccc" />
+  </ns0:g>
+</ns0:svg></svg>

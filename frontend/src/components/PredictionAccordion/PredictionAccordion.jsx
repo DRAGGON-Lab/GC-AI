@@ -1,202 +1,84 @@
 /* eslint-disable react/prop-types */
 import React, { forwardRef, useContext, useEffect, useRef, useState } from 'react';
-import { Accordion, AccordionSummary, AccordionDetails, Autocomplete, Typography, TextField, Box, Checkbox, FormControlLabel, IconButton, Divider } from '@mui/material';
+import { Accordion, AccordionSummary, AccordionDetails, Autocomplete, Typography, TextField, Box, Checkbox, FormControlLabel, IconButton, Divider, Alert, Button } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import NameContext from '../../context/NameContext';
+import { patchPart, numberInstances } from '../../utils/Draft.js';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { FixedSizeList } from 'react-window';
 
-const PredictionAccordion = ({ item, index, setPrediction, prediction, helperText, setErrors, API_BASE_URL, showModal }) => {
+const PredictionAccordion = ({ item, index, setPrediction, helperText, setErrors, API_BASE_URL }) => {
   const { namesCache, roles } = useContext(NameContext);
-  const [checkedAddComponent, setCheckedAddComponent] = useState(false);
-  const prevNamesCache = useRef(namesCache);
-  const prevItemRole = useRef(item.role);
+  const checkedAddComponent = Boolean(item.new);
+  const [lookupError, setLookupError] = useState(false);
+  const requestGeneration = useRef(0);
+  const abortLookup = useRef(null);
+  useEffect(() => () => {
+    requestGeneration.current += 1;
+    abortLookup.current?.abort();
+  }, []);
 
-  useEffect(() => {
-    if (!item.role) return;
+  const cancelLookup = () => {
+    requestGeneration.current += 1;
+    abortLookup.current?.abort();
+    setLookupError(false);
+  };
+  const patch = values => setPrediction(current => patchPart(current, item.id, values));
 
-    setPrediction(current => {
-      if (!current?.[index]) return current;
-      const availableNames = namesCache[item.role] || [];
-      if (JSON.stringify(current[index].availableNames) === JSON.stringify(availableNames)) return current;
-      const newData = [...current];
-      newData[index] = { ...newData[index], availableNames };
-      return newData;
-    });
-
-    prevNamesCache.current = { ...namesCache };
-    prevItemRole.current = item.role;
-  }, [namesCache, item.role, index, setPrediction]);
-
-  if (item.availableNames.length === 0) {
-    const newAvailableNames = namesCache[item.role] || [];
-
-    if (JSON.stringify(item.availableNames) !== JSON.stringify(newAvailableNames)) {
-      const newData = [...prediction];
-      newData[index] = { ...newData[index], availableNames: newAvailableNames, name: '' };
-
-      setPrediction(newData);
-    }
-  }
-  
   const handleRoleChange = (event, newValue) => {
-    const newData = [...prediction];
-    newData[index] = { ...newData[index], role: newValue, availableNames: namesCache[newValue] || [], name: '' };
-    setPrediction(newData);
+    cancelLookup();
+    patch({ role: newValue || '', name: '', identifier: '', description: '', sequence: '', sequence_length: '' });
   };
 
-  const handleNameChange = async (event, newValue) => {
-    const newData = [...prediction];
-
-    newData[index].name = newValue;
-
-    const nameMap = {};
-
-    newData.forEach((component) => {
-      if (component.name && component.name !== "") {
-        if (!nameMap[component.name]) {
-          nameMap[component.name] = [];
-        }
-        nameMap[component.name].push(component);
-      }
-    });
-
-    Object.keys(nameMap).forEach((name) => {
-      const components = nameMap[name];
-
-      if (components.length > 1) {
-        let instanceCounter = 1;
-
-        components.forEach((component) => {
-          if (components.every((comp) => comp.role === component.role)) {
-            component.instance_id = instanceCounter++;
-          } else {
-            delete component.instance_id;
-          }
-        });
-      } else {
-        delete components[0].instance_id;
-      }
-    });
-
+  const loadDetails = async (name) => {
+    cancelLookup();
+    if (!name) return;
+    const generation = requestGeneration.current;
+    const controller = new AbortController();
+    abortLookup.current = controller;
+    const role = item.role;
     try {
-      if (newValue === null) return;
-      const response = await fetch(`${API_BASE_URL}/component/details?component_name=${newValue}&role=${item.role}`);
-      if (response.ok) {
-        const componentDetails = await response.json();
-
-        newData[index] = { ...newData[index], ...componentDetails, role: componentDetails.role };
-
-        setPrediction(newData);
-      } else {
-        showModal("Error", "An error occurred while fetching component details. Please try again later.", "error");
-      }
-    } catch (error) {
-      showModal("Error", "Database connection error. Please try again later.", "error");
+      const query = new URLSearchParams({ component_name: name, role });
+      const response = await fetch(`${API_BASE_URL}/component/details?${query}`, { signal: controller.signal });
+      if (!response.ok) throw new Error('Part details unavailable');
+      const details = await response.json();
+      if (controller.signal.aborted || requestGeneration.current !== generation) return;
+      // Whitelist registry fields: a response cannot change a row's stable UI identity.
+      setPrediction(current => numberInstances(current.map(row =>
+        row.id === item.id && row.role === role && row.name === name && !row.new
+          ? { ...row, identifier: details.identifier, description: details.description,
+            sequence: details.sequence, sequence_length: details.sequence_length }
+          : row)));
+    } catch {
+      if (!controller.signal.aborted && requestGeneration.current === generation) setLookupError(true);
     }
   };
 
-  const handleCheckedAddComponenteChange = (event) => {
-    const updatedPrediction = [...prediction];
-
-    const newValue = event.target.checked ? true : false;
-    const uriValue = event.target.checked ? '' : 'http://parts.igem.org/';
-
-    updatedPrediction[index] = {
-      ...updatedPrediction[index],
-      uri: uriValue,
-      identifier: '',
-      name: '',
-      description: '',
-      sequence: '',
-      sequence_length: '',
-      new: newValue
-    };
-
-    setPrediction(updatedPrediction);
-    setCheckedAddComponent(event.target.checked);
+  const handleNameChange = (event, newValue) => {
+    patch({ name: newValue || '', identifier: '', description: '', sequence: '', sequence_length: '' });
+    loadDetails(newValue);
   };
 
-  const handleTexfieldChange = (event) => {
+  const handleCheckedAddComponenteChange = event => {
+    cancelLookup();
+    patch({ new: event.target.checked, uri: event.target.checked ? '' : 'http://parts.igem.org/',
+      identifier: '', name: '', description: '', sequence: '', sequence_length: '' });
+  };
+
+  const handleTexfieldChange = event => {
+    cancelLookup();
     const { name, value } = event.target;
-    const updatedPrediction = [...prediction];
-    updatedPrediction[index] = {
-      ...updatedPrediction[index],
-      [name]: value
-    };
-
-    if (name === 'sequence') {
-      updatedPrediction[index].sequence_length = value.length;
-    }
-
-    if (name === 'name') {
-      const nameMap = {};
-
-      updatedPrediction.forEach((component) => {
-        if (component.name && component.name !== "") {
-          if (!nameMap[component.name]) {
-            nameMap[component.name] = [];
-          }
-          nameMap[component.name].push(component);
-        }
-      });
-
-      Object.keys(nameMap).forEach((name) => {
-        const components = nameMap[name];
-
-        if (components.length > 1) {
-          let instanceCounter = 1;
-
-          components.forEach((component) => {
-            if (components.every((comp) => comp.role === component.role)) {
-              component.instance_id = instanceCounter++;
-            } else {
-              delete component.instance_id;
-            }
-          });
-        } else {
-          delete components[0].instance_id;
-        }
-      });
-    }
-    setPrediction(updatedPrediction);
+    patch({ [name]: value, ...(name === 'sequence' ? { sequence_length: value.length } : {}) });
   };
 
   const handleRemove = () => {
-    const updatedPrediction = prediction.filter((_, i) => i !== index);
-
-    const nameMap = {};
-
-    updatedPrediction.forEach((component) => {
-      if (component.name && component.name !== "") {
-        if (!nameMap[component.name]) {
-          nameMap[component.name] = [];
-        }
-        nameMap[component.name].push(component);
-      }
+    cancelLookup();
+    setPrediction(current => numberInstances(current.filter(row => row.id !== item.id)));
+    setErrors(previous => {
+      const next = { ...previous };
+      delete next[item.id];
+      return next;
     });
-
-    Object.keys(nameMap).forEach((name) => {
-      const components = nameMap[name];
-      if (components.length > 1) {
-        components.forEach((component, idx) => {
-          component.instance_id = idx + 1;
-        });
-      } else {
-        delete components[0].instance_id;
-      }
-    });
-
-    setPrediction(updatedPrediction);
-
-    setErrors((prevErrors) => {
-      const updatedErrors = { ...prevErrors };
-      if (prediction[index]?.id) {
-        delete updatedErrors[prediction[index].id];
-      }
-      return updatedErrors;
-    });
-
   };
 
   const ListboxComponent = forwardRef(function ListboxComponent(props, ref) {
@@ -268,6 +150,10 @@ const PredictionAccordion = ({ item, index, setPrediction, prediction, helperTex
             }}
           />
 
+          {item.modelScore !== undefined && <Typography>Model score: {item.modelScore.toFixed(3)} (uncalibrated)</Typography>}
+          {lookupError && <Alert severity="error" action={
+            <Button onClick={() => loadDetails(item.name)}>Retry details</Button>
+          }>Part details could not be loaded. Retry or choose Add Custom Component.</Alert>}
           <Box>
             <TextField
               focused
@@ -335,9 +221,9 @@ const PredictionAccordion = ({ item, index, setPrediction, prediction, helperTex
               </>
             ) : (
               <Autocomplete
-                options={item.availableNames}
+                options={namesCache[item.role] || []}
                 name="name"
-                value={item.availableNames.includes(item.name) ? item.name : ""}
+                value={item.name || ""}
                 onChange={handleNameChange}
                 ListboxComponent={ListboxComponent}
                 isOptionEqualToValue={(option, value) => option === value}

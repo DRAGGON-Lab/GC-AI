@@ -73,7 +73,12 @@ def test_every_searchable_role_returns_parts(live: GCAIClient) -> None:
 def test_detection_matches_the_committed_record(live: GCAIClient, directory: Path) -> None:
     image = next(directory.glob("*-CIRCUIT.png"))
     expected = json.loads((directory / "detections.json").read_text())
-    assert live.detect(image).to_json() == expected
+    observed = live.detect(image).to_json()
+    # Immutable historical records predate optional model scores. Compare every
+    # historical field while score validation remains part of client parsing.
+    for glyph in observed["glyphs"]:
+        glyph.pop("model_score", None)
+    assert observed == expected
 
 
 @needs_service
