@@ -1,6 +1,8 @@
-# Epic #6 acceptance evidence
+# Historical epic #6 acceptance evidence
 
-This is a tracking contract, not an issue-closure assertion. The integration
+This table preserves the original implementation-stage evidence. For the current
+CPU research candidate, see [epic #8 acceptance](../release/epic-8.md).
+It is not a current issue-closure assertion. The integration
 owner must attach final test results and complete remaining scientific review
 before merge. ADR 0001 was explicitly approved by the user on 23 November 2026;
 that decision approval does not establish completion of the other gates below.

@@ -1,11 +1,9 @@
 name: backend
-on:
-  push:
-    paths: ['backend/**', 'client/**', 'tools/verify_deployment.py', 'tools/verify_checkpoint.py', 'tools/verify_browser.py', 'tools/tests/**', 'examples/quickstart.ipynb', 'docs/openapi.yaml', '.github/workflows/backend.yml']
-  pull_request:
-    paths: ['backend/**', 'client/**', 'tools/verify_deployment.py', 'tools/verify_checkpoint.py', 'tools/verify_browser.py', 'tools/tests/**', 'examples/quickstart.ipynb', 'docs/openapi.yaml', '.github/workflows/backend.yml']
+on: [push, pull_request]
+
 jobs:
   test:
+    name: Backend isolated API
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,6 +17,7 @@ jobs:
       - run: python -m pytest backend/tests -q
 
   cross-client:
+    name: Cross-client HTTP
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
