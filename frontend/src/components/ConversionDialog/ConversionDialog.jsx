@@ -30,12 +30,12 @@ const ConversionDialog = ({ open, handleClose, handleConvert }) => {
       <Box sx={{ display: 'flex', flexDirection: 'row', mt: 2 }}>
         <CheckCircleOutlineIcon sx={{ fontSize: 35, color: 'primary.main', ml: 2.5, mt: 2 }} />
         <DialogTitle sx={{ mt: .3 }} id="conversion-dialog-title">
-          {"Convert SBOL 3.1 File"}
+          {"Convert SBOL 3 File"}
         </DialogTitle>
       </Box>
       <DialogContent>
         <DialogContentText id="conversion-dialog-description" sx={{ mb: 2 }}>
-          The SBOL 3.1 file has been successfully downloaded. Would you like to convert this file into another format? You can select multiple options.
+          The SBOL 3 file has been successfully downloaded. Would you like to convert this file into another format? You can select multiple options.
         </DialogContentText>
         <FormGroup>
           <FormControlLabel

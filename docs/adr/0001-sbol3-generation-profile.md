@@ -1,10 +1,13 @@
 # ADR 0001: SBOL3 generation and relationship semantics
 
-Status: Proposed — pending scientific review.
+Status: Accepted — 23 November 2026.
 
-The behavior below describes the proposed interpretation implemented on this
-branch. Formal scientific acceptance has not been recorded and remains a merge
-prerequisite.
+Approval evidence: the user explicitly stated “I approve the ADR” in the project
+conversation on 23 November 2026. This acceptance covers the generation and
+relationship semantics below, including `Order` as relative sequence order and
+legacy `Regulate` as its deprecated positional alias. Functional regulation uses
+typed interactions. Remaining integration and deployment verification gates are
+tracked separately in the validation evidence.
 
 ## Context
 

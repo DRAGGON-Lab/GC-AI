@@ -5,7 +5,7 @@ const LoadingScreen = ({ message }) => {
 
   const messages = {
     prediction: "Processing your circuit. Please wait... ",
-    sbolGeneration: "Generating SBOL 3.1 file... ",
+    sbolGeneration: "Generating SBOL 3 file... ",
     conversion: "Converting files, this might take a moment... ",
     data: "The necessary data is being retrieved. Please wait... "
   };

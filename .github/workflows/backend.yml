@@ -1,9 +1,9 @@
 name: backend
 on:
   push:
-    paths: ['backend/**', 'client/src/gcai/constants.py', 'docs/openapi.yaml', '.github/workflows/backend.yml']
+    paths: ['backend/**', 'client/**', 'tools/verify_deployment.py', 'tools/verify_checkpoint.py', 'tools/verify_browser.py', 'tools/tests/**', 'examples/quickstart.ipynb', 'docs/openapi.yaml', '.github/workflows/backend.yml']
   pull_request:
-    paths: ['backend/**', 'client/src/gcai/constants.py', 'docs/openapi.yaml', '.github/workflows/backend.yml']
+    paths: ['backend/**', 'client/**', 'tools/verify_deployment.py', 'tools/verify_checkpoint.py', 'tools/verify_browser.py', 'tools/tests/**', 'examples/quickstart.ipynb', 'docs/openapi.yaml', '.github/workflows/backend.yml']
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -17,3 +17,20 @@ jobs:
           node-version: '24'
       - run: pip install -r backend/requirements-test.txt -e client
       - run: python -m pytest backend/tests -q
+
+  cross-client:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r backend/requirements-test.txt -e 'client[mcp]' nbclient nbformat ipykernel ipython
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm ci --prefix frontend
+      - name: Python, CLI, MCP, React conversion and notebook against actual HTTP
+        run: python -m pytest tools/tests -q --disable-warnings
+        env:
+          PYTHONPATH: backend:client/src

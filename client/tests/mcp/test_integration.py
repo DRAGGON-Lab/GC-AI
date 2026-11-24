@@ -120,4 +120,5 @@ async def test_a_part_the_service_does_not_know_is_reported(live_client) -> None
         },
     )
     assert result.is_error
-    assert "No component data found" in result.content[0].text
+    assert "404" in result.content[0].text
+    assert "BBa_NOT_A_REAL_PART_0" in result.content[0].text

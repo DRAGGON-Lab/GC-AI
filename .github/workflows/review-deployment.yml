@@ -1,0 +1,59 @@
+name: Review deployment acceptance
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: GitHub environment containing review-only connection secrets
+        type: environment
+        required: true
+concurrency:
+  group: review-deployment-${{ inputs.environment }}
+  cancel-in-progress: false
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r backend/requirements-test.txt -e 'client[dev,db,mcp]'
+      - run: pip install -r tools/requirements-browser.txt
+      - run: python -m playwright install --with-deps chromium
+      - name: Run authenticated live gates
+        env:
+          GCAI_URL: ${{ secrets.GCAI_URL }}
+          GCAI_USERNAME: ${{ secrets.GCAI_USERNAME }}
+          CURRENT_PASSWORD: ${{ secrets.GCAI_PASSWORD }}
+          OLD_PASSWORD: ${{ secrets.GCAI_OLD_PASSWORD }}
+        run: |
+          umask 077
+          mkdir -p "$RUNNER_TEMP/gcai-secrets"
+          trap 'rm -rf "$RUNNER_TEMP/gcai-secrets"' EXIT
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          root = Path(os.environ['RUNNER_TEMP']) / 'gcai-secrets'
+          for variable, name in [('CURRENT_PASSWORD', 'current'), ('OLD_PASSWORD', 'old')]:
+              if not os.environ.get(variable):
+                  raise SystemExit('Configure current and old review credentials in the selected environment')
+              (root / name).write_text(os.environ.pop(variable))
+          PY
+          export GCAI_PASSWORD_FILE="$RUNNER_TEMP/gcai-secrets/current"
+          unset CURRENT_PASSWORD OLD_PASSWORD
+          python tools/verify_deployment.py \
+            --image 'docs/examples/YES GATE/YES-GATE-CIRCUIT.png' \
+            --old-password-file "$RUNNER_TEMP/gcai-secrets/old" \
+            --output "$RUNNER_TEMP/gcai-review"
+          python tools/verify_browser.py --image "docs/examples/YES GATE/YES-GATE-CIRCUIT.png" --output "$RUNNER_TEMP/gcai-browser"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sanitized-review-runtime-report
+          path: |
+            ${{ runner.temp }}/gcai-review/report.json
+            ${{ runner.temp }}/gcai-browser/report.json
+          retention-days: 14

@@ -14,7 +14,7 @@ export default function Welcome() {
           A smart tool for designing and documenting genetic circuits. Upload images with synthetic biology symbols, and GC-AI will automatically identify and predict the components. Connect with the iGEM database to use existing parts or create your own, while visualizing your circuit in real-time.
         </Typography>
         <Typography variant="h6" sx={{ textAlign: 'justify', mb: 4 }}>
-          When everything is ready, generate SBOL 3.1 files and convert them to formats like GenBank or FASTA. Make your projects easier and more accurate with GC-AI!
+          When everything is ready, generate SBOL 3 files and convert them to formats like GenBank or FASTA. Make your projects easier and more accurate with GC-AI!
         </Typography>
       </Box>
 

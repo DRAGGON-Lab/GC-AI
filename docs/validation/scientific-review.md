@@ -5,6 +5,16 @@ required by epic #6. Reviewed the changed physical assembly, request validation,
 functional participant resolution, export/convert boundary, Python validation and
 React submission paths against ADR 0001.
 
+## ADR acceptance
+
+On 23 November 2026, the user explicitly stated “I approve the ADR” in the project
+conversation. ADR 0001 is therefore Accepted, including `Order` as relative
+sequence order and legacy `Regulate` as its deprecated positional alias.
+Functional regulation uses typed interactions. This approval records acceptance
+of the decision; the remaining scientific, live integration and deployment gates
+remain tracked separately in acceptance-matrix.md and the security verification
+report.
+
 ## Confirmed defect found and corrected
 
 **P1: a species could resolve to an operon with the same name.** An operon named
