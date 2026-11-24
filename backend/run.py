@@ -8,10 +8,10 @@ import os
 def main():
     
     app = create_app()
-    app.logger.info("Starting GC-AI backend in production mode...")
+    app.logger.info("Starting GC-AI development server...")
     start_cleanup_schedule()
     
-    host = os.getenv('APP_HOST', '0.0.0.0')
+    host = os.getenv('APP_HOST', '127.0.0.1')
     port = int(os.getenv('APP_PORT', 5000))
     app.run(host=host, port=port)
     

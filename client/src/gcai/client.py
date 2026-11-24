@@ -8,6 +8,7 @@ import re
 import zipfile
 from pathlib import Path
 from typing import Any, Mapping
+from urllib.parse import urlsplit
 
 import httpx
 
@@ -29,7 +30,7 @@ def read_image(path: Path) -> bytes:
     return data
 
 
-USER_AGENT = "gcai-client/0.1.0"
+USER_AGENT = "gcai-client/0.2.0"
 
 
 class GCAIClient:
@@ -46,13 +47,26 @@ class GCAIClient:
         *,
         timeout: float = 180.0,
         transport: httpx.BaseTransport | None = None,
+        auth: tuple[str, str] | None = None,
     ) -> None:
         self.base_url = (base_url or os.environ.get("GCAI_URL") or DEFAULT_URL).rstrip("/")
+        parsed = urlsplit(self.base_url)
+        if parsed.username is not None or parsed.password is not None:
+            raise GCAIError("put credentials in auth or GCAI_PASSWORD_FILE, never in the URL")
+        if auth is None:
+            username, password_file = os.getenv("GCAI_USERNAME"), os.getenv("GCAI_PASSWORD_FILE")
+            if username or password_file:
+                if not username or not password_file:
+                    raise GCAIError("set both GCAI_USERNAME and GCAI_PASSWORD_FILE")
+                auth = (username, Path(password_file).read_text().rstrip("\r\n"))
+        if auth is not None and parsed.scheme != "https" and parsed.hostname not in {"localhost", "127.0.0.1", "::1"}:
+            raise GCAIError("Basic authentication requires HTTPS outside loopback")
         self._http = httpx.Client(
             base_url=self.base_url,
             timeout=timeout,
             headers={"User-Agent": USER_AGENT},
             transport=transport,
+            auth=auth,
         )
 
     def __enter__(self) -> "GCAIClient":

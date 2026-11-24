@@ -50,16 +50,14 @@ A participation role that does not belong to its interaction type. A species
 URI with whitespace in it. Errors stop `build` unless you pass
 `validate=False`; server validation always applies.
 
-`build()` hides the file handoff. `POST /file/create` returns the path of a
-second document in a response header and `POST /file/convert` wants that path,
+`build()` hides the file handoff. `POST /file/create` returns an opaque handle for a
+second document in a response header and `POST /file/convert` wants that handle,
 so `build()` does both calls and hands back the bytes.
 
 ## Service behaviour that will catch you out
 
-- **`/healthcheck/` always answers 500.** It closes its database cursor without
-  reading the result of its test query. `client.health()` calls
-  `GET /component/names` instead, which proves the application is serving, the
-  model has loaded and the database answers.
+- **Readiness:** `health()` calls `/healthcheck/`, which returns 200 when the detector and database are usable and sanitized 503 otherwise. `/livez` checks only application liveness.
+
 - **Send a namespace for reproducible identities.** Local validation requires an
   absolute namespace.
 - **A registry part ignores what you send.** With `new=False` the description
@@ -73,8 +71,7 @@ so `build()` does both calls and hands back the bytes.
   externally defined feature.
 - **Order means relative position.** Order emits `precedes`; Regulate remains a
   deprecated positional alias. Use typed interactions for functional regulation.
-- **Generated files are deleted after 24 hours**, so a structural path is only
-  good for that long.
+- **Handles expire after 24 hours.** Hourly cleanup removes the expired files.
 
 ## Storing designs in SBOL DB
 
@@ -186,3 +183,13 @@ uv run --extra dev pytest        # unit tests, no services needed
 GCAI_URL=http://localhost:5001 SBOL_DB_URL=http://localhost:8888 \
   uv run --extra dev --extra db pytest -m integration
 ```
+
+Hosted access uses TLS Basic authentication:
+
+```python
+with GCAIClient("https://gcai.example/api", auth=(username, password)) as client:
+    created = client.create(design)
+    converted = client.convert(created.structural_handle)
+```
+
+CLI and MCP read `GCAI_USERNAME` and `GCAI_PASSWORD_FILE` (a private file containing the password). Do not put credentials in URLs, arguments or build variables. Generated results carry `structural_handle`; server filesystem paths are no longer accepted. Handles expire after 24 hours. Incomplete conversion archives raise `GCAIError`. SDK and MCP limit image reads to 10 MiB; hosted operators must coordinate any changed limits across clients and server.

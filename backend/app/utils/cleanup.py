@@ -52,8 +52,8 @@ def start_cleanup_schedule():
         while True:
             try:
                 cleanup_files()
-            except Exception:
-                logger.exception("Artifact cleanup failed")
+            except Exception as error:
+                logger.error("Artifact cleanup failed (%s)", type(error).__name__)
             time.sleep(3600)
 
     thread = Thread(target=run_schedule, daemon=True)

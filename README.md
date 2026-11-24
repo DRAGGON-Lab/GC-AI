@@ -23,7 +23,7 @@
 - **SBOL3 File Generation**: Creates SBOL3 files based on user input and system rules.
 - **File Conversion**: Converts SBOL3 files to GenBank and/or FASTA formats.
 - **Health Check**: Provides an endpoint to verify the application's health.
-- **Database Integration**: Interacts with a MySQL database to retrieve and store relevant data.
+- **Database Integration**: Reads registry part metadata and sequences from MySQL.
 
 ---
 ## 🧩 System Architecture
@@ -59,7 +59,7 @@ and a worked walkthrough in [`docs/api_documentation.md`](docs/api_documentation
 | `GET` | `/component/details` | Returns one registry part with its description and sequence. |
 | `POST` | `/file/create` | Generates SBOL3 documents for a design. |
 | `POST` | `/file/convert` | Converts a generated document to GenBank and/or FASTA. |
-| `GET` | `/healthcheck/` | Reports service status. Always answers `500` in the current build. |
+| `GET` | `/healthcheck/` | Readiness: 200 when detector and database are usable; otherwise 503. |
 
 To check whether a running instance is usable, call
 `GET /component/names?role=Promoter`: it succeeds only when the application is
@@ -97,3 +97,5 @@ For a detailed API reference, user guide, and additional resources, visit the `d
 ## 📝 License
 
 This project is licensed under the MIT License. See the `LICENSE` file for details.
+
+Hosted TLS/authentication, resource limits, and migration instructions: [deployment](docs/deployment.md). `/livez` provides dependency-independent liveness.

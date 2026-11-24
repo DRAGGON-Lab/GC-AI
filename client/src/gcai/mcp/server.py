@@ -73,7 +73,7 @@ def build_server(
         finally:
             service.close()
 
-    mcp = MCPServer("gc-ai", instructions=INSTRUCTIONS, lifespan=lifespan, version="0.1.0")
+    mcp = MCPServer("gc-ai", instructions=INSTRUCTIONS, lifespan=lifespan, version="0.2.0")
     _register(mcp)
     return mcp
 
@@ -114,7 +114,7 @@ def _fail(exc: Exception) -> ToolError:
         return ToolError(f"the GC-AI service returned {exc.status_code}: {exc.message}")
     if isinstance(exc, GCAIError):
         return ToolError(str(exc))
-    logger.exception("unhandled error")
+    logger.error("Unhandled tool failure (%s)", type(exc).__name__)
     return ToolError(f"internal error: {type(exc).__name__}")
 
 
