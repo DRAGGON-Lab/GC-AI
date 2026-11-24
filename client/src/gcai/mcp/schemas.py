@@ -12,6 +12,13 @@ class Glyph(BaseModel):
     glyph_class: str
     role: str | None = Field(default=None, description="The component role this glyph becomes")
     box: list[int] = Field(description="x1, y1, x2, y2 in pixels")
+    model_score: float | None = Field(
+        default=None,
+        ge=0,
+        le=1,
+        allow_inf_nan=False,
+        description="Optional model score, not a calibrated probability",
+    )
 
 
 class Result(BaseModel):

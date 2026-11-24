@@ -181,6 +181,7 @@ def _register(mcp: MCPServer) -> None:
                 glyph_class=glyph.glyph_class.value,
                 role=glyph.role.value if glyph.role else None,
                 box=glyph.box.as_list(),
+                model_score=glyph.model_score,
             )
             for index, glyph in enumerate(ordered)
         ]
