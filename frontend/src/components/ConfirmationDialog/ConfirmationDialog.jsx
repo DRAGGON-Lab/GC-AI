@@ -13,12 +13,12 @@ const ConfirmationDialog = ({ open, handleClose, handleConfirm }) => {
       <Box sx={{ display: 'flex', flexDirection: 'row' }}>
         <HelpOutlineIcon sx={{ fontSize: 35, color: 'primary.main', ml: 2.5, mt: { xs: 4, md: 2, sm: 2 }, mb: 0 }} />
         <DialogTitle sx={{ mt: .3, width: { xs: '60vw' } }} id="alert-dialog-title" >
-          {"Confirm Creation of SBOL3.1 File"}
+          {"Confirm Creation of SBOL 3 File"}
         </DialogTitle>
       </Box>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
-          Are you sure you want to create the SBOL3.1 file? This will save the current configuration and create a downloadable XML file.
+          Are you sure you want to create the SBOL 3 file? This will save the current configuration and create a downloadable XML file.
         </DialogContentText>
       </DialogContent>
       <DialogActions sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>

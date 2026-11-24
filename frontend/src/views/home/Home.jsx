@@ -137,7 +137,7 @@ export default function Home() {
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', prediction[0].name);
+        link.setAttribute('download', `${prediction[0].name}.xml`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -278,7 +278,7 @@ export default function Home() {
                 <Box>
                   {isButtonVisible && (
                     <Button variant="contained" color="primary" onClick={handleOpenDialog} startIcon={<NoteAddIcon />} sx={{ mt: 2.5, p: 1 }} fullWidth>
-                      Create SBOL 3.1 File
+                      Create SBOL 3 File
                     </Button>
                   )}
                 </Box>
