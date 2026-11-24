@@ -70,3 +70,57 @@ def test_coco_mode_preserves_head_without_downloading_when_disabled(detector_bui
     constructor.assert_called_once_with(weights=None, weights_backbone=None)
     predictor.assert_not_called()
     assert model.roi_heads.box_predictor is original_head
+
+@pytest.mark.parametrize('expected', [None, '', 'bad', '0' * 63, 'g' * 64, '0' * 64])
+def test_real_loader_rejects_unverified_checkpoint_before_deserialization(tmp_path, monkeypatch, expected):
+    from app import config
+    path = tmp_path / 'model.pth'
+    path.write_bytes(b'tampered pickle bytes')
+    monkeypatch.setattr(config, 'MODEL_PATH', str(path))
+    if expected is None:
+        monkeypatch.delenv('GCAI_EXPECTED_CHECKPOINT_SHA256', raising=False)
+    else:
+        monkeypatch.setenv('GCAI_EXPECTED_CHECKPOINT_SHA256', expected)
+    torch = ModuleType('torch')
+    torch.load = Mock(side_effect=AssertionError('unverified data reached deserialization'))
+    torch.device = Mock()
+    torch.cuda = SimpleNamespace(is_available=lambda: False)
+    monkeypatch.setitem(sys.modules, 'torch', torch)
+    models = ModuleType('app.models.create_fasterrcnn_model')
+    models.create_model = {}
+    monkeypatch.setitem(sys.modules, models.__name__, models)
+    with pytest.raises(Exception):
+        config.load_model()
+    torch.load.assert_not_called()
+
+
+def test_real_loader_hashes_rewinds_and_deserializes_the_same_open_stream(tmp_path, monkeypatch):
+    import hashlib
+    from app import config
+    content = b'approved checkpoint'
+    path = tmp_path / 'model.pth'
+    path.write_bytes(content)
+    monkeypatch.setattr(config, 'MODEL_PATH', str(path))
+    monkeypatch.setenv('GCAI_EXPECTED_CHECKPOINT_SHA256', hashlib.sha256(content).hexdigest())
+    model = Mock()
+    model.to.return_value.eval.return_value = model
+    def load(stream, **kwargs):
+        assert not isinstance(stream, (str, Path))
+        assert stream.tell() == 0
+        # Replacing the pathname cannot change the already verified descriptor.
+        replacement = tmp_path / 'replacement'
+        replacement.write_bytes(b'untrusted')
+        replacement.replace(path)
+        assert stream.read() == content
+        assert kwargs['weights_only'] is False
+        return {'model_name': 'test', 'model_state_dict': {}}
+    torch = ModuleType('torch')
+    torch.device = Mock()
+    torch.cuda = SimpleNamespace(is_available=lambda: False)
+    torch.load = Mock(side_effect=load)
+    monkeypatch.setitem(sys.modules, 'torch', torch)
+    models = ModuleType('app.models.create_fasterrcnn_model')
+    models.create_model = {'test': Mock(return_value=model)}
+    monkeypatch.setitem(sys.modules, models.__name__, models)
+    assert config.load_model() is model
+    torch.load.assert_called_once()

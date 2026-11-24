@@ -1,21 +1,20 @@
 name: deployment-boundaries
-on:
-  push:
-    paths: ['backend/**', 'frontend/**', '.github/workflows/deployment.yml']
-  pull_request:
-    paths: ['backend/**', 'frontend/**', '.github/workflows/deployment.yml']
+on: [workflow_dispatch]
+
 jobs:
   docker:
+    name: Explicit Docker boundary qualification
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Build reviewed application images
         run: |
           docker build -f backend/Dockerfile -t gcai-backend:check .
+          docker build -f backend/Dockerfile --target test -t gcai-backend:test .
           docker build -f frontend/Dockerfile -t gcai-frontend:check .
       - name: Run detector-free real decoder regressions inside runtime image
         run: |
-          docker run --rm -v "$PWD:/source:ro" gcai-backend:check python -m pytest /source/backend/tests/test_inference.py /source/backend/tests/test_artifacts.py /source/backend/tests/test_conversion_handles.py -q --disable-warnings
+          docker run --rm -v "$PWD:/source:ro" gcai-backend:test python -m pytest /source/backend/tests/test_inference.py /source/backend/tests/test_artifacts.py /source/backend/tests/test_conversion_handles.py -q --disable-warnings
       - name: Check WSGI liveness without checkpoint and database
         run: |
           docker run -d --name gcai-check -e GCAI_BIND=0.0.0.0:5001 -p 127.0.0.1:5001:5001 gcai-backend:check

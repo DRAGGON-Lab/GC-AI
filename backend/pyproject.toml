@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools==80.9.0", "wheel==0.45.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gc-ai-backend"
+version = "1.0.0rc1"
+description = "GC-AI CPU research API for glyph detection and validated SBOL3 exports"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+license = "MIT"
+dynamic = ["dependencies"]
+
+[project.scripts]
+gc-ai-backend = "app.cli:main"
+gc-ai-janitor = "app.utils.cleanup:main"
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements-api.txt", "requirements-runtime.txt"]}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app", "app.*"]
+namespaces = false
+
+[tool.setuptools.package-data]
+app = ["data_configs/*.yaml"]
