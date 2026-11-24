@@ -34,3 +34,6 @@ dist-ssr
 *.sw?
 
 .venv/
+
+frontend/test-results/
+frontend/playwright-report/
