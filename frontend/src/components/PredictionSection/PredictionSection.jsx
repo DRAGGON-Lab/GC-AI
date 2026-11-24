@@ -34,7 +34,7 @@ export default function PredictionSection({ prediction, setPrediction, error, he
         * The default parts are extracted from the iGEM repository.
       </Typography>
       {prediction.map((item, index) => (
-        <div key={item.id}>
+        <div key={item.uiIdentity || item.id}>
           <PredictionAccordion
             item={item}
             index={index}

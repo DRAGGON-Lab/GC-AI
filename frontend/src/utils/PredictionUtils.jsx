@@ -19,7 +19,7 @@ export const updatePredictions = (predictionData, namesCache) => {
     }[role] || role;
 
     return {
-      id: `${role}-${index}`,
+      id: crypto.randomUUID(),
       uri: 'http://parts.igem.org/',
       new: false,
       identifier: '',
@@ -35,6 +35,7 @@ export const updatePredictions = (predictionData, namesCache) => {
 
   const principalComponent = {
     id: 'component-principal',
+    uiIdentity: crypto.randomUUID(),
     uri: 'http://parts.igem.org/',
     new: false,
     identifier: '',

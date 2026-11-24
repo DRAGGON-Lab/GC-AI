@@ -85,3 +85,97 @@ test('rendered upload, editing, generation, downloads and conversion', async ({ 
   expect((await fasta).suggestedFilename()).toBe('Circuit.fasta');
   await expect(page.getByText('Files converted successfully!', { exact: true })).toBeVisible();
 });
+
+for (const failure of [400, 500, 'network']) {
+  test(`create ${failure} preserves mounted editors and every draft field`, async ({ page }) => {
+    await page.route('**/api/file/create', route => failure === 'network'
+      ? route.abort() : route.fulfill({ status: failure, json: { error: 'Synthetic create failure' } }));
+    await edit(page);
+    await page.locator('input[name=name]').first().evaluate(node => { node.dataset.retained = 'yes'; });
+    await create(page);
+    await expect(page.getByRole('dialog').last()).toContainText(/failure|kept/);
+    await page.keyboard.press('Escape');
+    await expect(page.locator('input[name=name]').first()).toHaveValue('Circuit');
+    await expect(page.locator('input[name=name]').first()).toHaveAttribute('data-retained', 'yes');
+    await expect(page.locator('input[name=description]').nth(1)).toHaveValue('Reviewed PromoterPart');
+    await expect(page.locator('input[name=sequence]').first()).toHaveValue('ATGC');
+    await expect(page.getByRole('checkbox', { name: 'controlled' }).first()).toBeChecked();
+  });
+}
+
+test('registry failures allow manual editing, and retry retains successful lists', async ({ page }) => {
+  const counts = {};
+  let recovered = false;
+  await page.route('**/api/component/names?*', route => {
+    const role = new URL(route.request().url()).searchParams.get('role');
+    counts[role] = (counts[role] || 0) + 1;
+    return route.fulfill(role === 'CDS' && !recovered ? { status: 500, json: {} } : { json: ['BBa_A', 'BBa_B'] });
+  });
+  await edit(page);
+  await expect(page.getByText(/Some registry parts could not be loaded/)).toBeVisible();
+  recovered = true;
+  await page.getByRole('button', { name: 'Retry registry' }).click();
+  await expect(page.getByText(/Some registry parts could not be loaded/)).toHaveCount(0);
+  await expect(page.locator('input[name=name]').first()).toHaveValue('Circuit');
+  expect(counts.Promoter).toBe(1);
+  expect(counts.CDS).toBe(2);
+});
+
+test('conversion failure retains handle and format selection for retry', async ({ page }) => {
+  const attempts = [];
+  await page.route('**/api/file/create', route => route.fulfill({ body: '<rdf:RDF/>', headers: { 'X-GCAI-Structural-Handle': handle } }));
+  const archive = await new JSZip().file('Circuit_fasta.fasta', '>Circuit\natgc\n').generateAsync({ type: 'nodebuffer' });
+  await page.route('**/api/file/convert', route => {
+    attempts.push(route.request().postDataJSON());
+    return route.fulfill(attempts.length === 1 ? { status: 503, json: { error: 'Retry conversion' } } : { body: archive });
+  });
+  await edit(page);
+  await create(page);
+  await page.getByRole('checkbox', { name: 'Convert to FASTA' }).check();
+  await page.getByRole('button', { name: 'Convert', exact: true }).click();
+  await expect(page.getByText('Retry conversion', { exact: true })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('checkbox', { name: 'Convert to FASTA' })).toBeChecked();
+  await page.getByRole('button', { name: 'Convert', exact: true }).click();
+  await expect(page.getByText('Files converted successfully!', { exact: true })).toBeVisible();
+  expect(attempts).toEqual([attempts[0], attempts[0]]);
+  expect(attempts[0].structural_handle).toBe(handle);
+  await page.keyboard.press('Escape');
+  await expect(page.locator('input[name=name]').first()).toHaveValue('Circuit');
+});
+
+test('only confirmed New design discards edits', async ({ page }) => {
+  await edit(page);
+  await page.getByRole('button', { name: 'New design', exact: true }).click();
+  await page.getByRole('button', { name: 'Keep editing' }).click();
+  await expect(page.locator('input[name=name]').first()).toHaveValue('Circuit');
+  await page.getByRole('button', { name: 'New design', exact: true }).click();
+  await page.getByRole('button', { name: 'Discard and start new' }).click();
+  await expect(page.getByLabel('Namespace', { exact: false })).toHaveCount(0);
+  await upload(page);
+  await expect(page.getByLabel('Namespace', { exact: false })).toHaveValue('');
+});
+
+test('late registry details cannot overwrite a newer selection', async ({ page }) => {
+  let release;
+  const pending = new Promise(resolve => { release = resolve; });
+  await page.route('**/api/component/details?*', async route => {
+    const name = new URL(route.request().url()).searchParams.get('component_name');
+    if (name === 'BBa_A') await pending;
+    await route.fulfill({ json: { name, identifier: name, role: 'Promoter', sequence: name === 'BBa_A' ? 'AAAA' : 'CCCC', sequence_length: 4, description: name } }).catch(() => {});
+  });
+  await upload(page);
+  const accordion = page.locator('.MuiAccordion-root').nth(1);
+  await accordion.locator('.MuiAccordionSummary-root').click();
+  const name = accordion.getByRole('combobox', { name: 'Name', exact: true });
+  await name.fill('BBa_A');
+  await page.getByRole('option', { name: 'BBa_A', exact: true }).click();
+  await name.fill('BBa_B');
+  await page.getByRole('option', { name: 'BBa_B', exact: true }).click();
+  await expect(accordion.locator('input[name=sequence]')).toHaveValue('CCCC');
+  release();
+  await expect(accordion.locator('input[name=identifier]')).toHaveValue('BBa_B');
+  await page.getByRole('button', { name: 'New design', exact: true }).click();
+  await page.getByRole('button', { name: 'Discard and start new' }).click();
+  await expect(page.getByLabel('Namespace', { exact: false })).toHaveCount(0);
+});
