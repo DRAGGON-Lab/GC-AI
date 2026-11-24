@@ -106,9 +106,10 @@ CPU/GPU device and versions separately. CPU success does not establish GPU parit
 The environment repository also provides `compose.registry.yml` for a disposable
 SBOL DB on `127.0.0.1:18899`, pinned to
 `ghcr.io/marpaia/sbol-db@sha256:ec35a160248e1db1b50e2a55c251e140c6f2f6c0d5781822b5140aa475af759b`.
-Five live storage integration checks passed against that image on 24 November
-2026; the sixth service-to-registry test was skipped because no full GC-AI review
-service was running. SQLite migration must complete before server startup and its
+The final full live suite passed all 22 cases against that image and the running
+GC-AI review service on 24 November 2026, including all six storage checks; no live
+tests were skipped. The earlier registry-only run passed five storage cases and
+skipped the service-to-registry case before the review service was running. SQLite migration must complete before server startup and its
 working directory must be writable for blob storage; the profile configures both.
 
 

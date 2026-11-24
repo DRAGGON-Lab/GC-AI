@@ -47,7 +47,8 @@ have regressions and successful real execution after correction.
 CPU verification used Python 3.12.16, Torch 2.6.0+cpu and TorchVision 0.21.0+cpu.
 The exact executed package set is captured in backend/requirements-checkpoint.lock;
 future verifier builds apply those constraints. The production CUDA runtime remains
-a separate acceptance target. Public production migration, production credential
-rotation, published release image digests, GPU parity, human UI/scientific/release
-acceptance and integrated merge-to-main remain open. Keep #16 and epic #7 open until
+a separate acceptance target. The project owner accepted the local UI and integration evidence on 24 November
+2026; see [review-approval.md](review-approval.md). Public production migration,
+production credential rotation, published release image digests, GPU parity and
+integrated merge-to-main remain separate gates. Keep #16 and epic #7 open until
 the coordinated changes and operator evidence are accepted.
