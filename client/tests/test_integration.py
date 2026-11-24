@@ -57,15 +57,9 @@ def test_the_service_is_usable(live: GCAIClient) -> None:
 
 
 @needs_service
-def test_the_health_endpoint_is_broken(live: GCAIClient) -> None:
-    """The reason `health()` does not use it."""
-    from gcai.errors import GCAIResponseError
-
-    with pytest.raises(GCAIResponseError) as caught:
-        live._request("GET", "/healthcheck/")
-    assert caught.value.status_code == 500
-    assert "Unread result found" not in caught.value.message
-    assert caught.value.code == "internal_error"
+def test_readiness_and_liveness_are_supported(live: GCAIClient) -> None:
+    assert live._request("GET", "/healthcheck/").json()["status"] == "healthy"
+    assert live._request("GET", "/livez").json()["status"] == "alive"
 
 
 @needs_service

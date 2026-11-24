@@ -99,13 +99,14 @@ people can read.
 
 [`quickstart.ipynb`](quickstart.ipynb) calls the same two functions and displays
 the annotated image, which is the quickest way to see which glyphs were found
-and which were missed. Its outputs are committed, so it reads on GitHub without
-being run. To run it:
+and which were missed. It reads the service URL and private credential configuration from the environment.
+See [review gates](../docs/security/review-gates.md) for notebook execution and
+explicit registry-publishing opt-in. To run it:
 
 ```sh
 cd client
 uv run --with jupyter --with nbconvert \
-  jupyter nbconvert --to notebook --execute --inplace ../examples/quickstart.ipynb
+  jupyter nbconvert --to notebook --execute ../examples/quickstart.ipynb --output executed-quickstart.ipynb --output-dir /tmp/gcai-notebook-review
 ```
 
 ## Driving it from an agent

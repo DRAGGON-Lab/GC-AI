@@ -26,7 +26,7 @@ needs_gcai = pytest.mark.skipif(not GCAI_URL, reason="set GCAI_URL")
 
 
 def example_dirs() -> list[Path]:
-    return sorted(p for p in EXAMPLES.iterdir() if (p / "request.json").exists())
+    return sorted((EXAMPLES.parent / "validation" / "regenerated").iterdir())
 
 
 @pytest.fixture(scope="module")
@@ -38,19 +38,30 @@ def registry() -> Iterator[object]:
 @needs_registry
 @pytest.mark.parametrize("directory", example_dirs(), ids=lambda p: p.name)
 def test_an_example_publishes_and_reads_back(registry, directory: Path) -> None:
-    document = next(directory.glob("*.xml")).read_bytes()
+    document = (directory / "full.xml").read_bytes()
     iri = f"https://gc-ai.test/designs/{uuid.uuid4()}"
 
     report = storage.publish(registry, document, document_iri=iri, name=directory.name, description="integration test")
 
-    assert report.object_count > 0
-    assert report.triple_count > 0
-    registry.delete_graph_by_document_iri(iri)
+    try:
+        assert report.object_count > 0
+        assert report.triple_count > 0
+        assert report.validation_status == "passed"
+        assert report.validation_issue_count == 0
+        request = json.loads((EXAMPLES / directory.name / "request.json").read_text())
+        root = request["namespace"].rstrip("/") + "/" + request["components"][0]["name"]
+        rdf = storage.fetch(registry, root)
+        import rdflib
+
+        graph = rdflib.Graph().parse(data=rdf, format="xml")
+        assert (rdflib.URIRef(root), rdflib.RDF.type, rdflib.URIRef("http://sbols.org/v3#Component")) in graph
+    finally:
+        registry.delete_graph_by_document_iri(iri)
 
 
 @needs_registry
 def test_the_registry_converts_to_sbol2(registry) -> None:
-    document = (EXAMPLES / "YES GATE" / "YES-GATE.xml").read_bytes()
+    document = (EXAMPLES.parent / "validation" / "regenerated" / "YES GATE" / "full.xml").read_bytes()
     iri = f"https://gc-ai.test/designs/{uuid.uuid4()}"
     storage.publish(registry, document, document_iri=iri, name="YES gate")
     try:
@@ -63,7 +74,7 @@ def test_the_registry_converts_to_sbol2(registry) -> None:
 
 @needs_registry
 def test_overwrite_replaces_an_earlier_publish(registry) -> None:
-    document = (EXAMPLES / "YES GATE" / "YES-GATE.xml").read_bytes()
+    document = (EXAMPLES.parent / "validation" / "regenerated" / "YES GATE" / "full.xml").read_bytes()
     iri = f"https://gc-ai.test/designs/{uuid.uuid4()}"
     storage.publish(registry, document, document_iri=iri, name="YES gate")
     try:

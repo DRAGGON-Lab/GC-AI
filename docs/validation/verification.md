@@ -100,3 +100,7 @@ Executed checks after the correction (all exit 0):
 Real checkpoint/GPU/MySQL verification: not_run; these checks establish the
 readiness and synchronization contract using stubs. The separate existing
 `/healthcheck/` unread-query defect is outside this correction.
+
+## Real integration follow-up — 24 November 2026
+
+The full live22-case client suite and complete real-service notebook now pass, including live SBOL DB publication/readback and conversion. The real checkpoint matches all3 recorded detection cases on CPU. See [review verification](../security/review-verification.md) for commands, source baselines, receipts and the remaining production/GPU/release gates. These results apply to the fresh local review environment.

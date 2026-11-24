@@ -1,0 +1,9 @@
+# Local CPU review only; production deployments use backend/Dockerfile.
+ARG CHECKPOINT_IMAGE=gcai-cpu-review:temporary
+FROM ${CHECKPOINT_IMAGE}
+USER 0:0
+RUN pip install --no-cache-dir gunicorn==23.0.0 mysql-connector-python==9.3.0
+COPY backend/gunicorn.conf.py /app/gunicorn.conf.py
+ENTRYPOINT []
+USER 10001:10001
+CMD ["gunicorn", "--config", "gunicorn.conf.py", "app:create_app()"]

@@ -1,6 +1,6 @@
 # Deploying a trusted GC-AI workspace
 
-This release changes the conversion wire contract. Release Flask, React, Python, CLI and MCP together. Existing server paths cannot be migrated into handles: generate the design again. Use one trusted workspace with a TLS reverse proxy and password authentication. Read the coordinated `cvtalrc/GC-AI-environment` change before deploying.
+This release changes the conversion wire contract. Release Flask, React, Python, CLI and MCP together. Existing server paths cannot be migrated into handles: generate the design again. Use one trusted workspace with a TLS reverse proxy and password authentication. Read the coordinated `DRAGGON-Lab/GC-AI-environment` change before deploying.
 
 ## Build and run reviewed source
 
@@ -50,3 +50,5 @@ Before upgrades, export a fresh logical registry backup to a private file, check
 Code validation does not establish deployment completion. Docker-capable CI builds reviewed source and exercises real Pillow decoding, WSGI liveness and degraded readiness. The environment workflow verifies TLS authentication, private networking, registry import, grants, backup/restore and janitor behavior when invoked with reviewed source and pinned assets.
 
 The operator receipt must record source/image/checkpoint digests, import/backup checksums, row counts, least-privilege grants, successful authenticated create/convert/inference/readiness, unauthenticated denial, old-credential rejection, janitor operation, and rollback location. Never include secret values. Checkpoint/GPU smoke tests must be distinguished from mocked runners. Keep issue #16 and epic #7 open until the environment PR, integrated deployment checks, actual migration and credential-rotation receipts are accepted.
+
+Runnable acceptance checks and discovered legacy inputs: [review gates](security/review-gates.md).
