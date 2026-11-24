@@ -39,3 +39,17 @@ Pre-commit rerun: exit 0, all eight hooks passed using pinned hook revisions and
 needed `cryptography==46.0.7` (the installed client test version) because the
 newest transitive source distribution required unavailable local OpenSSL build
 support. The final cached-hook run passed without network access or constraints.
+
+## #23–#25 engineering checks
+
+The expanded isolated backend suite passed 183 tests (exit 0). The built-app
+Chromium harness first passed the generation/download/conversion workflow.
+A new create-400 test then failed against the unchanged build: custom inputs
+were missing after the response because their local mode reset on remount.
+After keeping editors mounted and controlling custom mode from the draft,
+all eight browser cases passed, including 400/500/network create errors,
+conversion retry with the same opaque handle, retained registry successes,
+confirmed reset and a late details response after a newer selection.
+Failure trace/screenshot retained locally in
+`/private/tmp/gcai-epic8/editor-regression-before`; CI retains equivalent failure
+artifacts. Mocked browser evidence does not qualify real model or SBOL accuracy.

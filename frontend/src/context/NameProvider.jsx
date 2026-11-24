@@ -1,10 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect, useMemo, useRef } from 'react';
 import NameContext from './NameContext';
-import { Alert, Box, Button, Container, Paper } from '@mui/material';
-import Navbar from '../components/Navbar/Navbar';
-import LoadingScreen from '../components/LoadingScreen/LoadingScreen';
-import Footer from '../components/Footer/Footer';
+import { Alert, Button } from '@mui/material';
 import { loadNames } from '../utils/LoadNames.js';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
@@ -38,30 +35,14 @@ const NameProvider = ({ children }) => {
     return () => controller.abort();
   }, [roles, attempt]);
 
-  if (status !== 'ready') {
-    return (
-
-      <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        <Navbar />
-        <Container maxWidth="md" sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-          <Paper elevation={3} sx={{ p: 5, mt: 2, width: '100%', border: '3px solid #1b4a3b', borderRadius: 2, boxShadow: '1px 1px 15px 5px #1b4a3b', mb: 2, height: '100%' }}>
-            {status === 'loading' ? <LoadingScreen message="data" /> : (
-              <Alert severity="error" action={
-                <Button color="inherit" onClick={() => setAttempt(value => value + 1)}>Retry</Button>
-              }>
-                We couldn’t load the available parts. Please try again.
-              </Alert>
-            )}
-          </Paper>
-        </Container>
-        <Footer />
-      </Box>
-
-    );
-  }
-
   return (
     <NameContext.Provider value={{ namesCache, roles }}>
+      {status !== 'ready' && <Alert severity={status === 'loading' ? 'info' : 'warning'} action={
+        <Button disabled={status === 'loading'} onClick={() => setAttempt(value => value + 1)}>Retry registry</Button>
+      }>
+        {status === 'loading' ? 'Loading registry parts. Manual entry is available.' :
+          'Some registry parts could not be loaded. Retry or use Add Custom Component for manual entry.'}
+      </Alert>}
       {children}
     </NameContext.Provider>
   );
