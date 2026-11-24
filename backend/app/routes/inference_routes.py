@@ -2,6 +2,7 @@
 
 import base64
 import io
+import math
 from threading import Lock
 import warnings
 
@@ -110,7 +111,18 @@ def inference():
             )
         image = decode_image(content)
         runner = current_app.config.get("INFERENCE_RUNNER") or run_inference
-        result_image, draw_boxes, pred_classes = runner(image)
+        result = runner(image)
+        result_image, draw_boxes, pred_classes = result[:3]
+        scores = result[3] if len(result) == 4 else None
+        if len(draw_boxes) != len(pred_classes):
+            raise ValueError('Inference classes and boxes are not aligned')
+        if scores is not None:
+            scores = list(scores)
+            if len(scores) != len(pred_classes) or any(
+                isinstance(score, bool) or not isinstance(score, (int, float)) or
+                not math.isfinite(score) or not 0 <= score <= 1 for score in scores
+            ):
+                raise ValueError('Inference model scores are invalid')
         from PIL import Image
 
         encoded = io.BytesIO()
@@ -125,6 +137,8 @@ def inference():
             "pred_classes": pred_classes,
             "has_predictions": bool(boxes),
         }
+        if scores is not None:
+            response["pred_scores"] = scores
         if not boxes:
             response["message"] = "No predictions made by the model."
         return jsonify(response)

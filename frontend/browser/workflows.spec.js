@@ -253,3 +253,18 @@ test('deleting an earlier operon cannot transfer union mode or erase manual edit
   await expect(operon('Operon 2').getByRole('checkbox', { name: 'Generate unions automatically by component order' })).not.toBeChecked();
   await expect(operon('Operon 2').getByRole('combobox', { name: 'From', exact: true })).toHaveCount(1);
 });
+
+test('generation requires review and editing or reordering invalidates that review', async ({ page }) => {
+  await edit(page);
+  const submit = page.getByRole('button', { name: 'Create SBOL 3 File' });
+  const review = page.getByRole('checkbox', { name: /I have reviewed/ });
+  await expect(submit).toBeDisabled();
+  await review.check();
+  await expect(submit).toBeEnabled();
+  await page.locator('input[name=description]').first().fill('Updated design');
+  await expect(review).not.toBeChecked();
+  await review.check();
+  await page.getByRole('button', { name: 'Move part right' }).first().click();
+  await expect(review).not.toBeChecked();
+  await expect(page.locator('input[name=name]').nth(1)).toHaveValue('RBSPart');
+});

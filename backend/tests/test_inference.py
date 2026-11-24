@@ -196,3 +196,16 @@ def test_camera_jpeg_exif_orientation_reaches_detector_upright(inference_app):
     annotated = Image.open(io.BytesIO(base64.b64decode(response.json["result_image"])))
     assert annotated.size == (12, 24)
     np.testing.assert_array_equal(np.array(annotated), decoded[:, :, ::-1])
+
+
+@pytest.mark.parametrize('scores,status', [([.7], 200), ([], 500), ([float('nan')], 500), ([1.1], 500), ([True], 500)])
+def test_model_scores_are_validated_and_preserved(inference_app, scores, status):
+    app, runner = inference_app
+    runner.side_effect = lambda image: (image, [[0, 0, 2, 2]], ['cds-arrow'], scores)
+    response = upload(app, image_bytes())
+    assert response.status_code == status
+    if status == 200:
+        assert response.json['pred_scores'] == scores
+        assert response.json['pred_classes'] == ['cds-arrow']
+    else:
+        assert response.json['error'] == 'An unexpected error occurred.'
