@@ -40,7 +40,7 @@ The following diagram illustrates the complete workflow of GC-AI, from the initi
 
 The installation and setup of this application for local use are provided in the following repository:
 
-- [GC-AI Environment](https://github.com/cvtalrc/GC-AI-environment)
+- [GC-AI Environment](https://github.com/DRAGGON-Lab/GC-AI-environment)
 
 Please refer to that repository for detailed instructions on setting up and running the application.
 
