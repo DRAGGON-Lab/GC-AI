@@ -11,6 +11,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends libglib2.0-0 li
 RUN pip install --no-cache-dir --require-hashes -r requirements-cpu.lock && useradd --uid 10001 --create-home gcai
 COPY --from=package /wheels /wheels
 RUN pip install --no-deps /wheels/*.whl && rm -rf /wheels
+COPY tools/verify_package_records.py /usr/local/bin/gcai-verify-package-records.py
+RUN python /usr/local/bin/gcai-verify-package-records.py && pip check && python -c "import torch, torchvision, cv2; from app.wsgi import application"
 COPY backend/gunicorn.conf.py ./gunicorn.conf.py
 RUN mkdir -p /var/lib/gcai/artifacts && chown -R 10001:10001 /var/lib/gcai
 ENV GCAI_ARTIFACT_DIR=/var/lib/gcai/artifacts

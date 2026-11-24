@@ -89,3 +89,19 @@ shutdown at 17:34 UTC on 24 November 2026 (`init.log: no space left on device`).
 Workspace sandbox socket denial is a separate restriction. The host later had
 approximately 16 GiB free; recovery and fresh CPU replay are required before
 counting this channel as passed. Existing review/database volumes are preserved.
+
+Docker recovery completed: the VM and existing review/backend/MySQL services
+recovered after terminating stale Desktop processes and relaunching. The first
+candidate contained zero-byte dependency files following the disk-full incident;
+it was rejected. A no-cache rebuild now verifies installed hashes against wheel
+RECORDs, runs `pip check`, imports Torch/TorchVision/OpenCV/WSGI and passes real
+installed CPU replay for all three historical examples. Receipt:
+`/private/tmp/gcai-epic8/checkpoint-28-clean-image.json` (CPU only).
+
+The companion environment passed all 16 unit tests under Python 3.12/OpenSSL 3.
+Authenticated proxy replacement forced IP `172.23.0.2` → `172.23.0.4` and
+recovered in 4.649 seconds without restarting/replacing the proxy. This receipt
+uses the explicitly documented stdlib backend stub; full candidate-stack
+qualification remains a separate required check. Production and rollback volumes
+were preserved. Thirteen release-gate regressions pass, including deliberate
+invalid evidence, missing channels, skipped live tests and unaccepted reports.

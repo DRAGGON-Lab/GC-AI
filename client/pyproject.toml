@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "gc-ai-client"
-version = "0.2.0"
+version = "0.2.1rc1"
 description = "Client for the GC-AI symbol detection and SBOL3 generation service"
 readme = "README.md"
 requires-python = ">=3.10"

@@ -9,12 +9,8 @@ load_dotenv()
 BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 
 FILES_CONVERTED_DIR = os.path.join(BASE_PATH, "files_converted")
-FILES_GENERATED_DIR = os.getenv(
-    "GCAI_ARTIFACT_DIR", os.path.join(BASE_PATH, "files_generated")
-)
-MODEL_PATH = os.getenv(
-    "GCAI_MODEL_PATH", os.path.join(BASE_PATH, "models", "model_files", "160_model.pth")
-)
+FILES_GENERATED_DIR = os.getenv("GCAI_ARTIFACT_DIR", os.path.join(BASE_PATH, "files_generated"))
+MODEL_PATH = os.getenv("GCAI_MODEL_PATH", os.path.join(BASE_PATH, "models", "model_files", "160_model.pth"))
 GLYPHS_CONFIG_PATH = os.path.join(BASE_PATH, "data_configs", "glyphs.yaml")
 
 try:
@@ -72,6 +68,7 @@ def _load_verified_model(stream):
     model = build_model(num_classes=NUM_CLASSES, pretrained=False, coco_model=False)
     model.load_state_dict(checkpoint["model_state_dict"])
     return model.to(device).eval()
+
 
 def get_db_connection():
     """Establece una conexión a la base de datos y la devuelve."""
