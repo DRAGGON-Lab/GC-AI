@@ -33,3 +33,9 @@ Executed on 24 November 2026, Python 3.12.13, clean starting main:
 The historical acceptance matrix contains earlier counts and prerequisites;
 current release claims must use this candidate's own evidence. Historical
 example inference records remain immutable and are regression evidence only.
+
+Pre-commit rerun: exit 0, all eight hooks passed using pinned hook revisions and
+`PRE_COMMIT_HOME=/private/tmp/gcai-precommit`. Initial hook environment setup
+needed `cryptography==46.0.7` (the installed client test version) because the
+newest transitive source distribution required unavailable local OpenSSL build
+support. The final cached-hook run passed without network access or constraints.

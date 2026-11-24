@@ -28,3 +28,10 @@ A skipped live test cannot qualify a release.
 `cd frontend && npm ci && npm run lint && npm test && npm run build` runs on
 Node 24. The browser harness serves the production build locally and mocks API
 traffic; it requires pinned Playwright Chromium but no backend services.
+
+Browser setup: `npx playwright install --with-deps chromium`, then
+`npm run build && npm run test:browser`. Playwright 1.58.2 pins Chromium build
+1208. Unexpected API/external requests and uncaught page errors fail tests.
+Traces, screenshots and the HTML report are uploaded on CI failure. The mocked
+XML download checks UI behavior; real SBOL validation belongs to the backend and
+full-stack channels.
