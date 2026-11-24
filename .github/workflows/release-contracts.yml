@@ -1,0 +1,50 @@
+name: release-contracts
+on: [push, pull_request]
+jobs:
+  contracts:
+    name: Release evidence and benchmark contracts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install --require-hashes -r backend/requirements-test.lock
+      - run: pip install -r tools/requirements-benchmark.txt jsonschema==4.26.0
+      - run: python -m pytest tools/benchmark/test_benchmark.py tools/release -q --disable-warnings
+      - id: environment-source
+        run: python -c "import json; print('revision='+json.load(open('docs/release/environment-source.json'))['revision'])" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        with:
+          repository: DRAGGON-Lab/GC-AI-environment
+          ref: ${{ steps.environment-source.outputs.revision }}
+          path: candidate-environment
+      - name: Shared manifest schema parity
+        run: cmp docs/release/release-manifest.schema.json candidate-environment/docs/release/release-manifest.schema.json
+  installed:
+    name: Installed Python wheel and source artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install build==1.2.2.post1
+      - run: |
+          export SOURCE_DATE_EPOCH=$(git show -s --format=%ct HEAD)
+          python -m build backend --outdir "$RUNNER_TEMP/dist"
+          python -m build client --outdir "$RUNNER_TEMP/dist"
+      - name: Install and exercise each artifact type outside checkout
+        run: |
+          for suffix in whl tar.gz; do
+            python -m venv "$RUNNER_TEMP/installed-$suffix"
+            interpreter="$RUNNER_TEMP/installed-$suffix/bin/python"
+            "$interpreter" -m pip install --require-hashes -r backend/requirements-test.lock
+            "$interpreter" -m pip install httpx==0.28.1
+            "$interpreter" -m pip install --no-deps "$RUNNER_TEMP"/dist/*.$suffix
+            (cd "$RUNNER_TEMP" && "$interpreter" "$GITHUB_WORKSPACE/tools/verify_installed.py")
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: python-candidate-artifacts
+          path: ${{ runner.temp }}/dist/

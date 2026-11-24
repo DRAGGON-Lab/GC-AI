@@ -81,6 +81,36 @@ in [the draft corpus](../benchmark/corpus-draft/inventory.json). Real physical
 captures, approved ground truth and scientific acceptance remain outstanding.
 No benchmark accuracy measurements or candidate qualification are claimed.
 
+## Continuation qualification
+
+Exact `a4b367fe85262657e19e71f59e2fc0b13ef7569a` CPU archives were built and
+verified with environment `e142b837d982360257106f1a4cecccbf06ccc386`.
+Both wheel and source installations passed outside the checkout using backend
+`1.0.0rc1` and client `0.2.1rc1`. Private artifacts and hash-bound receipts are in
+`/private/tmp/gcai-epic8/candidate-exact`.
+
+The first disposable full-stack run passed real readiness, authenticated wire,
+Python/CLI/MCP, generation and conversion checks. Live integrations executed
+all 22 cases: 19 passed and three historical replay comparisons failed solely
+because optional model scores were newly included. Historical records remain
+immutable; the comparison now excludes only the newly added score field.
+This failed run is retained at `/private/tmp/gcai-epic8/qualification-exact-1`;
+its disposable services and volumes were removed. It does not qualify a release.
+
+Independent review identified missing live admission checks and incomplete
+prerelease evidence distribution. The wire suite now checks malformed/oversized
+images, concurrent busy rejection and subsequent recovery. These checks passed
+against the real disposable CPU service. Publication now attaches an allowlisted
+archive containing the manifest, referenced reports, Python/OCI artifacts and
+approved benchmark reproduction inputs; private execution logs are excluded.
+Public distribution of these selected inputs remains part of bundle review.
+
+Hosted CI rejected deliberate regression `7527f19` in both backend and cross-client
+checks; correction `6fd846b` passed both on the disposable proof branch.
+Both repositories' live merge protections were rechecked. The publication
+environment is absent and configuration requires an explicit decision about
+self-approval semantics. No publication or scientific acceptance is asserted.
+
 ## Docker interruption
 
 The CPU image build completed. The subsequent real CPU replay produced no
@@ -89,3 +119,19 @@ shutdown at 17:34 UTC on 24 November 2026 (`init.log: no space left on device`).
 Workspace sandbox socket denial is a separate restriction. The host later had
 approximately 16 GiB free; recovery and fresh CPU replay are required before
 counting this channel as passed. Existing review/database volumes are preserved.
+
+Docker recovery completed: the VM and existing review/backend/MySQL services
+recovered after terminating stale Desktop processes and relaunching. The first
+candidate contained zero-byte dependency files following the disk-full incident;
+it was rejected. A no-cache rebuild now verifies installed hashes against wheel
+RECORDs, runs `pip check`, imports Torch/TorchVision/OpenCV/WSGI and passes real
+installed CPU replay for all three historical examples. Receipt:
+`/private/tmp/gcai-epic8/checkpoint-28-clean-image.json` (CPU only).
+
+The companion environment passed all 16 unit tests under Python 3.12/OpenSSL 3.
+Authenticated proxy replacement forced IP `172.23.0.2` → `172.23.0.4` and
+recovered in 4.649 seconds without restarting/replacing the proxy. This receipt
+uses the explicitly documented stdlib backend stub; full candidate-stack
+qualification remains a separate required check. Production and rollback volumes
+were preserved. Thirteen release-gate regressions pass, including deliberate
+invalid evidence, missing channels, skipped live tests and unaccepted reports.
