@@ -29,8 +29,10 @@ and fixture hashes are in committed-examples.json and regenerated provenance.
 
 Independent engineering/scientific code review found and corrected retention,
 optional-description validation and species/operon reference ambiguity defects.
-This is not the human scientific approval required before merge. The inherited blanket protein-role mapping has been removed; see
-scientific-review.md.
+The independent code review does not establish human scientific approval.
+ADR 0001 was subsequently accepted by explicit user approval on 23 November 2026;
+remaining scientific and live verification gates are tracked in acceptance-matrix.md.
+The inherited blanket protein-role mapping has been removed; see scientific-review.md.
 
 PR #5 provenance: https://github.com/DRAGGON-Lab/GC-AI/pull/5 . Its intended
 examples/client delta is included, with corrections for the changed semantics.
@@ -65,7 +67,11 @@ The final local command was:
 
 Exit 0, result passed. All regenerated RDF/provenance and raw reports were
 refreshed after the backend correction. Original examples remain unchanged.
-ADR 0001 is Proposed — pending scientific review; no formal approval is claimed.
+ADR 0001 was Proposed at the time of these checks. On 23 November 2026, the user
+explicitly stated “I approve the ADR” in the project conversation, establishing
+acceptance of its generation and relationship semantics. This approval supplies
+the decision evidence; live integration and deployment verification remain
+separate requirements.
 
 ## PR #30 detector readiness review corrections
 
