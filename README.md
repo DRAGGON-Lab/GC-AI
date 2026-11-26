@@ -33,6 +33,26 @@ engineered region, inert DNA spacer, non-coding RNA (`ncrna`), operator, origin 
 replication, origin of transfer, poly(A) site, primer binding site, promoter,
 ribosome entry site (RBS), and terminator.
 
+<p>
+  <img src="frontend/src/assets/symbols/aptamer.svg" alt="Aptamer" title="Aptamer" width="64" height="64">
+  <img src="frontend/src/assets/symbols/cds.svg" alt="CDS" title="CDS" width="64" height="64">
+  <img src="frontend/src/assets/symbols/cds-arrow.svg" alt="CDS (arrow)" title="CDS (arrow)" width="64" height="64">
+  <img src="frontend/src/assets/symbols/engineered-region.svg" alt="Engineered region" title="Engineered region" width="64" height="64">
+  <img src="frontend/src/assets/symbols/inert-dna-spacer.svg" alt="Inert DNA spacer" title="Inert DNA spacer" width="64" height="64">
+  <img src="frontend/src/assets/symbols/ncrna.svg" alt="Non-coding RNA" title="Non-coding RNA" width="64" height="64">
+  <img src="frontend/src/assets/symbols/operator.svg" alt="Operator" title="Operator" width="64" height="64">
+  <img src="frontend/src/assets/symbols/origin-of-replication.svg" alt="Origin of replication" title="Origin of replication" width="64" height="64">
+  <img src="frontend/src/assets/symbols/origin-of-transfer.svg" alt="Origin of transfer" title="Origin of transfer" width="64" height="64">
+  <img src="frontend/src/assets/symbols/polyA.svg" alt="Poly(A) site" title="Poly(A) site" width="64" height="64">
+  <img src="frontend/src/assets/symbols/primer-binding-site.svg" alt="Primer binding site" title="Primer binding site" width="64" height="64">
+  <img src="frontend/src/assets/symbols/promoter.svg" alt="Promoter" title="Promoter" width="64" height="64">
+  <img src="frontend/src/assets/symbols/ribosome-entry-site.svg" alt="Ribosome entry site (RBS)" title="Ribosome entry site (RBS)" width="64" height="64">
+  <img src="frontend/src/assets/symbols/terminator.svg" alt="Terminator" title="Terminator" width="64" height="64">
+</p>
+
+Glyphs are shown in the order listed above, at the same image size as the
+[SBOL Visual glyph gallery](https://sbolstandard.org/visual-glyphs/).
+
 Both CDS variants represent a coding sequence. See the
 [detector configuration](backend/app/data_configs/glyphs.yaml) for the exact class names.
 
