@@ -64,11 +64,7 @@ origin of transfer, poly(A) site, and primer binding site.
   <img src="frontend/src/assets/symbols/dark/primer-binding-site.svg#gh-dark-mode-only" alt="Primer binding site" title="Primer binding site" width="64" height="64">
 </p>
 
-Glyphs are shown in the order listed above, at the same image size as the
-[SBOL Visual glyph gallery](https://sbolstandard.org/visual-glyphs/), with black
-strokes in light mode and white strokes in dark mode.
-
-Both CDS variants represent a coding sequence. See the
+Glyphs are shown in the order listed above. See the
 [detector configuration](backend/app/data_configs/glyphs.yaml) for the exact class names.
 
 ---
