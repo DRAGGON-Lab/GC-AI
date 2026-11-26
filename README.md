@@ -7,6 +7,7 @@
 ## 📖 Table of Contents
 
 -  [Features](#features)
+-  [Supported Glyphs](#supported-glyphs)
 -  [Requirements](#requirements)
 -  [Installation](#installation)
 -  [Usage](#usage)
@@ -24,6 +25,16 @@
 - **File Conversion**: Converts SBOL3 files to GenBank and/or FASTA formats.
 - **Health Check**: Provides an endpoint to verify the application's health.
 - **Database Integration**: Reads registry part metadata and sequences from MySQL.
+
+## Supported Glyphs
+
+GC-AI detects 14 SBOL Visual glyph classes: aptamer, CDS (`cds` and `cds-arrow`),
+engineered region, inert DNA spacer, non-coding RNA (`ncrna`), operator, origin of
+replication, origin of transfer, poly(A) site, primer binding site, promoter,
+ribosome entry site (RBS), and terminator.
+
+Both CDS variants represent a coding sequence. See the
+[detector configuration](backend/app/data_configs/glyphs.yaml) for the exact class names.
 
 ---
 ## 🧩 System Architecture
