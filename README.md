@@ -7,6 +7,7 @@
 ## 📖 Table of Contents
 
 -  [Features](#features)
+-  [Supported Glyphs](#supported-glyphs)
 -  [Requirements](#requirements)
 -  [Installation](#installation)
 -  [Usage](#usage)
@@ -24,6 +25,47 @@
 - **File Conversion**: Converts SBOL3 files to GenBank and/or FASTA formats.
 - **Health Check**: Provides an endpoint to verify the application's health.
 - **Database Integration**: Reads registry part metadata and sequences from MySQL.
+
+## Supported Glyphs
+
+GC-AI detects 14 SBOL Visual glyph classes: promoter, ribosome entry site (RBS),
+CDS (`cds`), terminator, aptamer, CDS (arrow) (`cds-arrow`), engineered region,
+inert DNA spacer, non-coding RNA (`ncrna`), operator, origin of replication,
+origin of transfer, poly(A) site, and primer binding site.
+
+<p>
+  <img src="frontend/src/assets/symbols/promoter.svg#gh-light-mode-only" alt="Promoter" title="Promoter" width="64" height="64">
+  <img src="frontend/src/assets/symbols/dark/promoter.svg#gh-dark-mode-only" alt="Promoter" title="Promoter" width="64" height="64">
+  <img src="frontend/src/assets/symbols/ribosome-entry-site.svg#gh-light-mode-only" alt="Ribosome entry site (RBS)" title="Ribosome entry site (RBS)" width="64" height="64">
+  <img src="frontend/src/assets/symbols/dark/ribosome-entry-site.svg#gh-dark-mode-only" alt="Ribosome entry site (RBS)" title="Ribosome entry site (RBS)" width="64" height="64">
+  <img src="frontend/src/assets/symbols/cds.svg#gh-light-mode-only" alt="CDS" title="CDS" width="64" height="64">
+  <img src="frontend/src/assets/symbols/dark/cds.svg#gh-dark-mode-only" alt="CDS" title="CDS" width="64" height="64">
+  <img src="frontend/src/assets/symbols/terminator.svg#gh-light-mode-only" alt="Terminator" title="Terminator" width="64" height="64">
+  <img src="frontend/src/assets/symbols/dark/terminator.svg#gh-dark-mode-only" alt="Terminator" title="Terminator" width="64" height="64">
+  <img src="frontend/src/assets/symbols/aptamer.svg#gh-light-mode-only" alt="Aptamer" title="Aptamer" width="64" height="64">
+  <img src="frontend/src/assets/symbols/dark/aptamer.svg#gh-dark-mode-only" alt="Aptamer" title="Aptamer" width="64" height="64">
+  <img src="frontend/src/assets/symbols/cds-arrow.svg#gh-light-mode-only" alt="CDS (arrow)" title="CDS (arrow)" width="64" height="64">
+  <img src="frontend/src/assets/symbols/dark/cds-arrow.svg#gh-dark-mode-only" alt="CDS (arrow)" title="CDS (arrow)" width="64" height="64">
+  <img src="frontend/src/assets/symbols/engineered-region.svg#gh-light-mode-only" alt="Engineered region" title="Engineered region" width="64" height="64">
+  <img src="frontend/src/assets/symbols/dark/engineered-region.svg#gh-dark-mode-only" alt="Engineered region" title="Engineered region" width="64" height="64">
+  <img src="frontend/src/assets/symbols/inert-dna-spacer.svg#gh-light-mode-only" alt="Inert DNA spacer" title="Inert DNA spacer" width="64" height="64">
+  <img src="frontend/src/assets/symbols/dark/inert-dna-spacer.svg#gh-dark-mode-only" alt="Inert DNA spacer" title="Inert DNA spacer" width="64" height="64">
+  <img src="frontend/src/assets/symbols/ncrna.svg#gh-light-mode-only" alt="Non-coding RNA" title="Non-coding RNA" width="64" height="64">
+  <img src="frontend/src/assets/symbols/dark/ncrna.svg#gh-dark-mode-only" alt="Non-coding RNA" title="Non-coding RNA" width="64" height="64">
+  <img src="frontend/src/assets/symbols/operator.svg#gh-light-mode-only" alt="Operator" title="Operator" width="64" height="64">
+  <img src="frontend/src/assets/symbols/dark/operator.svg#gh-dark-mode-only" alt="Operator" title="Operator" width="64" height="64">
+  <img src="frontend/src/assets/symbols/origin-of-replication.svg#gh-light-mode-only" alt="Origin of replication" title="Origin of replication" width="64" height="64">
+  <img src="frontend/src/assets/symbols/dark/origin-of-replication.svg#gh-dark-mode-only" alt="Origin of replication" title="Origin of replication" width="64" height="64">
+  <img src="frontend/src/assets/symbols/origin-of-transfer.svg#gh-light-mode-only" alt="Origin of transfer" title="Origin of transfer" width="64" height="64">
+  <img src="frontend/src/assets/symbols/dark/origin-of-transfer.svg#gh-dark-mode-only" alt="Origin of transfer" title="Origin of transfer" width="64" height="64">
+  <img src="frontend/src/assets/symbols/polyA.svg#gh-light-mode-only" alt="Poly(A) site" title="Poly(A) site" width="64" height="64">
+  <img src="frontend/src/assets/symbols/dark/polyA.svg#gh-dark-mode-only" alt="Poly(A) site" title="Poly(A) site" width="64" height="64">
+  <img src="frontend/src/assets/symbols/primer-binding-site.svg#gh-light-mode-only" alt="Primer binding site" title="Primer binding site" width="64" height="64">
+  <img src="frontend/src/assets/symbols/dark/primer-binding-site.svg#gh-dark-mode-only" alt="Primer binding site" title="Primer binding site" width="64" height="64">
+</p>
+
+Glyphs are shown in the order listed above. See the
+[detector configuration](backend/app/data_configs/glyphs.yaml) for the exact class names.
 
 ---
 ## 🧩 System Architecture
